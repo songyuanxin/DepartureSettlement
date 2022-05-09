@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="lsjsServer" />
+        <module name="lsjs-commons" />
+        <module name="lsjs-core" />
+        <module name="lsjs-system" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="lsjs-commons" target="1.8" />
+      <module name="lsjs-core" target="1.8" />
+      <module name="lsjs-system" target="1.8" />
+      <module name="lsjsServer" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="lsjs-commons" options="-parameters" />
+      <module name="lsjs-core" options="-parameters" />
+      <module name="lsjs-system" options="-parameters" />
+      <module name="lsjsServer" options="-parameters" />
+    </option>
+  </component>
+</project>
