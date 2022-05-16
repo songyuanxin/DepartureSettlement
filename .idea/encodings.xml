@@ -3,6 +3,7 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/lsjs-commons/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/lsjs-core/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/lsjs-core/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/lsjs-system/src/main/java" charset="UTF-8" />
   </component>
 </project>
