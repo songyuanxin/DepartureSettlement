@@ -3,24 +3,24 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.6.7</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <groupId>com.syx</groupId>
+        <artifactId>lsjsServer</artifactId>
+        <version>1.0.0</version>
     </parent>
     <groupId>com.syx</groupId>
     <artifactId>lsjs-commons</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>lsjs-commons</name>
     <description>lsjs-commons</description>
     <properties>
         <java.version>1.8</java.version>
+        <axis2.version>1.7.8</axis2.version>
     </properties>
     <dependencies>
         <dependency>
             <groupId>com.syx</groupId>
             <artifactId>lsjs-core</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>1.0.0</version>
         </dependency>
 
         <dependency>
@@ -66,23 +66,79 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.47</version>
         </dependency>
-    </dependencies>
+        <!--spring web Service的包-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web-services</artifactId>
+            <version>1.5.2.RELEASE</version>
+        </dependency>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+        <!--spring web service wsdl包-->
+        <dependency>
+            <groupId>wsdl4j</groupId>
+            <artifactId>wsdl4j</artifactId>
+            <version>1.6.3</version>
+        </dependency>
+        <!-- axis 1.4 jar start -->
+        <dependency>
+            <groupId>org.apache.axis</groupId>
+            <artifactId>axis</artifactId>
+            <version>1.4</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-discovery</groupId>
+            <artifactId>commons-discovery</artifactId>
+            <version>0.2</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis</groupId>
+            <artifactId>axis-jaxrpc</artifactId>
+            <version>1.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis</groupId>
+            <artifactId>axis-saaj</artifactId>
+            <version>1.4</version>
+        </dependency>
+        <dependency>
+            <groupId>wsdl4j</groupId>
+            <artifactId>wsdl4j</artifactId>
+            <version>1.4</version>
+        </dependency>
+        <!-- axis 1.4 jar end -->
+        <dependency>
+            <groupId>javax.activation</groupId>
+            <artifactId>activation</artifactId>
+            <version>1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>1.4</version>
+        </dependency>
+        <dependency>
+            <groupId>dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jdom</groupId>
+            <artifactId>jdom</artifactId>
+            <version>1.1.3</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
 
 </project>

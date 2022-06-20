@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.syx.mapper.lsjs.ResumeMapper">
+    <resultMap id="ResumeResult" type="com.syx.domain.Resume">
+        <result property="pernr" column="pernr"/>
+        <result property="startDate" column="start_date"/>
+        <result property="endDate" column="end_date"/>
+        <result property="storeId" column="store_id"/>
+        <result property="storeName" column="store_name"/>
+        <result property="position" column="position"/>
+        <result property="post" column="post"/>
+    </resultMap>
+
+    <select id="getResumeByPernr" resultType="com.syx.domains.vo.ResumeRes" parameterType="string">
+        select pernr, start_date, end_date, store_id, store_name, position from Resume where pernr = #{quitPernr}
+    </select>
+
+    <insert id="insertResume" parameterType="com.syx.domain.Resume">
+        insert into Resume (pernr, start_date, end_date, store_id, position, store_name, post)
+        values (#{pernr}, #{startDate}, #{endDate}, #{storeId}, #{position}, #{storeName}, #{post})
+    </insert>
+
+    <delete id="deleteResume" parameterType="string">
+        delete from Resume where pernr = #{pernr}
+    </delete>
+
+</mapper>

@@ -1,4 +1,34 @@
 #端口
 server:
-  port: 9001
+  port: 9006
+
+spring:
+  #redis连接配置
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    database: 2
+
+  #数据源的配置
+  datasource:
+    lsjsdb:
+      driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+      jdbc-url: jdbc:sqlserver://10.8.1.119;DatabaseName=HRInfo;
+      username: sa
+#      password: 20050311jzjcomm
+      password: Jzj981228!
+    sapstoreheaddb:
+      driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+      jdbc-url: jdbc:sqlserver://116.55.231.200;databaseName=ZP;
+      username: jzjcomm
+      password: 20100531jzjcomm
+
+#mybatisplus的配置
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  mapper-locations: classpath:mappers/lsjs/*.xml, classpath:mappers/SAPStoreHead/*.xml
+  global-config:
+    db-config:
+      id-type: auto
 

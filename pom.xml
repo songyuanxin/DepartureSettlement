@@ -2,19 +2,28 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.6.7</version>
+        <version>2.5.13</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+
+    <modules>
+        <module>lsjs-commons</module>
+        <module>lsjs-core</module>
+        <module>lsjs-system</module>
+    </modules>
     <groupId>com.syx</groupId>
     <artifactId>lsjsServer</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
     <name>lsjsServer</name>
     <description>lsjsServer</description>
     <properties>
         <java.version>1.8</java.version>
+        <axis2.version>1.7.8</axis2.version>
     </properties>
     <dependencies>
         <dependency>
@@ -39,22 +48,5 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>

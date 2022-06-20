@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.syx.mapper.lsjs.ImportDataMapper">
+    <resultMap id="ImportDataResult" type="com.syx.domain.ImportData">
+        <result property="quitPernr" column="quit_pernr"/>
+        <result property="personScope" column="person_scope"/>
+        <result property="directPernr" column="direct_pernr"/>
+        <result property="division" column="division"/>
+        <result property="originatorPernr" column="originator_pernr"/>
+        <result property="importTime" column="import_time"/>
+    </resultMap>
+
+    <insert id="insertImportData" parameterType="com.syx.domain.ImportData">
+        insert into ImportData (quit_pernr, person_scope, direct_pernr, division, originator_pernr, import_time)
+        values (
+                   #{quitPernr},#{personScope},#{directPernr},#{division}, #{originatorPernr}, #{importTime}
+               )
+    </insert>
+
+    <select id="getImoprtDataByPernr" parameterType="string" resultMap="ImportDataResult">
+        select * from ImportData where quit_pernr = #{quitPernr}
+    </select>
+
+    <delete id="deleteImportData" parameterType="string">
+        delete from ImportData where quit_pernr = #{quitPernr}
+    </delete>
+
+</mapper>

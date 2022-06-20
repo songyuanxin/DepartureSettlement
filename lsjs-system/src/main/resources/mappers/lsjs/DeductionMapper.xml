@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.syx.mapper.lsjs.DeductionMapper">
+    <resultMap id="DeductionResult" type="com.syx.domain.Deduction">
+        <result property="pernr" column="pernr"/>
+        <result property="month" column="month"/>
+        <result property="money" column="money"/>
+    </resultMap>
+
+    <select id="getDeductionByPernr" parameterType="string" resultType="com.syx.domain.Deduction">
+        select pernr, month, money from Deduction where pernr = #{quitPernr}
+    </select>
+
+    <insert id="insertDeduction" parameterType="com.syx.domain.Deduction">
+        insert into Deduction(pernr, month, money) values (#{pernr}, #{month}, #{money})
+    </insert>
+
+    <delete id="deleteDeduction" parameterType="string">
+        delete from Deduction where pernr = #{pernr}
+    </delete>
+
+</mapper>

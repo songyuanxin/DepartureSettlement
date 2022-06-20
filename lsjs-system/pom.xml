@@ -3,10 +3,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.5.13</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <groupId>com.syx</groupId>
+        <artifactId>lsjsServer</artifactId>
+        <version>1.0.0</version>
     </parent>
     <groupId>com.syx</groupId>
     <artifactId>lsjs-system</artifactId>
@@ -15,17 +14,21 @@
     <description>lsjs-system</description>
     <properties>
         <java.version>1.8</java.version>
+        <mybatisplus.version>3.2.0</mybatisplus.version>
+        <druid.version>1.1.18</druid.version>
+        <log4j.version>1.2.17</log4j.version>
+        <sqlServer.version>9.2.1.jre8</sqlServer.version>
     </properties>
     <dependencies>
         <dependency>
             <groupId>com.syx</groupId>
             <artifactId>lsjs-core</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>com.syx</groupId>
             <artifactId>lsjs-commons</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>1.0.0</version>
         </dependency>
 
         <dependency>
@@ -56,9 +59,84 @@
         </dependency>
 
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+        <!-- mybatisplus -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>${mybatisplus.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-extension</artifactId>
+            <version>3.4.3</version>
+        </dependency>
+        <!-- druid -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-starter</artifactId>
+            <version>${druid.version}</version>
+        </dependency>
+        <!-- log4j -->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <!-- .sqlserver/mssql-jdbc -->
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+            <version>${sqlServer.version}</version>
+        </dependency>
+
+        <dependency>
+            <!-- jsoup HTML parser library @ https://jsoup.org/ -->
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.13.1</version>
+        </dependency>
+        <!-- axis 1.4 jar start -->
+        <dependency>
+            <groupId>org.apache.axis</groupId>
+            <artifactId>axis</artifactId>
+            <version>1.4</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-discovery</groupId>
+            <artifactId>commons-discovery</artifactId>
+            <version>0.2</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis</groupId>
+            <artifactId>axis-jaxrpc</artifactId>
+            <version>1.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis</groupId>
+            <artifactId>axis-saaj</artifactId>
+            <version>1.4</version>
+        </dependency>
+        <dependency>
+            <groupId>wsdl4j</groupId>
+            <artifactId>wsdl4j</artifactId>
+            <version>1.4</version>
+        </dependency>
+        <!-- axis 1.4 jar end -->
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.35</version>
         </dependency>
 
     </dependencies>
@@ -69,6 +147,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
+                    <mainClass>com.syx.LsjsSystemApplication</mainClass>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>
@@ -76,6 +155,13 @@
                         </exclude>
                     </excludes>
                 </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

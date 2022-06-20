@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.syx.mapper.lsjs.ReviewerMapper">
+    <resultMap id="ReviewerResult" type="com.syx.domain.Reviewer">
+        <id property="id" column="id"/>
+        <result property="parcel" column="parcel"/>
+        <result property="parcelDesc" column="parcel_desc"/>
+        <result property="region" column="region"/>
+        <result property="personScope" column="person_scope"/>
+        <result property="loanPernr" column="loan_pernr"/>
+        <result property="shortPernr" column="short_pernr"/>
+        <result property="qualityPernr" column="quality_pernr"/>
+        <result property="toolPernr" column="tool_pernr"/>
+        <result property="carePernr" column="care_pernr"/>
+    </resultMap>
+
+    <select id="getReviewer" resultMap="ReviewerResult">
+        select * from Reviewer where person_scope = #{personScope} and parcel_desc = #{parcelDesc} and region = #{region}
+    </select>
+</mapper>

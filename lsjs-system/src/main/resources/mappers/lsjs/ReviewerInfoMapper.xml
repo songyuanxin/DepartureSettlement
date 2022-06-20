@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.syx.mapper.lsjs.ReviewerInfoMapper">
+    <resultMap id="ReviewerInfoResult" type="com.syx.domain.ReviewerInfo">
+        <result property="approvePernr" column="approve_pernr"/>
+        <result property="approveName" column="approve_name"/>
+        <result property="approvePhone" column="approve_phone"/>
+    </resultMap>
+</mapper>

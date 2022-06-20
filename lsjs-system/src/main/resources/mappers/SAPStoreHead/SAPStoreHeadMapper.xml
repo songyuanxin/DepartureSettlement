@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.syx.mapper.SAPStoreHead.SAPStoreHeadMapper">
+    <resultMap id="SAPStoreHeadMap" type="com.syx.domain.SAPStoreHead">
+        <!--@mbg.generated-->
+        <!--@Table SAPStoreHead-->
+        <id column="门店编码" jdbcType="VARCHAR" property="storeId" />
+        <result column="门店名称" jdbcType="VARCHAR" property="storeName" />
+        <result column="旧POS编码" jdbcType="VARCHAR" property="oldStoreId" />
+        <result column="地址" jdbcType="VARCHAR" property="address" />
+        <result column="省级分部" jdbcType="VARCHAR" property="levelParcel" />
+        <result column="省级分部描述" jdbcType="VARCHAR" property="levelParcelName" />
+        <result column="门店类型" jdbcType="VARCHAR" property="storeType" />
+        <result column="门店类型描述" jdbcType="VARCHAR" property="storeTypeTitle" />
+        <result column="电话" jdbcType="VARCHAR" property="phone" />
+        <result column="负责人" jdbcType="VARCHAR" property="person" />
+        <result column="负责人电话" jdbcType="VARCHAR" property="personPhone" />
+        <result column="是否经营" jdbcType="VARCHAR" property="isRun" />
+        <result column="是否经营描述" jdbcType="VARCHAR" property="isRunTitle" />
+        <result column="送货日程" jdbcType="VARCHAR" property="goodsDay" />
+        <result column="门店名全称" jdbcType="VARCHAR" property="storeTitle" />
+        <result column="门店状态" jdbcType="VARCHAR" property="storeStatus" />
+        <result column="市级分部" jdbcType="VARCHAR" property="market" />
+        <result column="市级分部描述" jdbcType="VARCHAR" property="marketTitle" />
+        <result column="城市" jdbcType="VARCHAR" property="city" />
+        <result column="城市描述" jdbcType="VARCHAR" property="cityTitle" />
+        <result column="管理地区" jdbcType="VARCHAR" property="manageArea" />
+        <result column="片区" jdbcType="VARCHAR" property="area" />
+        <result column="更新时间" jdbcType="TIMESTAMP" property="updateTime" />
+    </resultMap>
+
+    <select id="getSAPStoreHeadByStoreId" resultMap="SAPStoreHeadMap" parameterType="string">
+        select * from SAPStoreHead where 门店编码 = #{storeId}
+    </select>
+
+    <select id="getSAPStoreNameByStoreId" parameterType="string" resultType="string">
+        select 门店名称 from SAPStoreHead where 门店编码 = #{storeId}
+    </select>
+</mapper>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.syx.mapper.lsjs.ApproveLogMapper">
+    <resultMap id="ApproveLogResult" type="com.syx.domain.ApproveLog">
+        <id property="id" column="id"/>
+        <result property="quitPernr" column="quit_pernr"/>
+        <result property="approveContent" column="approve_content"/>
+        <result property="approveContentDesc" column="approve_content_desc"/>
+        <result property="reviewerPernr" column="reviewer_pernr"/>
+        <result property="approveTime" column="approve_time"/>
+        <result property="approveResult" column="approve_result"/>
+        <result property="approveResultDesc" column="approve_result_desc"/>
+        <result property="approveOpinion" column="approve_opinion"/>
+    </resultMap>
+
+    <insert id="insertApproveLog" parameterType="com.syx.domain.ApproveLog">
+        insert into ApproveLog (quit_pernr, reviewer_pernr, approve_content, approve_content_desc, approve_time,
+                             approve_result, approve_result_desc, approve_opinion)
+        values (#{quitPernr}, #{reviewerPernr}, #{approveContent}, #{approveContentDesc}, #{approveTime},
+                #{approveResult},#{approveResultDesc}, #{approveOpinion})
+    </insert>
+</mapper>

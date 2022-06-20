@@ -18,22 +18,15 @@ import java.util.Map;
  **/
 @Service
 public class WxServiceImpl {
-    private static final String ATT_CORP_ID = "wx69ef55d633835331";
-    private static final String ATT_CORP_SECRET = "QzM1PetgYBE7QcxsPJy6giWk5AgXH198wTHPYq31-q8";
-    private static final String EFTS_CORP_ID = "wx69ef55d633835331";
-    private static final String EFTS_CORP_SECRET = "QzM1PetgYBE7QcxsPJy6giWk5AgXH198wTHPYq31-q8";
+    private static final String CORP_ID = "wx69ef55d633835331";
+    private static final String CORP_SECRET = "n9445-9rfHcCgwbg8KvWZgd94Htom_SgLqr0YvtUkMA";
 
-    /**
-     * 获取离司结算应用Token
-     * @return
-     * @throws IOException
-     */
     @SuppressWarnings("unchecked")
-    public AccessTokenRes getAttAccessToken() throws IOException {
+    public AccessTokenRes getAccessToken() throws IOException {
         WxClient client = new WxClient();
         Map<String, Object> params = new HashMap<>(2);
-        params.put("corpid",ATT_CORP_ID);
-        params.put("corpsecret",ATT_CORP_SECRET);
+        params.put("corpid",CORP_ID);
+        params.put("corpsecret",CORP_SECRET);
         String s = client.executeGet(WxClient.Api.ACCESS_TOKEN_GET, params);
         AccessTokenRes tokenBaseRes = (AccessTokenRes) JsonUtils.deserializeObject(s, new TypeReference<AccessTokenRes>() {});
         return tokenBaseRes;

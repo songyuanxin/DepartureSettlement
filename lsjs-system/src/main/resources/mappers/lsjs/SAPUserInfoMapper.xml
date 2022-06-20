@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.syx.mapper.lsjs.SAPUserInfoMapper">
+
+    <select id="getUserNameByPernr" parameterType="string" resultType="string">
+        select name
+        from personInfo
+        where alias = #{pernr}
+    </select>
+
+    <select id="getUserInfoByPernr" parameterType="string" resultType="com.syx.domain.SAPUserInfo">
+        select alias       as pernr,
+               name        as name,
+               idcard      as idNumber,
+               storename   as department,
+               zntx        as dutySystem,
+               id          as fourOrganizationId,
+               text        as fourOrganization,
+               mobilephone as phone,
+               positionID  as positionId,
+               position as position,
+               jobID       as postId,
+               job         as post,
+               zrzrq       as joinedDate,
+               zzzrq       as confirDate,
+               zlzrq       as leaveDate
+        from personInfo
+        where alias = #{pernr}
+    </select>
+
+    <select id="getUserInfoByPernrList" parameterType="string" resultType="com.syx.domain.vo.AuditUserRes">
+        select a.alias       as pernr,
+               a.name        as userName,
+               a.storename   as department,
+               a.zrzrq       as joinedDate,
+               a.zzzrq       as confirDate,
+               a.zlzrq       as leaveDate,
+               a.mobilephone as phone,
+               a.text        as division,
+               b.work as work,
+               b.fixed_asset   as fixedAsset,
+	           b.isa           as isa,
+               b.dormitory     as dormitory,
+               b.goods_refund  as goodsRefund,
+               b.document_num  as documentNum,
+	           c.loan_money    as loanMoney,
+	           c.short_money   as shortMoney,
+	           d.quality_money as qualityMoney,
+	           e.card_money    as cardMoney,
+	           e.clothes_money as clothesMoney,
+	           f.care_money    as careMoney,
+               f.care_document_num as careDocumentNum
+        from personInfo a left join Approve b
+        on a.alias = b.quit_pernr and b.approve_content=1
+            left join Approve c on a.alias = c.quit_pernr and c.approve_content=2
+            left join Approve d on a.alias = d.quit_pernr and d.approve_content = 3
+            left join Approve e on a.alias = e.quit_pernr and e.approve_content = 4
+            left join Approve f on a.alias = f.quit_pernr and f.approve_content = 5
+        where a.alias = #{quitPernr}
+    </select>
+
+    <select id="getDepartmentByPernr" parameterType="string" resultType="string">
+        select storename
+        from personInfo
+        where alias = #{quitPernr}
+    </select>
+
+    <select id="searchUserInfoByPernr" parameterType="string" resultType="com.syx.domains.vo.SearchUserInfoRes">
+        select alias as pernr, name as userName, position
+        from personInfo
+        where alias like '%' + #{pernr} + '%'
+    </select>
+
+    <select id="getDuyuSystemByPernr" resultType="string" parameterType="string">
+        select zntx as duty_system
+        from personInfo
+        where alias = #{quitPernr}
+    </select>
+
+    <select id="getLeaveDateByPernr" parameterType="string" resultType="string">
+        select zlzrq as leave_date
+        from personInfo
+        where alias = #{pernr}
+    </select>
+
+    <select id="getUserPernrOrUserName" parameterType="string" resultType="com.syx.domains.vo.SearchUserInfoRes">
+        select top 20 alias as pernr, name as user_name, position
+        from personInfo
+        where (alias like '%' + #{pernrOrName} + '%' or name like '%' + #{pernrOrName} + '%')
+          and zlzrq is null and massn != '04' and (zntx = '区域经理级' or zntx = '地区经理级' or zntx = '营运体系')
+    </select>
+</mapper>

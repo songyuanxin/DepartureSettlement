@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.syx.mapper.lsjs.ApproveMapper">
+    <resultMap id="ApproveResult" type="com.syx.domain.Approve">
+        <id property="approveId" column="approve_id"/>
+        <result property="quitPernr" column="quit_pernr"/>
+        <result property="approveContent" column="approve_content"/>
+        <result property="approveContentDesc" column="approve_content_desc"/>
+        <result property="reviewerPernr" column="reviewer_pernr"/>
+        <result property="sendTime" column="send_time"/>
+        <result property="approveTime" column="approve_time"/>
+        <result property="approveResult" column="approve_result"/>
+        <result property="approveResultDesc" column="approve_result_desc"/>
+        <result property="approveOpinion" column="approve_opinion"/>
+        <result property="work" column="work"/>
+        <result property="fixedAsset" column="fixed_asset"/>
+        <result property="isa" column="isa"/>
+        <result property="dormitory" column="dormitory"/>
+        <result property="goodsRefund" column="goods_refund"/>
+        <result property="documentNum" column="document_num"/>
+        <result property="loanMoney" column="loan_money"/>
+        <result property="shortMoney" column="short_money"/>
+        <result property="shortStoreId" column="short_store_id"/>
+        <result property="qualityMoney" column="quality_money"/>
+        <result property="careMoney" column="care_money"/>
+        <result property="cardMoney" column="card_money"/>
+        <result property="clothesMoney" column="clothes_money"/>
+    </resultMap>
+
+    <resultMap id="QueryApproveRes" type="com.syx.domains.vo.QueryApproveRes">
+        <result property="approveDepartMent" column="approveDepartMent"/>
+        <result property="approveResult" column="approveResult"/>
+        <result property="approveTime" column="approveTime"/>
+        <result property="approverName" column="approverName"/>
+        <result property="approverPernr" column="approverPernr"/>
+        <result property="approverPhone" column="approverPhone"/>
+        <result property="remarks" column="remarks"/>
+    </resultMap>
+
+    <select id="getApproveLastByPernr" parameterType="string" resultMap="ApproveResult">
+        select *
+        from (select *, ROW_NUMBER() over(partition by #{quitPernr} order by send_time desc) as lastIndexCreated
+              from Approve) a
+        where lastIndexCreated = 1;
+    </select>
+
+    <select id="getApproveByPernr" parameterType="string" resultType="com.syx.domain.Approve">
+        select * from Approve where quit_pernr = #{pernr}
+    </select>
+
+    <select id="queryApproveByPernr" parameterType="string" resultType="com.syx.domains.vo.QueryApproveRes">
+        select * from VQueryApprove where quit_pernr = #{pernr} order by CONVERT(BIGINT,approveTime) desc
+    </select>
+
+    <select id="getAuditQuitPernr" parameterType="string" resultType="string">
+        select quit_pernr
+        from Approve
+        where reviewer_pernr = #{reviewerPernr}
+        and approve_result in (0, 1, 3, 4, null)
+    </select>
+
+    <select id="getAreaPernrByQuitPernr" parameterType="string" resultType="string">
+        select top 1 area_pernr from Approve where quit_pernr = #{quitPernr}
+    </select>
+
+    <insert id="insertApprove" parameterType="com.syx.domain.Approve">
+        insert into Approve (quit_pernr, reviewer_pernr, approve_content, approve_content_desc, send_time, approve_time,
+                             approve_result, approve_result_desc, approve_opinion, work, fixed_asset, isa, dormitory,
+                             goods_refund,
+                             document_num, loan_money, short_money, quality_money, care_money, card_money,
+                             clothes_money)
+        values (#{quitPernr}, #{reviewerPernr}, #{approveContent}, #{approveContentDesc}, #{sendTime}, #{approveTime},
+                #{approveResult},
+                #{approveResultDesc}, #{approveOpinion}, #{work}, #{fixedAsset}, #{isa}, #{dormitory}, #{goodsRefund},
+                #{documentNum},
+                #{loanMoney}, #{shortStoreId}, #{qualityMoney}, #{careMoney}, #{cardMoney}, #{clothesMoney})
+    </insert>
+
+    <update id="updateApprove" parameterType="com.syx.domain.Approve">
+        update Approve
+        <trim prefix="set" suffixOverrides=",">
+            <if test="approveTime != null">approve_time = #{approveTime},</if>
+            <if test="approveResult != null">approve_result = #{approveResult},</if>
+            <if test="approveResultDesc != null">approve_result_desc = #{approveResultDesc},</if>
+            <if test="reviewerPernr != null">reviewer_pernr = #{reviewerPernr},</if>
+            <if test="approveOpinion != null">approve_opinion = #{approveOpinion},</if>
+            <if test="work != null">work = #{work},</if>
+            <if test="fixedAsset != null">fixed_asset = #{fixedAsset},</if>
+            <if test="isa != null">isa = #{isa},</if>
+            <if test="dormitory != null">dormitory = #{dormitory},</if>
+            <if test="goodsRefund != null">goods_refund = #{goodsRefund},</if>
+            <if test="documentNum != null">document_num = #{documentNum},</if>
+            <if test="regionPernr != null">region_pernr = #{regionPernr},</if>
+            <if test="areaPernr != null">area_pernr = #{areaPernr},</if>
+            <if test="loanMoney != null">loan_money = #{loanMoney},</if>
+            <if test="shortMoney != null">short_money = #{shortMoney},</if>
+            <if test="shortStoreId != null">short_store_id = #{shortStoreId},</if>
+            <if test="qualityMoney != null">quality_money = #{qualityMoney},</if>
+            <if test="careMoney != null">care_money = #{careMoney},</if>
+            <if test="careDocumentNum != null">care_document_num = #{careDocumentNum}</if>
+            <if test="cardMoney != null">card_money = #{cardMoney},</if>
+            <if test="clothesMoney != null">clothes_money = #{clothesMoney},</if>
+        </trim>
+        where quit_pernr = #{quitPernr} and approve_content = #{approveContent}
+    </update>
+
+    <delete id="deleteApproveByPernr" parameterType="string">
+        delete from Approve where quit_pernr = #{quitPernr} and approve_content = #{approveContent}
+    </delete>
+</mapper>
