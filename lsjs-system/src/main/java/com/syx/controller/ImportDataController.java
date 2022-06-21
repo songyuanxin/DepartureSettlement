@@ -1,10 +1,12 @@
 package com.syx.controller;
 
 import com.syx.domain.Approve;
+import com.syx.domain.Deduction;
 import com.syx.domain.ImportData;
 import com.syx.domain.SAPUserInfo;
 import com.syx.domains.AjaxResult;
 import com.syx.domains.dto.ImportDataDto;
+import com.syx.domains.vo.ResumeRes;
 import com.syx.domains.vo.SendMsgRes;
 import com.syx.service.IImportDataService;
 import com.syx.service.ILsjsService;
@@ -152,6 +154,8 @@ public class ImportDataController {
             //查询审核表中最近一次发起离司结算的时间
 //            Approve approveLastByPernr = lsjsService.getApproveLastByPernr(pernr);
             List<Approve> approve = lsjsService.getApproveByPernr(pernr);
+            List<ResumeRes> resume = lsjsService.getResume(pernr);
+            List<Deduction> deduction = lsjsService.getDeduction(pernr);
             ImportData importData = lsjsService.getImoprtDataByPernr(pernr);
             //若查到发起记录
             if (importData != null){
@@ -164,6 +168,12 @@ public class ImportDataController {
                 }
             }else {
                 if (approve.size() > 0){
+                    return AjaxResult.error("该模板中存在异常的数据，请联系管理员处理！");
+                }
+                if (resume.size() > 0){
+                    return AjaxResult.error("该模板中存在异常的数据，请联系管理员处理！");
+                }
+                if (deduction.size() > 0){
                     return AjaxResult.error("该模板中存在异常的数据，请联系管理员处理！");
                 }
             }
@@ -191,7 +201,7 @@ public class ImportDataController {
         int insertPdkkAndRzll = lsjsService.getPDKKandRZLL(quitPernrList);
         if (insertPdkkAndRzll == -1){
             lsjsService.deleteImportData(dataList);
-            return AjaxResult.error("流程发起失败，可能原因：获取盘点扣款或任职履历时出错，请联系管理员处理！");
+            return AjaxResult.error("流程发起失败，可能原因：保存离职员工盘点扣款或任职履历时出错，请联系管理员处理！");
         }
         String isReturn = "0";
         //导入数据时若以上校验通过则开始发起流程

@@ -3,10 +3,7 @@ package com.syx.service;
 import com.syx.domain.*;
 import com.syx.domain.vo.AuditUserRes;
 import com.syx.domains.dto.ImportDataDto;
-import com.syx.domains.vo.ItPDKK;
-import com.syx.domains.vo.ItRZLI;
-import com.syx.domains.vo.QueryApproveRes;
-import com.syx.domains.vo.SearchUserInfoRes;
+import com.syx.domains.vo.*;
 import org.dom4j.DocumentException;
 
 import java.text.ParseException;
@@ -64,4 +61,8 @@ public interface ILsjsService {
     int deleteImportData(List<ImportDataDto> dataList);
 
     int deletePDKKandRZLL(List<ImportDataDto> dataList);
+
+    List<ResumeRes> getResume(String pernr);
+
+    List<Deduction> getDeduction(String pernr);
 }

@@ -320,11 +320,14 @@ public class LsjsServiceImpl implements ILsjsService {
         int i = 0;
         if (itPDKKMap.size() > 0 || itRZLIMap.size() > 0){
             int insertDeduction = insertDeduction(itPDKKMap);
+            if (itPDKKMap.size() > 0 && insertDeduction <= 0){
+                return -1;
+            }
             int insertResume = insertResume(itRZLIMap);
+            if (itRZLIMap.size() > 0 && insertResume <= 0){
+                return -1;
+            }
             i = i + insertDeduction + insertResume;
-        }
-        if ((itPDKKMap.size() > 0 || itRZLIMap.size() > 0) && i == 0){
-            i = -1;
         }
         return i;
     }
@@ -466,6 +469,16 @@ public class LsjsServiceImpl implements ILsjsService {
             i = deleteResume + deleteDeduction + i;
         }
         return i;
+    }
+
+    @Override
+    public List<ResumeRes> getResume(String pernr) {
+        return resumeMapper.getResumeByPernr(pernr);
+    }
+
+    @Override
+    public List<Deduction> getDeduction(String pernr) {
+        return deductionMapper.getDeductionByPernr(pernr);
     }
 
     @Override

@@ -129,6 +129,10 @@ public class FinanceProcessServiceImpl implements IFinanceProcessService {
                     return sendMsgRes;
                 }
             }
+        }else {
+            sendMsgRes.setErrcode(0);
+            sendMsgRes.setErrmsg("此离职员工职能体系为空");
+            return sendMsgRes;
         }
         return sendMsgRes;
     }
