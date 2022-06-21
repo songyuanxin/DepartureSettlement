@@ -103,6 +103,9 @@ public class LsjsController {
             if (queryApproveRes.getApproveResult().equals("不通过") || queryApproveRes.getApproveResult().equals("待审核")){
                 resultList.add(queryApproveRes.getApproveResult());
             }
+            if (queryApproveRes.getApproveResult().equals("通过")){
+                queryApproveRes.setApproveResult("已审核");
+            }
         }
         if (resultList.size() > 0){
             approveStatusResList.setStatus(2);
@@ -124,7 +127,10 @@ public class LsjsController {
      */
     @PostMapping(value = "/searchUserByPernr")
     public AjaxResult searchUserByPernr(String pernr) {
-        List<SearchUserInfoRes> infoResList = lsjsService.getUserPernrOrUserName(pernr);
+        List<SearchUserInfoRes> infoResList = new ArrayList<>();
+        if (pernr.length() > 1){
+            infoResList = lsjsService.getUserPernrOrUserName(pernr);
+        }
         return AjaxResult.success("查询成功", infoResList);
     }
 

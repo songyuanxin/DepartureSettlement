@@ -49,7 +49,7 @@
     </select>
 
     <select id="queryApproveByPernr" parameterType="string" resultType="com.syx.domains.vo.QueryApproveRes">
-        select * from VQueryApprove where quit_pernr = #{pernr} order by CONVERT(BIGINT,approveTime) desc
+        select * from VQueryApprove where quit_pernr = #{pernr} order by isnull(approveTime,GETDATE()) ,approvecontent
     </select>
 
     <select id="getAuditQuitPernr" parameterType="string" resultType="string">

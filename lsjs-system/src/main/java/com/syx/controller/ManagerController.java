@@ -63,7 +63,7 @@ public class ManagerController {
         approve.setApproveOpinion(regionalOrAreaApproveDto.getAuditMind());
         approve.setApproveTime(timestamp);
         approve.setApproveResult(2);
-        approve.setApproveResultDesc("同意");
+        approve.setApproveResultDesc("通过");
         approve.setApproveContent(6);
 
         SendMsgRes sendMsgRes = new SendMsgRes();
@@ -150,7 +150,7 @@ public class ManagerController {
         approve.setApproveOpinion(regionalOrAreaApproveDto.getAuditMind());
         approve.setApproveTime(timestamp);
         approve.setApproveResult(2);
-        approve.setApproveResultDesc("同意");
+        approve.setApproveResultDesc("通过");
         approve.setApproveContent(7);
 
         //一、发送至财务和其他审核人审核

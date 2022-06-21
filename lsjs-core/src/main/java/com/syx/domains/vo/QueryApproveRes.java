@@ -11,6 +11,7 @@ public class QueryApproveRes {
     private String auditNode;
     private String sendTime;
     private String approveResult;
+    private int approveContent;
     private String approveTime;
     private String approverName;
     private String approverPernr;
