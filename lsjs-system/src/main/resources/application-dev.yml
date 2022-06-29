@@ -1,22 +1,23 @@
 #端口
 server:
-  port: 9006
+  port: 19002
 
 spring:
   #redis连接配置
   redis:
     host: 127.0.0.1
     port: 6379
-    database: 2
+    database: 4
 
   #数据源的配置
   datasource:
     lsjsdb:
       driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-      jdbc-url: jdbc:sqlserver://10.8.1.119;DatabaseName=HRInfo;
+#      jdbc-url: jdbc:sqlserver://10.8.1.119;DatabaseName=HRInfo;
+      jdbc-url: jdbc:sqlserver://10.9.16.2:1433;DatabaseName=HRInfo;
       username: sa
-#      password: 20050311jzjcomm
-      password: Jzj981228!
+      password: 20050311jzjcomm
+#      password: Jzj981228!
     sapstoreheaddb:
       driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
       jdbc-url: jdbc:sqlserver://116.55.231.200;databaseName=ZP;
@@ -31,4 +32,20 @@ mybatis-plus:
   global-config:
     db-config:
       id-type: auto
+
+wechat:
+  cp:
+    # 测试企业
+    corpId: wx69ef55d633835331
+    appConfigs:
+      - agentId: 1000046
+        secret: 1xXEJ1gmOmmoVCC04trkmnXi245udU1nNtjd_uaCr0U
+        token: xxx
+        aesKey: xxx
+
+logging:
+  level:
+    com.github.binarywang.demo.wx.cp: DEBUG
+    me.chanjar.weixin: DEBUG
+
 

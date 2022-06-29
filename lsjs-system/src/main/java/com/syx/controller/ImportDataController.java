@@ -16,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -83,9 +82,18 @@ public class ImportDataController {
             if (importDataDto.getDirectPernr().equals("") || importDataDto.getPersonScope().equals("") || importDataDto.getPernr().equals("") || importDataDto.getDirectName().equals("") || importDataDto.getName().equals("")){
                 return AjaxResult.error("<div>导入数据中缺少关键数据，请检查修改后重新导入数据！<div style=\"color:#81b6dd;\">导入数据模板要求：</br>1、必须填写离职员工工号、离职员工姓名、直接上级工号、直接上级姓名、人员范围；</br>2、若离职员工属于职能部门则必须填写所属分部</div></div>");
             }
+            //四、校验离职原因为旷工的是否已填写旷工发文号
+            //1、查询离职员工离职原因
+            String leaveResonByQuitPernr = lsjsService.getLeaveResonByQuitPernr(importDataDto.getPernr());
+            if (StringUtils.isNotBlank(leaveResonByQuitPernr)){
+                //2、判断该离职原因离职原因是否是旷工，若为旷工但没填写旷工发文号时不允许导入
+                if (leaveResonByQuitPernr.equals("旷工") && importDataDto.getAbsenteeismDoc().equals("")){
+                    return AjaxResult.error("导入数据中" + importDataDto.getPernr() + importDataDto.getName() + "缺少旷工发文号，请检查修改后重新导入数据!(离职原因为旷工的离职员工必须填写旷工发文号)");
+                }
+            }
             String pernr = importDataDto.getPernr();
             String directPernr = importDataDto.getDirectPernr();
-            //四、校验是否有无效的工号
+            //五、校验是否有无效的工号
             //1、校验是否有离职员工工号无效的
             String quitNameByPernr = lsjsService.getUserNameByPernr(pernr);
             if (StringUtils.isNotBlank(quitNameByPernr)){
@@ -110,7 +118,7 @@ public class ImportDataController {
             if (invalidList.size() > 0){
                 return AjaxResult.error("导入数据中" + invalidList + "直接上级不存在企业中或工号错误，请检查修改后重新导入数据！");
             }
-            //五、检验导入数据中是否有未离职员工
+            //六、检验导入数据中是否有未离职员工
             //1、检验是否有未离职的员工确存在导入数据中
             String leaveDateByPernr = lsjsService.getLeaveDateByPernr(pernr);
             if (StringUtils.isBlank(leaveDateByPernr)){
@@ -131,7 +139,7 @@ public class ImportDataController {
             if (idErrorDirectPernrList.size() > 0){
                 return AjaxResult.error("导入数据中" + idErrorDirectPernrList + "直接上级已经离职，请检查修改后重新导入数据！");
             }
-            //六、校验工号和姓名是否匹配
+            //七、校验工号和姓名是否匹配
             //根据工号查询离职员工姓名
             String name = "";
             String directName = "";
@@ -150,9 +158,7 @@ public class ImportDataController {
             if (noMatchingList.size() > 0){
                 return AjaxResult.error("导入数据中" + noMatchingList + "的工号与姓名不匹配，请检查修改后重新导入数据！！");
             }
-            //七、校验是否存在已经发起过离司结算的员工
-            //查询审核表中最近一次发起离司结算的时间
-//            Approve approveLastByPernr = lsjsService.getApproveLastByPernr(pernr);
+            //八、校验是否存在已经发起过离司结算的员工
             List<Approve> approve = lsjsService.getApproveByPernr(pernr);
             List<ResumeRes> resume = lsjsService.getResume(pernr);
             List<Deduction> deduction = lsjsService.getDeduction(pernr);
@@ -187,6 +193,7 @@ public class ImportDataController {
             importData.setDirectPernr(data.getDirectPernr());
             importData.setDivision(data.getDivision());
             importData.setOriginatorPernr(data.getOriginatorPernr());
+            importData.setAbsenteeismDoc(data.getAbsenteeismDoc());
             LocalDateTime now = LocalDateTime.now();
             Timestamp timestamp = Timestamp.valueOf(now);
             importData.setImportTime(timestamp);
@@ -211,7 +218,7 @@ public class ImportDataController {
             lsjsService.deletePDKKandRZLL(dataList);
             return AjaxResult.error("流程发起失败，可能原因：发送至直接上级审核时出错，请联系管理员处理！");
         }
-        return AjaxResult.success("流程发起成功");
+        return AjaxResult.success("流程发起成功",dataList);
     }
 
 }

@@ -2,6 +2,7 @@ package com.syx.service;
 
 import com.syx.domain.*;
 import com.syx.domain.vo.AuditUserRes;
+import com.syx.domains.dto.ApproveGetDto;
 import com.syx.domains.dto.ImportDataDto;
 import com.syx.domains.vo.*;
 import org.dom4j.DocumentException;
@@ -17,8 +18,6 @@ import java.util.Map;
 public interface ILsjsService {
 
     String getUserNameByPernr(String pernr);
-
-    Approve getApproveLastByPernr(String pernr);
 
     SAPUserInfo getUserInfoByPernr(String pernr);
 
@@ -65,4 +64,12 @@ public interface ILsjsService {
     List<ResumeRes> getResume(String pernr);
 
     List<Deduction> getDeduction(String pernr);
+
+    List<String> getImoprtDataByTime(ApproveGetDto approveGetDto);
+
+    List<ApproveGetRes> getApproveDataByPernr(List<String> imoprtPernrByTime);
+
+    List<ApproveGetRes> getLsjsList(ApproveGetDto approveGetDto);
+
+    String getLeaveResonByQuitPernr(String pernr);
 }

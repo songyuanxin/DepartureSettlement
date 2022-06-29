@@ -20,5 +20,8 @@ public class ImportData {
     private String division;
     //发起人工号
     private String originatorPernr;
+    //导入时间
     private Timestamp importTime;
+    //旷工发文号
+    private String absenteeismDoc;
 }

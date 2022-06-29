@@ -1,6 +1,8 @@
 package com.syx.mapper.lsjs;
 
 import com.syx.domain.Approve;
+import com.syx.domains.dto.ApproveGetDto;
+import com.syx.domains.vo.ApproveGetRes;
 import com.syx.domains.vo.QueryApproveRes;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
@@ -13,13 +15,6 @@ import java.util.List;
  **/
 @Mapper
 public interface ApproveMapper {
-
-    /**
-     * 根据工号查询最近一次审核表中的记录
-     * @param pernr
-     * @return
-     */
-    Approve getApproveLastByPernr(String pernr);
 
     /**
      * 企业微信发送消息后将离司结算写入审核表
@@ -39,4 +34,6 @@ public interface ApproveMapper {
     int deleteApproveByPernr(String quitPernr, String approveContent);
 
     List<Approve> getApproveByPernr(String pernr);
+
+    ApproveGetRes getApproveDataByPernr(String pernr);
 }

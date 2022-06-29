@@ -19,7 +19,8 @@ import java.util.Map;
 @Service
 public class WxServiceImpl {
     private static final String CORP_ID = "wx69ef55d633835331";
-    private static final String CORP_SECRET = "n9445-9rfHcCgwbg8KvWZgd94Htom_SgLqr0YvtUkMA";
+//    private static final String CORP_SECRET = "n9445-9rfHcCgwbg8KvWZgd94Htom_SgLqr0YvtUkMA";
+    private static final String CORP_SECRET = "1xXEJ1gmOmmoVCC04trkmnXi245udU1nNtjd_uaCr0U";
 
     @SuppressWarnings("unchecked")
     public AccessTokenRes getAccessToken() throws IOException {

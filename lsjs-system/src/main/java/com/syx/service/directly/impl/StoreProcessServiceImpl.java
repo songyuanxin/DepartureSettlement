@@ -46,10 +46,7 @@ public class StoreProcessServiceImpl implements IStoreProcessService {
                     quitpernr = quitpernr + quitImportDataDto.getPernr() + quitImportDataDto.getName() + "、";
                     pernr = quitImportDataDto.getPernr();
                 }
-//                String splicing = "离司结算审核提醒:\n您收到了"+ quitpernr.substring(0, quitpernr.length()-1) + "<a href=\"http://10.9.16.219:8080/#/pages/index/directly/storeApproval?pernr="+direct.substring(0,6) + "\">"+"审批入口</a>";
-                String splicing = "离司结算审核提醒:\n您收到了"+ quitpernr.substring(0, quitpernr.length()-1) + "<a href=\"http://hrfico.jzj.cn:19004/approve/#/pages/index/directly/storeApproval?pernr="+direct.substring(0,6) + "\">"+"审批入口</a>";
-                sendMsgRes = weChatServiceImpl.sendMsg(direct.substring(0,6), splicing);
-                //判断提醒消息是否发送成功，若发送成功则写入审核表以及审核记录表
+
                 int insertApproveResult = 0;
                 int updateApproveResult = 0;
                 if (sendMsgRes.getErrcode() == 0 && isReturn.equals("1")) {
@@ -66,6 +63,16 @@ public class StoreProcessServiceImpl implements IStoreProcessService {
                 if (insertApproveResult == 0 && updateApproveResult == 0){
                     sendMsgRes.setErrcode(1);
                     sendMsgRes.setErrmsg("写入数据库失败");
+                    return sendMsgRes;
+                }
+
+                String splicing = "离司结算审核提醒:\n您收到了"+ quitpernr.substring(0, quitpernr.length()-1) + "<a href=\"http://localhost:8080/approve/#/pages/index/directly/storeApproval?pernr="+direct.substring(0,6) + "\">"+"审批入口</a>";
+//                String splicing = "离司结算审核提醒:\n您收到了"+ quitpernr.substring(0, quitpernr.length()-1) + "<a href=\"http://hrfico.jzj.cn:19004/approve/#/pages/index/directly/storeApproval?pernr="+direct.substring(0,6) + "\">"+"审批入口</a>";
+                sendMsgRes = weChatServiceImpl.sendMsg(direct.substring(0,6), splicing);
+                //判断提醒消息是否发送成功，若发送成功则写入审核表以及审核记录表
+                if(sendMsgRes.getErrcode() != 0){
+                    sendMsgRes.setErrcode(1);
+                    sendMsgRes.setErrmsg("发送至直接上级企业微信时失败");
                     return sendMsgRes;
                 }
             }

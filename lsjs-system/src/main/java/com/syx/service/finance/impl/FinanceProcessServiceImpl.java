@@ -42,19 +42,22 @@ public class FinanceProcessServiceImpl implements IFinanceProcessService {
             sendMsgRes.setErrcode(1);
             return sendMsgRes;
         }
-//        String splicing = "离司结算审核提醒:\n您收到了"+ quitPernr + userName + "<a href=\"http://10.9.16.219:8080/#/pages/index/finance/loanApproval?pernr="+reviewer.getLoanPernr() + "\">"+"审批入口</a>";
-        String splicing = "离司结算审核提醒:\n您收到了"+ quitPernr + userName + "<a href=\"http://hrfico.jzj.cn:19004/approve/#/pages/index/finance/loanApproval?pernr="+reviewer.getLoanPernr() + "\">"+"审批入口</a>";
-        sendMsgRes = weChatServiceImpl.sendMsg(reviewer.getLoanPernr(), splicing);
-        //判断提醒消息是否发送成功，若发送成功则写入审核表
         int insertApproveResult = 0;
-        if (sendMsgRes.getErrcode() == 0){
-            int approveContent = 2;
-            String approveContentDesc = "借款短款审核";
-            insertApproveResult = insertApprove(quitPernr,reviewer.getLoanPernr(), approveContent, approveContentDesc);
-        }
+        int approveContent = 2;
+        String approveContentDesc = "借款短款审核";
+        insertApproveResult = insertApprove(quitPernr,reviewer.getLoanPernr(), approveContent, approveContentDesc);
         if (insertApproveResult == 0){
             sendMsgRes.setErrcode(1);
             sendMsgRes.setErrmsg("写入数据库失败");
+            return sendMsgRes;
+        }
+        String splicing = "离司结算审核提醒:\n您收到了"+ quitPernr + userName + "<a href=\"http://localhost:8080/approve/#/pages/index/finance/loanApproval?pernr="+reviewer.getLoanPernr() + "\">"+"审批入口</a>";
+//        String splicing = "离司结算审核提醒:\n您收到了"+ quitPernr + userName + "<a href=\"http://hrfico.jzj.cn:19004/approve/#/pages/index/finance/loanApproval?pernr="+reviewer.getLoanPernr() + "\">"+"审批入口</a>";
+        sendMsgRes = weChatServiceImpl.sendMsg(reviewer.getLoanPernr(), splicing);
+        //判断提醒消息是否发送成功，若发送成功则写入审核表
+        if (sendMsgRes.getErrcode() != 0){
+            sendMsgRes.setErrcode(1);
+            sendMsgRes.setErrmsg("发送至借款短款审核时失败");
             return sendMsgRes;
         }
         return sendMsgRes;
@@ -75,20 +78,22 @@ public class FinanceProcessServiceImpl implements IFinanceProcessService {
             sendMsgRes.setErrcode(1);
             return sendMsgRes;
         }
-//        String splicing = "离司结算审核提醒:\n您收到了"+ quitPernr + userName + "<a href=\"http://10.9.16.219:8080/#/pages/index/finance/qualityApproval?pernr="+reviewer.getQualityPernr() + "\">"+"审批入口</a>";
-        String splicing = "离司结算审核提醒:\n您收到了"+ quitPernr + userName + "<a href=\"http://hrfico.jzj.cn:19004/approve/#/pages/index/finance/qualityApproval?pernr="+reviewer.getQualityPernr() + "\">"+"审批入口</a>";
-        sendMsgRes = weChatServiceImpl.sendMsg(reviewer.getQualityPernr(), splicing);
-        //判断提醒消息是否发送成功，若发送成功则写入审核表以及审核记录表
         int insertApproveResult = 0;
-        if (sendMsgRes.getErrcode() == 0){
-            int approveContent = 3;
-            String approveContentDesc = "质量简报扣款审核";
-            insertApproveResult = insertApprove(quitPernr,reviewer.getQualityPernr(), approveContent, approveContentDesc);
-        }
+        int approveContent = 3;
+        String approveContentDesc = "质量简报扣款审核";
+        insertApproveResult = insertApprove(quitPernr,reviewer.getQualityPernr(), approveContent, approveContentDesc);
         if (insertApproveResult == 0){
             sendMsgRes.setErrcode(1);
             sendMsgRes.setErrmsg("写入数据库失败");
             return sendMsgRes;
+        }
+        String splicing = "离司结算审核提醒:\n您收到了"+ quitPernr + userName + "<a href=\"http://localhost:8080/approve/#/pages/index/finance/qualityApproval?pernr="+reviewer.getQualityPernr() + "\">"+"审批入口</a>";
+//        String splicing = "离司结算审核提醒:\n您收到了"+ quitPernr + userName + "<a href=\"http://hrfico.jzj.cn:19004/approve/#/pages/index/finance/qualityApproval?pernr="+reviewer.getQualityPernr() + "\">"+"审批入口</a>";
+        sendMsgRes = weChatServiceImpl.sendMsg(reviewer.getQualityPernr(), splicing);
+        //判断提醒消息是否发送成功，若发送成功则写入审核表以及审核记录表
+        if (sendMsgRes.getErrcode() != 0){
+            sendMsgRes.setErrcode(1);
+            sendMsgRes.setErrmsg("发送至质量简报扣款审核时失败");
         }
         return sendMsgRes;
     }
@@ -112,20 +117,23 @@ public class FinanceProcessServiceImpl implements IFinanceProcessService {
 //        }
         String carePernr = "000606";
         if (StringUtils.isNotBlank(dutySystem)){
-            if (dutySystem.equals("区域经理级") || dutySystem.equals("地区经理级") || dutySystem.equals("分部总经理级")){
-//                String splicing = "离司结算审核提醒:\n您收到了"+ quitPernr + userName + "<a href=\"http://10.9.16.219:8080/#/pages/index/finance/careApproval?pernr="+ carePernr + "\">"+"审批入口</a>";
-                String splicing = "离司结算审核提醒:\n您收到了"+ quitPernr + userName + "<a href=\"http://hrfico.jzj.cn:19004/approve/#/pages/index/finance/careApproval?pernr="+ carePernr + "\">"+"审批入口</a>";
-                sendMsgRes = weChatServiceImpl.sendMsg(carePernr, splicing);
-                //判断提醒消息是否发送成功，若发送成功则写入审核表以及审核记录表
+            if (dutySystem.equals("区域经理级") || dutySystem.equals("地区经理级") || dutySystem.equals("分部总经理级") || dutySystem.equals("营运体系")){
                 int insertApproveResult = 0;
-                if (sendMsgRes.getErrcode() == 0){
-                    int approveContent = 5;
-                    String approveContentDesc = "管理责任盘点扣款审核";
-                    insertApproveResult = insertApprove(quitPernr,carePernr, approveContent, approveContentDesc);
-                }
+                int approveContent = 5;
+                String approveContentDesc = "管理责任盘点扣款审核";
+                insertApproveResult = insertApprove(quitPernr,carePernr, approveContent, approveContentDesc);
                 if (insertApproveResult == 0){
                     sendMsgRes.setErrcode(1);
                     sendMsgRes.setErrmsg("写入数据库失败");
+                    return sendMsgRes;
+                }
+                String splicing = "离司结算审核提醒:\n您收到了"+ quitPernr + userName + "<a href=\"http://localhost:8080/approve/#/pages/index/finance/careApproval?pernr="+ carePernr + "\">"+"审批入口</a>";
+//                String splicing = "离司结算审核提醒:\n您收到了"+ quitPernr + userName + "<a href=\"http://hrfico.jzj.cn:19004/approve/#/pages/index/finance/careApproval?pernr="+ carePernr + "\">"+"审批入口</a>";
+                sendMsgRes = weChatServiceImpl.sendMsg(carePernr, splicing);
+                //判断提醒消息是否发送成功，若发送成功则写入审核表以及审核记录表
+                if (sendMsgRes.getErrcode() != 0){
+                    sendMsgRes.setErrcode(1);
+                    sendMsgRes.setErrmsg("发送至管理责任盘点扣款审核时失败");
                     return sendMsgRes;
                 }
             }

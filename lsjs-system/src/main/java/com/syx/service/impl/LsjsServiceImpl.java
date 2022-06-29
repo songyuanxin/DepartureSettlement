@@ -3,6 +3,7 @@ package com.syx.service.impl;
 import com.syx.client.HttpClientUtils;
 import com.syx.domain.*;
 import com.syx.domain.vo.AuditUserRes;
+import com.syx.domains.dto.ApproveGetDto;
 import com.syx.domains.dto.ImportDataDto;
 import com.syx.domains.vo.*;
 import com.syx.mapper.SAPStoreHead.SAPStoreHeadMapper;
@@ -66,16 +67,6 @@ public class LsjsServiceImpl implements ILsjsService {
     @Override
     public String getUserNameByPernr(String pernr) {
         return sapUserInfoMapper.getUserNameByPernr(pernr);
-    }
-
-    /**
-     * 根据工号查询最近一次发起的离司结算申请
-     * @param pernr
-     * @return
-     */
-    @Override
-    public Approve getApproveLastByPernr(String pernr) {
-        return approveMapper.getApproveLastByPernr(pernr);
     }
 
     /**
@@ -332,6 +323,11 @@ public class LsjsServiceImpl implements ILsjsService {
         return i;
     }
 
+    /**
+     * 拼接请求SAP WebService的请求报文
+     * @param pernrList
+     * @return
+     */
     private String getXML(List<String> pernrList) {
         StringBuilder pernr = new StringBuilder();
         for (String quitPernr : pernrList) {
@@ -351,6 +347,13 @@ public class LsjsServiceImpl implements ILsjsService {
         return soapXml;
     }
 
+    /**
+     * 处理SAP返回结果
+     * @param soap
+     * @return
+     * @throws DocumentException
+     * @throws DocumentException
+     */
     public static List<Map<String, String>> parseSoap(String soap) throws DocumentException, DocumentException {
         org.dom4j.Document doc = DocumentHelper.parseText(soap);//报文转成doc对象
         Element root = doc.getRootElement();//获取根元素，准备递归解析这个XML树
@@ -445,11 +448,21 @@ public class LsjsServiceImpl implements ILsjsService {
         return i;
     }
 
+    /**
+     * 根据员工工号获取审核数据
+     * @param pernr
+     * @return
+     */
     @Override
     public List<Approve> getApproveByPernr(String pernr) {
         return approveMapper.getApproveByPernr(pernr);
     }
 
+    /**
+     * 根据离职员工工号删除导入数据
+     * @param dataList
+     * @return
+     */
     @Override
     public int deleteImportData(List<ImportDataDto> dataList) {
         int i = 0;
@@ -460,6 +473,11 @@ public class LsjsServiceImpl implements ILsjsService {
         return i;
     }
 
+    /**
+     * 根据离职员工工号删除任职履历和盘点扣款
+     * @param dataList
+     * @return
+     */
     @Override
     public int deletePDKKandRZLL(List<ImportDataDto> dataList) {
         int i = 0;
@@ -471,16 +489,81 @@ public class LsjsServiceImpl implements ILsjsService {
         return i;
     }
 
+    /**
+     * 获取任职履历
+     * @param pernr
+     * @return
+     */
     @Override
     public List<ResumeRes> getResume(String pernr) {
         return resumeMapper.getResumeByPernr(pernr);
     }
 
+    /**
+     * 获取盘点扣款
+     * @param pernr
+     * @return
+     */
     @Override
     public List<Deduction> getDeduction(String pernr) {
         return deductionMapper.getDeductionByPernr(pernr);
     }
 
+    /**
+     * 查询某一时间段内人事导入的离职员工工号
+     * @param approveGetDto
+     * @return
+     */
+    @Override
+    public List<String> getImoprtDataByTime(ApproveGetDto approveGetDto) {
+        return importDataMapper.getImoprtDataByTime(approveGetDto);
+    }
+
+    /**
+     * 根据员工工号查询审核数据
+     * @param imoprtPernrByTime
+     * @return
+     */
+    @Override
+    public List<ApproveGetRes> getApproveDataByPernr(List<String> imoprtPernrByTime) {
+        List<ApproveGetRes> approveDataList = new ArrayList<>();
+        for (String pernr:imoprtPernrByTime){
+            ApproveGetRes approveDataByPernr = approveMapper.getApproveDataByPernr(pernr);
+            approveDataList.add(approveDataByPernr);
+        }
+        return approveDataList;
+    }
+
+    /**
+     * 人力资源中心查询审核数据
+     * @param approveGetDto
+     * @return
+     */
+    @Override
+    public List<ApproveGetRes> getLsjsList(ApproveGetDto approveGetDto) {
+        //根据开始日期和结束日期查询该时间段内人事发起离司结算人的工号
+        List<String> imoprtDataByTime = getImoprtDataByTime(approveGetDto);
+        //根据工号查询离职员工离司结算审核数据
+        List<ApproveGetRes> approveDataByPernr = getApproveDataByPernr(imoprtDataByTime);
+        return approveDataByPernr;
+    }
+
+    /**
+     * 根据工号查询离职原因
+     * @param pernr
+     * @return
+     */
+    @Override
+    public String getLeaveResonByQuitPernr(String pernr) {
+        return sapUserInfoMapper.getLeaveResonByQuitPernr(pernr);
+    }
+
+    /**
+     * 直接上级审核门店员工时选择区域经理和地区经理使用远程搜索
+     *
+     * @param pernrOrName
+     * @return
+     */
     @Override
     public List<SearchUserInfoRes> getUserPernrOrUserName(String pernrOrName) {
         return sapUserInfoMapper.getUserPernrOrUserName(pernrOrName);

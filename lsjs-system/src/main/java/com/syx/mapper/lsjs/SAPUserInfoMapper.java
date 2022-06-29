@@ -40,4 +40,6 @@ public interface SAPUserInfoMapper extends BaseMapper<SAPUserInfo> {
     String getLeaveDateByPernr(String pernr);
 
     List<SearchUserInfoRes> getUserPernrOrUserName(String pernrOrName);
+
+    String getLeaveResonByQuitPernr(String pernr);
 }

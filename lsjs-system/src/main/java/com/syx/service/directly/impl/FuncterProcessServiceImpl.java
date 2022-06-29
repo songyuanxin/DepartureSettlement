@@ -47,26 +47,35 @@ public class FuncterProcessServiceImpl implements IFuncterProcessService {
                     quitpernr = quitpernr + quitImportDataDto.getPernr() + quitImportDataDto.getName() + "、";
                     pernr = quitImportDataDto.getPernr();
                 }
-//                String splicing = "离司结算审核提醒:\n您收到了"+ quitpernr.substring(0, quitpernr.length()-1) + "<a href=\"http://10.9.16.219:8080/#/pages/index/directly/functionApproval?pernr="+direct.substring(0,6) + "\">"+"审批入口</a>";
-                String splicing = "离司结算审核提醒:\n您收到了"+ quitpernr.substring(0, quitpernr.length()-1) + "<a href=\"http://hrfico.jzj.cn:19004/approve/#/pages/index/directly/functionApproval?pernr="+direct.substring(0,6) + "\">"+"审批入口</a>";
-                sendMsgRes = weChatServiceImpl.sendMsg(direct.substring(0,6), splicing);
-                //判断提醒消息是否发送成功，若发送成功则写入审核表以及审核记录表
+
                 int insertApproveResult = 0;
                 int updateApproveResult = 0;
-                if (sendMsgRes.getErrcode() == 0 && isReturn.equals("1")) {
+                if (isReturn.equals("1")) {
                     //若退回标识是区域经理，则需要删除区域经理审核记录并修改直接上级审核记录
                     lsjsServiceImpl.deleteApproveByPernr(pernr, "6");
                     updateApproveResult = updateApprove(importDataDtos);
-                }else if(sendMsgRes.getErrcode() == 0 && isReturn.equals("2")){
+                }else if(isReturn.equals("2")){
+                    //若退回标识是地区经理，则需要删除区域经理和地区经理的审核记录并修改直接上级审核记录
                     lsjsServiceImpl.deleteApproveByPernr(pernr, "6");
                     lsjsServiceImpl.deleteApproveByPernr(pernr, "7");
                     updateApproveResult = updateApprove(importDataDtos);
-                }else if(sendMsgRes.getErrcode() == 0 && isReturn.equals("0")){
+                }else if(isReturn.equals("0")){
+                    //若不属于退回则属于发起流程时发送至直接上级
                     insertApproveResult = insertApprove(importDataDtos, direct.substring(0,6));
                 }
                 if (insertApproveResult == 0 && updateApproveResult == 0){
                     sendMsgRes.setErrcode(1);
                     sendMsgRes.setErrmsg("写入数据库失败");
+                    return sendMsgRes;
+                }
+
+                String splicing = "离司结算审核提醒:\n您收到了"+ quitpernr.substring(0, quitpernr.length()-1) + "<a href=\"http://localhost:8080/approve/#/pages/index/directly/functionApproval?pernr="+direct.substring(0,6) + "\">"+"审批入口</a>";
+//                String splicing = "离司结算审核提醒:\n您收到了"+ quitpernr.substring(0, quitpernr.length()-1) + "<a href=\"http://hrfico.jzj.cn:19004/approve/#/pages/index/directly/functionApproval?pernr="+direct.substring(0,6) + "\">"+"审批入口</a>";
+                sendMsgRes = weChatServiceImpl.sendMsg(direct.substring(0,6), splicing);
+                //判断提醒消息是否发送成功，若发送成功则写入审核表以及审核记录表
+                if(sendMsgRes.getErrcode() != 0){
+                    sendMsgRes.setErrcode(1);
+                    sendMsgRes.setErrmsg("发生至直接上级企业微信失败");
                     return sendMsgRes;
                 }
             }

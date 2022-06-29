@@ -8,12 +8,17 @@
         <result property="division" column="division"/>
         <result property="originatorPernr" column="originator_pernr"/>
         <result property="importTime" column="import_time"/>
+        <result property="absenteeismDoc" column="absenteeism_doc"/>
+    </resultMap>
+
+    <resultMap id="quitPernrData" type="java.lang.String">
+        <result property="quitPernr" column="quit_pernr"/>
     </resultMap>
 
     <insert id="insertImportData" parameterType="com.syx.domain.ImportData">
-        insert into ImportData (quit_pernr, person_scope, direct_pernr, division, originator_pernr, import_time)
+        insert into ImportData (quit_pernr, person_scope, direct_pernr, division, originator_pernr, import_time, absenteeism_doc)
         values (
-                   #{quitPernr},#{personScope},#{directPernr},#{division}, #{originatorPernr}, #{importTime}
+                   #{quitPernr},#{personScope},#{directPernr},#{division}, #{originatorPernr}, #{importTime}, #{absenteeismDoc}
                )
     </insert>
 
@@ -24,5 +29,9 @@
     <delete id="deleteImportData" parameterType="string">
         delete from ImportData where quit_pernr = #{quitPernr}
     </delete>
+
+    <select id="getImoprtDataByTime" parameterType="com.syx.domains.dto.ApproveGetDto" resultMap="quitPernrData">
+        select quit_pernr from ImportData where convert(date,import_time) between #{startTime} and #{endTime}
+    </select>
 
 </mapper>

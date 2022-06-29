@@ -1,9 +1,9 @@
 package com.syx.controller;
 
-import com.syx.domain.ImportData;
 import com.syx.domain.SAPUserInfo;
 import com.syx.domain.vo.AuditUserRes;
 import com.syx.domains.AjaxResult;
+import com.syx.domains.dto.ApproveGetDto;
 import com.syx.domains.vo.*;
 import com.syx.service.ILsjsService;
 import com.syx.service.ISAPStoreHeadService;
@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.dom4j.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.*;
 
 /**
@@ -160,4 +159,17 @@ public class LsjsController {
         int insertResult = lsjsService.getPDKKandRZLL(quitPernrList);
         return AjaxResult.success("请求成功",insertResult);
     }
+
+    /**
+     * 人力资源中心获取审核数据
+     *
+     * @param approveGetDto
+     * @return
+     */
+    @GetMapping(value = "/getLsjsList")
+    public AjaxResult getLsjsList(ApproveGetDto approveGetDto){
+        List<ApproveGetRes> lsjsList = lsjsService.getLsjsList(approveGetDto);
+        return AjaxResult.success(lsjsList);
+    }
+
 }

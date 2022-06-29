@@ -30,4 +30,7 @@ public class ImportDataDto {
 
     @Excel(name = "发起人工号" , cellType = Excel.ColumnType.STRING)
     private String originatorPernr;
+
+    @Excel(name = "旷工发文号", cellType = Excel.ColumnType.STRING)
+    private String absenteeismDoc;
 }

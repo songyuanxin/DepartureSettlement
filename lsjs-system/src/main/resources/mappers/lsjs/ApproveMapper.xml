@@ -37,30 +37,30 @@
         <result property="remarks" column="remarks"/>
     </resultMap>
 
-    <select id="getApproveLastByPernr" parameterType="string" resultMap="ApproveResult">
-        select *
-        from (select *, ROW_NUMBER() over(partition by #{quitPernr} order by send_time desc) as lastIndexCreated
-              from Approve) a
-        where lastIndexCreated = 1;
-    </select>
-
     <select id="getApproveByPernr" parameterType="string" resultType="com.syx.domain.Approve">
-        select * from Approve where quit_pernr = #{pernr}
+        select *
+        from Approve
+        where quit_pernr = #{pernr}
     </select>
 
     <select id="queryApproveByPernr" parameterType="string" resultType="com.syx.domains.vo.QueryApproveRes">
-        select * from VQueryApprove where quit_pernr = #{pernr} order by isnull(approveTime,GETDATE()) ,approvecontent
+        select *
+        from VQueryApprove
+        where quit_pernr = #{pernr}
+        order by isnull(approveTime, GETDATE()), approvecontent
     </select>
 
     <select id="getAuditQuitPernr" parameterType="string" resultType="string">
         select quit_pernr
         from Approve
         where reviewer_pernr = #{reviewerPernr}
-        and approve_result in (0, 1, 3, 4, null)
+          and approve_result in (0, 1, 3, 4, null)
     </select>
 
     <select id="getAreaPernrByQuitPernr" parameterType="string" resultType="string">
-        select top 1 area_pernr from Approve where quit_pernr = #{quitPernr}
+        select top 1 area_pernr
+        from Approve
+        where quit_pernr = #{quitPernr}
     </select>
 
     <insert id="insertApprove" parameterType="com.syx.domain.Approve">
@@ -105,6 +105,29 @@
     </update>
 
     <delete id="deleteApproveByPernr" parameterType="string">
-        delete from Approve where quit_pernr = #{quitPernr} and approve_content = #{approveContent}
+        delete
+        from Approve
+        where quit_pernr = #{quitPernr}
+          and approve_content = #{approveContent}
     </delete>
+
+    <select id="getApproveDataByPernr" parameterType="string" resultType="com.syx.domains.vo.ApproveGetRes">
+        select i.division,
+               v.quit_pernr,
+               p.name,
+               v.goodsRefund,
+               v.documentNum,
+               v.shortMoney,
+               v.qualityMoney,
+               v.careMoney,
+               v.cardMoney,
+               v.clothesMoney,
+               i.absenteeism_doc as absenteeismDoc
+        from VQueryApproveData v
+                 inner join personInfo p on v.quit_pernr = p.alias
+                 inner join ImportData i on v.quit_pernr = i.quit_pernr
+        where v.quit_pernr = #{pernr}
+        group by v.quit_pernr, v.goodsRefund, v.documentNum, v.shortMoney, v.qualityMoney, v.careMoney, v.cardMoney,
+                 v.clothesMoney, p.name, i.division, i.absenteeism_doc
+    </select>
 </mapper>

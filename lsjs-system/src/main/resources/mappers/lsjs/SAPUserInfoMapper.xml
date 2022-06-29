@@ -89,4 +89,8 @@
         where (alias like '%' + #{pernrOrName} + '%' or name like '%' + #{pernrOrName} + '%')
           and zlzrq is null and massn != '04' and (zntx = '区域经理级' or zntx = '地区经理级' or zntx = '营运体系')
     </select>
+
+    <select id="getLeaveResonByQuitPernr" parameterType="string" resultType="string">
+        select mgtxt from personInfo where massn = '04' and alias = #{pernr}
+    </select>
 </mapper>
