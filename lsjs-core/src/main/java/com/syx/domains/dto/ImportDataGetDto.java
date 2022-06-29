@@ -15,5 +15,5 @@ public class ImportDataGetDto {
     //导入人工号
     private String importPernr;
     //人员范围
-    private String division;
+    private String personScope;
 }
