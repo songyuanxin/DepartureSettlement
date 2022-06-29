@@ -193,8 +193,8 @@ public class ImportDataController {
             importData.setPersonScope(data.getPersonScope());
             importData.setDirectPernr(data.getDirectPernr());
             importData.setDivision(data.getDivision());
-            importData.setOriginatorPernr(data.getOriginatorPernr());
             importData.setAbsenteeismDoc(data.getAbsenteeismDoc());
+            importData.setOriginatorPernr(uploadDto.getUserId());
             LocalDateTime now = LocalDateTime.now();
             Timestamp timestamp = Timestamp.valueOf(now);
             importData.setImportTime(timestamp);
