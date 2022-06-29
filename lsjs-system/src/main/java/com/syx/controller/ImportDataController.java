@@ -6,6 +6,7 @@ import com.syx.domain.ImportData;
 import com.syx.domain.SAPUserInfo;
 import com.syx.domains.AjaxResult;
 import com.syx.domains.dto.ImportDataDto;
+import com.syx.domains.dto.UploadDto;
 import com.syx.domains.vo.ResumeRes;
 import com.syx.domains.vo.SendMsgRes;
 import com.syx.service.IImportDataService;
@@ -40,14 +41,14 @@ public class ImportDataController {
 
     /**
      * 导入离司结算
-     * @param file
+     * @param uploadDto
      * @return
      * @throws Exception
      */
     @PostMapping(path = "/import")
-    public AjaxResult importData(MultipartFile file) throws Exception{
+    public AjaxResult importData(UploadDto uploadDto) throws Exception{
         ExcelUtil<ImportDataDto> util = new ExcelUtil<ImportDataDto>(ImportDataDto.class);
-        List<ImportDataDto> dataList = util.importExcel(file.getInputStream());
+        List<ImportDataDto> dataList = util.importExcel(uploadDto.getFile().getInputStream());
 
         List<String> repeatList = new ArrayList<>();//存放导入数据中重复数据
         List<String> pErrorList = new ArrayList<>();//存放人员范围选择错误的工号加姓名
