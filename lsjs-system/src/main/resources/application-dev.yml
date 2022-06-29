@@ -32,20 +32,3 @@ mybatis-plus:
   global-config:
     db-config:
       id-type: auto
-
-wechat:
-  cp:
-    # 测试企业
-    corpId: wx69ef55d633835331
-    appConfigs:
-      - agentId: 1000046
-        secret: 1xXEJ1gmOmmoVCC04trkmnXi245udU1nNtjd_uaCr0U
-        token: xxx
-        aesKey: xxx
-
-logging:
-  level:
-    com.github.binarywang.demo.wx.cp: DEBUG
-    me.chanjar.weixin: DEBUG
-
-

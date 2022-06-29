@@ -6,7 +6,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.syx.domains.WxCpProperties;
 import org.springframework.lang.NonNull;
 
 /**
@@ -54,15 +53,5 @@ public final class JsonUtils {
     static {
         JSON.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         JSON.configure(SerializationFeature.INDENT_OUTPUT, Boolean.TRUE);
-    }
-
-    public static String toJson(Object obj) {
-        try {
-            return JSON.writeValueAsString(obj);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-
-        return null;
     }
 }
