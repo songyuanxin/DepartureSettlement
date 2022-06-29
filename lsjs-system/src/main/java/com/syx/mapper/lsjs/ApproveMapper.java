@@ -36,4 +36,6 @@ public interface ApproveMapper {
     List<Approve> getApproveByPernr(String pernr);
 
     ApproveGetRes getApproveDataByPernr(String pernr);
+
+    int deleteApproveDataByPernr(String quitPernr);
 }

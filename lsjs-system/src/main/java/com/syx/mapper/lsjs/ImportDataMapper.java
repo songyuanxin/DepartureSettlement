@@ -2,6 +2,7 @@ package com.syx.mapper.lsjs;
 
 import com.syx.domain.ImportData;
 import com.syx.domains.dto.ApproveGetDto;
+import com.syx.domains.dto.ImportDataGetDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.w3c.dom.stylesheets.LinkStyle;
 
@@ -31,4 +32,10 @@ public interface ImportDataMapper {
     int deleteImportData(String quitPernr);
 
     List<String> getImoprtDataByTime(ApproveGetDto approveGetDto);
+
+    ImportData getImoprtDataList(ImportDataGetDto importDataGetDto);
+
+    List<ImportData> getImoprtDataByImportTime(String importTime);
+
+    List<ImportData> getImportDataList();
 }

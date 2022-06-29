@@ -1,9 +1,11 @@
 package com.syx.controller;
 
+import com.syx.domain.ImportData;
 import com.syx.domain.SAPUserInfo;
 import com.syx.domain.vo.AuditUserRes;
 import com.syx.domains.AjaxResult;
 import com.syx.domains.dto.ApproveGetDto;
+import com.syx.domains.dto.ImportDataGetDto;
 import com.syx.domains.vo.*;
 import com.syx.service.ILsjsService;
 import com.syx.service.ISAPStoreHeadService;
@@ -172,4 +174,33 @@ public class LsjsController {
         return AjaxResult.success(lsjsList);
     }
 
+    /**
+     * 人力资源中心删除导入数据前查询导入数据
+     * @param importDataGetDto
+     * @return
+     */
+    @GetMapping(value = "/getImportDataList")
+    public AjaxResult getImportDataList(ImportDataGetDto importDataGetDto){
+        if (StringUtils.isBlank(importDataGetDto.getImportTime())){
+            importDataGetDto.setImportTime("");
+        }else if (StringUtils.isBlank(importDataGetDto.getQuitPernr())){
+            importDataGetDto.setQuitPernr("");
+        }
+        List<ImportData> importDataList = lsjsService.getImportDataList(importDataGetDto);
+        return AjaxResult.success(importDataList);
+    }
+
+    /**
+     * 人力资源中心删除人事导入时的错误数据
+     * @param quitPernr
+     * @return
+     */
+    @PostMapping(value = "/deleteDataByPernr/{quitPernr}")
+    public AjaxResult deleteDataByPernr(@PathVariable String quitPernr){
+        int i = lsjsService.deleteDataByPernr(quitPernr);
+        if (i == 0){
+            return AjaxResult.error("删除该离职员工数据失败，请重试或联系管理员");
+        }
+        return AjaxResult.success("删除成功",i);
+    }
 }

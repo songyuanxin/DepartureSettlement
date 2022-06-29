@@ -5,6 +5,7 @@ import com.syx.domain.*;
 import com.syx.domain.vo.AuditUserRes;
 import com.syx.domains.dto.ApproveGetDto;
 import com.syx.domains.dto.ImportDataDto;
+import com.syx.domains.dto.ImportDataGetDto;
 import com.syx.domains.vo.*;
 import com.syx.mapper.SAPStoreHead.SAPStoreHeadMapper;
 import com.syx.mapper.lsjs.*;
@@ -556,6 +557,78 @@ public class LsjsServiceImpl implements ILsjsService {
     @Override
     public String getLeaveResonByQuitPernr(String pernr) {
         return sapUserInfoMapper.getLeaveResonByQuitPernr(pernr);
+    }
+
+    /**
+     * 人力资源中心删除导入数据前获取导入数据
+     * @param importDataGetDto
+     * @return
+     */
+    @Override
+    public List<ImportData> getImportDataList(ImportDataGetDto importDataGetDto) {
+        List<ImportData> importDataList = new ArrayList<>();
+        if (importDataGetDto.getImportTime().length() > 0 && importDataGetDto.getQuitPernr().length() > 0){
+            ImportData list = importDataMapper.getImoprtDataList(importDataGetDto);
+            importDataList.add(list);
+        }else if (importDataGetDto.getImportTime().length() > 0 && importDataGetDto.getQuitPernr().length() == 0){
+            importDataList = importDataMapper.getImoprtDataByImportTime(importDataGetDto.getImportTime());
+        }else if (importDataGetDto.getImportTime().length() == 0 && importDataGetDto.getQuitPernr().length() > 0){
+            ImportData listByPernr = importDataMapper.getImoprtDataByPernr(importDataGetDto.getQuitPernr());
+            importDataList.add(listByPernr);
+        }else if (importDataGetDto.getImportTime().length() == 0 && importDataGetDto.getQuitPernr().length() == 0){
+            importDataList = importDataMapper.getImportDataList();
+        }
+        return importDataList;
+    }
+
+    /**
+     * 人力资源中心删除人事导入时的错误数据
+     * @param quitPernr
+     * @return
+     */
+    @Override
+    public int deleteDataByPernr(String quitPernr) {
+        int i = 0;
+        //判断导入数据表中是否存在该离职员工的数据
+        ImportData imoprtDataByPernr = importDataMapper.getImoprtDataByPernr(quitPernr);
+        if (imoprtDataByPernr.getDirectPernr().length() > 0){
+            int result = 0;
+            result = importDataMapper.deleteImportData(quitPernr);
+            if (result == 0){
+                return result;
+            }
+            i = i + result;
+        }
+        //判断审核表中是否存在该离职员工的审核数据
+        List<Approve> approveByPernr = approveMapper.getApproveByPernr(quitPernr);
+        if (approveByPernr.size() > 0){
+            int result = 0;
+            result = approveMapper.deleteApproveDataByPernr(quitPernr);
+            if (result == 0){
+                return result;
+            }
+            i = i + result;
+        }
+        //判断是否获取过该离职员工的任职履历和盘点扣款
+        List<ResumeRes> resumeByPernr = resumeMapper.getResumeByPernr(quitPernr);
+        if (resumeByPernr.size() > 0){
+            int result = 0;
+            result = resumeMapper.deleteResume(quitPernr);
+            if (result == 0){
+                return result;
+            }
+            i = i + result;
+        }
+        List<Deduction> deductionByPernr = deductionMapper.getDeductionByPernr(quitPernr);
+        if (deductionByPernr.size() > 0){
+            int result = 0;
+            result = deductionMapper.deleteDeduction(quitPernr);
+            if (result == 0){
+                return result;
+            }
+            i = i + result;
+        }
+        return i;
     }
 
     /**

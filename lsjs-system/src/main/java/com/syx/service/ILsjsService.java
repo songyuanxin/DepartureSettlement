@@ -4,6 +4,7 @@ import com.syx.domain.*;
 import com.syx.domain.vo.AuditUserRes;
 import com.syx.domains.dto.ApproveGetDto;
 import com.syx.domains.dto.ImportDataDto;
+import com.syx.domains.dto.ImportDataGetDto;
 import com.syx.domains.vo.*;
 import org.dom4j.DocumentException;
 
@@ -72,4 +73,8 @@ public interface ILsjsService {
     List<ApproveGetRes> getLsjsList(ApproveGetDto approveGetDto);
 
     String getLeaveResonByQuitPernr(String pernr);
+
+    List<ImportData> getImportDataList(ImportDataGetDto importDataGetDto);
+
+    int deleteDataByPernr(String quitPernr);
 }

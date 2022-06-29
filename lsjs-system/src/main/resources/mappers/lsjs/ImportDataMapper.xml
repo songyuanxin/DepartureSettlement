@@ -34,4 +34,15 @@
         select quit_pernr from ImportData where convert(date,import_time) between #{startTime} and #{endTime}
     </select>
 
+    <select id="getImoprtDataList" parameterType="com.syx.domains.dto.ImportDataGetDto" resultMap="ImportDataResult">
+        select * from ImportData where quit_pernr = #{quitPernr} or convert(date,import_time) = #{importTime}
+    </select>
+
+    <select id="getImoprtDataByImportTime" parameterType="string" resultMap="ImportDataResult">
+        select * from ImportData where convert(date,import_time) = #{importTime}
+    </select>
+
+    <select id="getImportDataList" resultMap="ImportDataResult">
+        select * from ImportData
+    </select>
 </mapper>

@@ -130,4 +130,10 @@
         group by v.quit_pernr, v.goodsRefund, v.documentNum, v.shortMoney, v.qualityMoney, v.careMoney, v.cardMoney,
                  v.clothesMoney, p.name, i.division, i.absenteeism_doc
     </select>
+
+    <delete id="deleteApproveDataByPernr" parameterType="string">
+        delete
+        from Approve
+        where quit_pernr = #{quitPernr}
+    </delete>
 </mapper>
