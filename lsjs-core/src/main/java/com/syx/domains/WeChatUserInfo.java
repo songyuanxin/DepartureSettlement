@@ -1,4 +1,4 @@
-package com.syx.domain;
+package com.syx.domains;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

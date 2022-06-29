@@ -12,4 +12,8 @@ public class ImportDataGetDto {
     private String importTime;
     //离职员工工号
     private String quitPernr;
+    //导入人工号
+    private String importPernr;
+    //人员范围
+    private String division;
 }

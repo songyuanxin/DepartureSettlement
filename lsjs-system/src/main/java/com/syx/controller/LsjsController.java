@@ -163,7 +163,7 @@ public class LsjsController {
     }
 
     /**
-     * 人力资源中心获取审核数据
+     * 人力资源中心获取审核数据(用于导出审核数据报表中)
      *
      * @param approveGetDto
      * @return
@@ -175,7 +175,7 @@ public class LsjsController {
     }
 
     /**
-     * 人力资源中心删除导入数据前查询导入数据
+     * 人力资源中心删除导入数据前查询导入数据(用于删除功能中)
      * @param importDataGetDto
      * @return
      */
@@ -191,7 +191,7 @@ public class LsjsController {
     }
 
     /**
-     * 人力资源中心删除人事导入时的错误数据
+     * 人力资源中心删除人事导入时的错误数据(删除功能)
      * @param quitPernr
      * @return
      */

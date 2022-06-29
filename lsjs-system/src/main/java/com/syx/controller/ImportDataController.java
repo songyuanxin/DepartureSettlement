@@ -227,8 +227,13 @@ public class ImportDataController {
         return AjaxResult.success("流程发起成功",dataList);
     }
 
-    @PostMapping("/getUserId")
-    public AjaxResult getUserId(String code){
+    /**
+     * 获取操作人工号
+     * @param code
+     * @return
+     */
+    @PostMapping("/getUserId/{code}")
+    public AjaxResult getUserId(@PathVariable String code){
         String userId = weChatService.getUserId(code);
         if (userId.equals("")){
             return AjaxResult.error("获取用户ID失败");
