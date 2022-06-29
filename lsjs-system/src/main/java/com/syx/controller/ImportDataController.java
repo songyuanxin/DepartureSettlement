@@ -11,9 +11,11 @@ import com.syx.domains.vo.ResumeRes;
 import com.syx.domains.vo.SendMsgRes;
 import com.syx.service.IImportDataService;
 import com.syx.service.ILsjsService;
+import com.syx.service.impl.WeChatServiceImpl;
 import com.syx.utils.ExcelUtil;
 import com.syx.utils.StringUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,6 +40,9 @@ public class ImportDataController {
 
     @Autowired
     private ILsjsService lsjsService;
+
+    @Autowired
+    private WeChatServiceImpl weChatService;
 
     /**
      * 导入离司结算
@@ -220,6 +225,16 @@ public class ImportDataController {
             return AjaxResult.error("流程发起失败，可能原因：发送至直接上级审核时出错，请联系管理员处理！");
         }
         return AjaxResult.success("流程发起成功",dataList);
+    }
+
+    @PostMapping("/getUserId")
+    public AjaxResult getUserId(String code){
+        String userId = weChatService.getUserId(code);
+        if (userId.equals("")){
+            return AjaxResult.error("获取用户ID失败");
+        }else {
+            return AjaxResult.success("获取用户ID成功",userId);
+        }
     }
 
 }
