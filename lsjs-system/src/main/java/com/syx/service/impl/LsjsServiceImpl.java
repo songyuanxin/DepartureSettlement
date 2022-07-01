@@ -794,4 +794,23 @@ public class LsjsServiceImpl implements ILsjsService {
     public List<SearchUserInfoRes> getUserPernrOrUserName(String pernrOrName) {
         return sapUserInfoMapper.getUserPernrOrUserName(pernrOrName);
     }
+
+    @Override
+    public List<ApproveDataRes> getApproveDataRes(ImportDataGetDto importDataGetDto) {
+        //调用 ApproveMapper 的方法获取离司结算流程监控报表的数据放进 list 返回给前端
+        List<ApproveDataRes> approveDataResList = approveMapper.getApproveDataRes(importDataGetDto);
+        //foreach循环遍历，获得list中的数据
+        for (ApproveDataRes dataRes:approveDataResList) {
+            //判断分部字段是否为空值
+            if(dataRes.getDivision().equals("")){
+                //如果分部字段为空，调用 ApproveMapper 获得商家编码
+                String storeName = sapUserInfoMapper.getDepartmentByPernr(importDataGetDto.getQuitPernr());
+                //调用 SAPStoreHeadMapper 的方法获得分部名称
+                SAPStoreHead sapStoreHeadByStoreId = sapStoreHeadMapper.getSAPStoreHeadByStoreId(storeName);
+                //把分部字段写进 list 中
+                dataRes.setDivision(sapStoreHeadByStoreId.getManageArea());
+            }
+        }
+        return approveDataResList;
+    }
 }

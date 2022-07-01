@@ -77,4 +77,6 @@ public interface ILsjsService {
     List<ImportData> getImportDataList(ImportDataGetDto importDataGetDto);
 
     int deleteDataByPernr(String quitPernr);
+
+    List<ApproveDataRes> getApproveDataRes(ImportDataGetDto importDataGetDto);
 }

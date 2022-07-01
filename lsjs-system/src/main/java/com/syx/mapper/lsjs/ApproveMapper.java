@@ -1,6 +1,8 @@
 package com.syx.mapper.lsjs;
 
 import com.syx.domain.Approve;
+import com.syx.domains.dto.ImportDataGetDto;
+import com.syx.domains.vo.ApproveDataRes;
 import com.syx.domains.vo.ApproveGetRes;
 import com.syx.domains.vo.QueryApproveRes;
 import org.apache.ibatis.annotations.Mapper;
@@ -83,4 +85,6 @@ public interface ApproveMapper {
     Timestamp getSendTimeByPernr(@Param("pernr")String pernr, @Param("approveContent") Integer approveContent);
 
     List<Integer> getApproveResultList(@Param("importTime")String importTime, @Param("quitPernr")String quitPernr);
+
+    List<ApproveDataRes> getApproveDataRes(ImportDataGetDto importDataGetDto);
 }

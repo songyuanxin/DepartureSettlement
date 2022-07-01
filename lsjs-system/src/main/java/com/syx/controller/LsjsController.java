@@ -214,4 +214,14 @@ public class LsjsController {
         }
         return AjaxResult.success("删除成功",i);
     }
+
+    /**
+     * 离司结算审核监控报表查询
+     * @param importDataGetDto
+     * @return
+     */
+    @GetMapping("/getApproveDataRes")
+    public AjaxResult getApproveDataRes(ImportDataGetDto importDataGetDto){
+        return AjaxResult.success("返回成功", this.lsjsService.getApproveDataRes(importDataGetDto));
+    }
 }
