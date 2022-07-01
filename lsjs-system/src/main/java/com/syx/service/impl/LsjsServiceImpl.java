@@ -620,49 +620,50 @@ public class LsjsServiceImpl implements ILsjsService {
 
     /**
      * 处理人力资源中心查询审核数据时金额为0的数据
+     *
      * @param approveGetRes
      * @return
      */
     private ApproveGetRes processNull(ApproveGetRes approveGetRes) {
-        if (StringUtils.isBlank(approveGetRes.getGoodsMoney())){
+        if (StringUtils.isBlank(approveGetRes.getGoodsMoney())) {
             approveGetRes.setGoodsMoney("0.00");
-        }else{
-            if (approveGetRes.getGoodsMoney().length() <= 0){
+        } else {
+            if (approveGetRes.getGoodsMoney().length() <= 0) {
                 approveGetRes.setGoodsMoney("0.00");
             }
         }
-        if (StringUtils.isBlank(approveGetRes.getShortMoney())){
+        if (StringUtils.isBlank(approveGetRes.getShortMoney())) {
             approveGetRes.setShortMoney("0.00");
-        }else {
-            if (approveGetRes.getShortMoney().length() <= 0){
+        } else {
+            if (approveGetRes.getShortMoney().length() <= 0) {
                 approveGetRes.setShortMoney("0.00");
             }
         }
-        if (StringUtils.isBlank(approveGetRes.getQualityMoney())){
+        if (StringUtils.isBlank(approveGetRes.getQualityMoney())) {
             approveGetRes.setQualityMoney("0.00");
-        }else {
-            if (approveGetRes.getQualityMoney().length() <= 0){
+        } else {
+            if (approveGetRes.getQualityMoney().length() <= 0) {
                 approveGetRes.setQualityMoney("0.00");
             }
         }
-        if (StringUtils.isBlank(approveGetRes.getCareMoney())){
+        if (StringUtils.isBlank(approveGetRes.getCareMoney())) {
             approveGetRes.setCareMoney("0.00");
-        }else {
-            if (approveGetRes.getCareMoney().length() <= 0){
+        } else {
+            if (approveGetRes.getCareMoney().length() <= 0) {
                 approveGetRes.setCareMoney("0.00");
             }
         }
-        if (StringUtils.isBlank(approveGetRes.getCardMoney())){
+        if (StringUtils.isBlank(approveGetRes.getCardMoney())) {
             approveGetRes.setCardMoney("0.00");
-        }else {
-            if (approveGetRes.getCardMoney().length() <= 0){
+        } else {
+            if (approveGetRes.getCardMoney().length() <= 0) {
                 approveGetRes.setCardMoney("0.00");
             }
         }
-        if (StringUtils.isBlank(approveGetRes.getClothesMoney())){
+        if (StringUtils.isBlank(approveGetRes.getClothesMoney())) {
             approveGetRes.setClothesMoney("0.00");
-        }else {
-            if (approveGetRes.getClothesMoney().length() <= 0){
+        } else {
+            if (approveGetRes.getClothesMoney().length() <= 0) {
                 approveGetRes.setClothesMoney("0.00");
             }
         }
@@ -799,16 +800,44 @@ public class LsjsServiceImpl implements ILsjsService {
     public List<ApproveDataRes> getApproveDataRes(ImportDataGetDto importDataGetDto) {
         //调用 ApproveMapper 的方法获取离司结算流程监控报表的数据放进 list 返回给前端
         List<ApproveDataRes> approveDataResList = approveMapper.getApproveDataRes(importDataGetDto);
-        //foreach循环遍历，获得list中的数据
-        for (ApproveDataRes dataRes:approveDataResList) {
-            //判断分部字段是否为空值
-            if(dataRes.getDivision().equals("")){
-                //如果分部字段为空，调用 ApproveMapper 获得商家编码
-                String storeName = sapUserInfoMapper.getDepartmentByPernr(importDataGetDto.getQuitPernr());
-                //调用 SAPStoreHeadMapper 的方法获得分部名称
-                SAPStoreHead sapStoreHeadByStoreId = sapStoreHeadMapper.getSAPStoreHeadByStoreId(storeName);
-                //把分部字段写进 list 中
-                dataRes.setDivision(sapStoreHeadByStoreId.getManageArea());
+        //如果前端传过来离职员工工号，执行以下代码
+        if (importDataGetDto.getQuitPernr() != null && importDataGetDto.getQuitPernr().length() != 0) {
+            //foreach循环遍历，获得list中的数据
+            for (ApproveDataRes dataRes : approveDataResList) {
+                //判断分部字段是否为空值
+                if (dataRes.getDivision().equals("")) {
+                    //如果分部字段为空，调用 ApproveMapper 获得商家编码
+                    String storeName = sapUserInfoMapper.getDepartmentByPernr(importDataGetDto.getQuitPernr());
+                    //调用 SAPStoreHeadMapper 的方法获得分部名称
+                    SAPStoreHead sapStoreHeadByStoreId = sapStoreHeadMapper.getSAPStoreHeadByStoreId(storeName);
+                    //把分部字段写进 list 中
+                    dataRes.setDivision(sapStoreHeadByStoreId.getManageArea());
+                }
+            }
+        }
+        //如果前端传过来的数据没有离职员工号，进入以下方法
+        else {
+            //foreach循环遍历，获得list中的数据
+            for (ApproveDataRes dataRes : approveDataResList) {
+                //判断分部字段是否为空值
+                if (dataRes.getDivision().equals("")) {
+                    //调用sql语句查询
+                    List<ImportData> importDataList = importDataMapper.getImportDataByImportPernr(dataRes.getImportPernr());
+                    for (ImportData importData : importDataList) {
+                        //判断人员范围，如果范围为门店
+                        if (importData.getPersonScope().equals("门店")) {
+                            //调用sql获得店编
+                            String storeName = sapUserInfoMapper.getDepartmentByPernr(importData.getQuitPernr());
+                            //调用 SAPStoreHeadMapper 的方法获得分部名称
+                            SAPStoreHead sapStoreHeadByStoreId = sapStoreHeadMapper.getSAPStoreHeadByStoreId(storeName);
+                            //把分部字段写进 list 中
+                            dataRes.setDivision(sapStoreHeadByStoreId.getManageArea());
+                        }else if(importData.getPersonScope().equals("职能")){
+                            //把分部字段写进 list 中
+                            dataRes.setDivision(importData.getDivision());
+                        }
+                    }
+                }
             }
         }
         return approveDataResList;

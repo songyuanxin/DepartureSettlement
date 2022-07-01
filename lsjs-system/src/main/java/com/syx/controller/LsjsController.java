@@ -222,6 +222,7 @@ public class LsjsController {
      */
     @GetMapping("/getApproveDataRes")
     public AjaxResult getApproveDataRes(ImportDataGetDto importDataGetDto){
-        return AjaxResult.success("返回成功", this.lsjsService.getApproveDataRes(importDataGetDto));
+        List<ApproveDataRes> approveDataRes = lsjsService.getApproveDataRes(importDataGetDto);
+        return AjaxResult.success("返回成功", approveDataRes);
     }
 }

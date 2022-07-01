@@ -64,4 +64,11 @@
         from ImportData
         where quit_pernr = #{quitPernr}
     </select>
+
+    <select id="getImportDataByImportPernr" parameterType="string" resultType="com.syx.domain.ImportData">
+        select *
+        from (select *, row_number() over(partition by quit_pernr order by import_time desc) rows from ImportData) t
+        where t.rows = 1
+          and t.originator_pernr = #{ImportPernr}
+    </select>
 </mapper>

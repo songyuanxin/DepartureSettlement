@@ -40,4 +40,6 @@ public interface ImportDataMapper {
     List<ImportData> getImportDataList();
 
     List<ImportData> getImoprtDataByPernr(String quitPernr);
+
+    List<ImportData> getImportDataByImportPernr(String ImportPernr);
 }
