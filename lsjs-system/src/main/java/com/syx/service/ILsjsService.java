@@ -30,7 +30,7 @@ public interface ILsjsService {
 
     int updateApprove(Approve approve);
 
-    ImportData getImoprtDataByPernr(String quitPernr);
+    ImportData getLastImoprtDataByPernr(String quitPernr);
 
     Reviewer getReviewer(String personScope, String parcelDesc, String region);
 
@@ -66,9 +66,9 @@ public interface ILsjsService {
 
     List<Deduction> getDeduction(String pernr);
 
-    List<String> getImoprtDataByTime(ApproveGetDto approveGetDto);
+    List<String> getPernrImoprtDataByTime(ApproveGetDto approveGetDto);
 
-    List<ApproveGetRes> getApproveDataByPernr(List<String> imoprtPernrByTime);
+    List<ApproveGetRes> getApproveDataByPernr(List<ImportData> imoprtPernrByTime);
 
     List<ApproveGetRes> getLsjsList(ApproveGetDto approveGetDto);
 

@@ -110,7 +110,7 @@ public class ManagerController {
         //二、重新发起离司结算申请并发送至直接上级企业微信中
 
         //1、根据离职员工工号到人事导入数据表中查询直接上级工号
-        ImportData importData = importDataService.getImportDataByPernr(regionalOrAreaApproveDto.getQuitPernr());
+        ImportData importData = importDataService.getLastImportDataByPernr(regionalOrAreaApproveDto.getQuitPernr());
         ImportDataDto importDataDto = new ImportDataDto();
         //根据工号查询员工姓名，向直接上级推送消息时使用
         String userName = lsjsService.getUserNameByPernr(importData.getQuitPernr());
@@ -205,7 +205,7 @@ public class ManagerController {
 
         //二、重新发起离司结算申请并发送至直接上级企业微信中
         //1、根据离职员工工号到人事导入数据表中查询直接上级工号
-        ImportData importData = importDataService.getImportDataByPernr(regionalOrAreaApproveDto.getQuitPernr());
+        ImportData importData = importDataService.getLastImportDataByPernr(regionalOrAreaApproveDto.getQuitPernr());
         ImportDataDto importDataDto = new ImportDataDto();
         //根据工号查询员工姓名，向直接上级推送消息时使用
         String userName = lsjsService.getUserNameByPernr(importData.getQuitPernr());

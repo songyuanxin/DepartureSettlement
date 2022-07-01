@@ -14,6 +14,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.dom4j.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -170,6 +173,15 @@ public class LsjsController {
      */
     @GetMapping(value = "/getLsjsList")
     public AjaxResult getLsjsList(ApproveGetDto approveGetDto){
+        if (StringUtils.isBlank(approveGetDto.getEndTime())){
+            approveGetDto.setEndTime("");
+        }
+        //判断结束日期是否为空，若没有选择结束日期则直接默认查询到当天
+        if (approveGetDto.getEndTime().length() == 0){
+            LocalDate date = LocalDate.now();
+            DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            approveGetDto.setEndTime(date.format(fmt));
+        }
         List<ApproveGetRes> lsjsList = lsjsService.getLsjsList(approveGetDto);
         return AjaxResult.success(lsjsList);
     }

@@ -173,7 +173,7 @@ public class FinanceProcessServiceImpl implements IFinanceProcessService {
      */
     public Reviewer getReviewer(String quitPernr){
         //一、根据离职员工工号到人事导入数据表中查询该员工所属分部以及人员范围
-        ImportData imprtData = lsjsServiceImpl.getImoprtDataByPernr(quitPernr);
+        ImportData imprtData = lsjsServiceImpl.getLastImoprtDataByPernr(quitPernr);
         //二、根据离职员工工号所属分部/地区到审核人配置表中查询各部分审核人
         Reviewer reviewer = new Reviewer();
         //1、根据离职员工人员范围判断是否需要从门店主数据中查询所属地区

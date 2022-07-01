@@ -9,40 +9,59 @@
         <result property="originatorPernr" column="originator_pernr"/>
         <result property="importTime" column="import_time"/>
         <result property="absenteeismDoc" column="absenteeism_doc"/>
-    </resultMap>
-
-    <resultMap id="quitPernrData" type="java.lang.String">
-        <result property="quitPernr" column="quit_pernr"/>
+        <result property="reEntry" column="re_entry"/>
     </resultMap>
 
     <insert id="insertImportData" parameterType="com.syx.domain.ImportData">
-        insert into ImportData (quit_pernr, person_scope, direct_pernr, division, originator_pernr, import_time, absenteeism_doc)
-        values (
-                   #{quitPernr},#{personScope},#{directPernr},#{division}, #{originatorPernr}, #{importTime}, #{absenteeismDoc}
-               )
+        insert into ImportData (quit_pernr, person_scope, direct_pernr, division, originator_pernr, import_time,
+                                absenteeism_doc, re_entry)
+        values (#{quitPernr}, #{personScope}, #{directPernr}, #{division}, #{originatorPernr}, #{importTime},
+                #{absenteeismDoc}, #{reEntry})
     </insert>
 
-    <select id="getImoprtDataByPernr" parameterType="string" resultMap="ImportDataResult">
-        select * from ImportData where quit_pernr = #{quitPernr}
+    <select id="getLastImoprtDataByPernr" parameterType="string" resultMap="ImportDataResult">
+        select top 1 *
+        from ImportData
+        where quit_pernr = #{quitPernr}
+        order by import_time desc
     </select>
 
     <delete id="deleteImportData" parameterType="string">
-        delete from ImportData where quit_pernr = #{quitPernr}
+        delete
+        from ImportData
+        where quit_pernr = #{quitPernr}
+          and convert(date, import_time) = #{importTime}
     </delete>
 
-    <select id="getImoprtDataByTime" parameterType="com.syx.domains.dto.ApproveGetDto" resultMap="quitPernrData">
-        select quit_pernr from ImportData where convert(date,import_time) between #{startTime} and #{endTime}
+    <select id="getImoprtDataByTime" parameterType="com.syx.domains.dto.ApproveGetDto" resultMap="ImportDataResult">
+        select *
+        from (select *, row_number() over(partition by quit_pernr order by import_time desc) rows from ImportData) t
+        where t.rows = 1
+          and t.import_time between #{startTime} and #{endTime}
     </select>
 
-    <select id="getImoprtDataList" parameterType="com.syx.domains.dto.ImportDataGetDto" resultMap="ImportDataResult">
-        select * from ImportData where quit_pernr = #{quitPernr} or convert(date,import_time) = #{importTime}
+    <select id="getImoprtDataByTimeAndPernr" parameterType="com.syx.domains.dto.ImportDataGetDto"
+            resultMap="ImportDataResult">
+        select *
+        from ImportData
+        where quit_pernr = #{quitPernr}
+          and convert(date, import_time) = #{importTime}
     </select>
 
     <select id="getImoprtDataByImportTime" parameterType="string" resultMap="ImportDataResult">
-        select * from ImportData where convert(date,import_time) = #{importTime}
+        select *
+        from ImportData
+        where convert(date, import_time) = #{importTime}
     </select>
 
     <select id="getImportDataList" resultMap="ImportDataResult">
-        select * from ImportData
+        select top 500 *
+        from ImportData
+    </select>
+
+    <select id="getImoprtDataByPernr" parameterType="string" resultMap="ImportDataResult">
+        select *
+        from ImportData
+        where quit_pernr = #{quitPernr}
     </select>
 </mapper>

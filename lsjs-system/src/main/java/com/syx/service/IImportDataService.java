@@ -17,5 +17,5 @@ public interface IImportDataService {
      */
     SendMsgRes launchProcess(List<ImportDataDto> dataList, String isReturn);
 
-    ImportData getImportDataByPernr(String quitPernr);
+    ImportData getLastImportDataByPernr(String quitPernr);
 }

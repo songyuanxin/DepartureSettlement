@@ -27,15 +27,17 @@ public interface ImportDataMapper {
      * @param quitPernr
      * @return
      */
-    ImportData getImoprtDataByPernr(String quitPernr);
+    ImportData getLastImoprtDataByPernr(String quitPernr);
 
-    int deleteImportData(String quitPernr);
+    int deleteImportData(String quitPernr,String importTime);
 
-    List<String> getImoprtDataByTime(ApproveGetDto approveGetDto);
+    List<ImportData> getImoprtDataByTime(ApproveGetDto approveGetDto);
 
-    ImportData getImoprtDataList(ImportDataGetDto importDataGetDto);
+    ImportData getImoprtDataByTimeAndPernr(ImportDataGetDto importDataGetDto);
 
     List<ImportData> getImoprtDataByImportTime(String importTime);
 
     List<ImportData> getImportDataList();
+
+    List<ImportData> getImoprtDataByPernr(String quitPernr);
 }

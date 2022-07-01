@@ -17,4 +17,5 @@ public interface ResumeMapper {
     int insertResume(Resume resume);
 
     int deleteResume(String pernr);
+
 }

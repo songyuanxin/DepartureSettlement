@@ -76,7 +76,7 @@ public class ImportDataServiceImpl implements IImportDataService {
      * @return
      */
     @Override
-    public ImportData getImportDataByPernr(String quitPernr) {
-        return importDataMapper.getImoprtDataByPernr(quitPernr);
+    public ImportData getLastImportDataByPernr(String quitPernr) {
+        return importDataMapper.getLastImoprtDataByPernr(quitPernr);
     }
 }

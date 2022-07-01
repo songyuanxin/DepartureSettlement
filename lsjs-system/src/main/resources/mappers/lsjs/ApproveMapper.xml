@@ -112,23 +112,19 @@
     </delete>
 
     <select id="getApproveDataByPernr" parameterType="string" resultType="com.syx.domains.vo.ApproveGetRes">
-        select i.division,
-               v.quit_pernr,
-               p.name,
-               v.goodsRefund,
-               v.documentNum,
-               v.shortMoney,
-               v.qualityMoney,
-               v.careMoney,
-               v.cardMoney,
-               v.clothesMoney,
-               i.absenteeism_doc as absenteeismDoc
-        from VQueryApproveData v
-                 inner join personInfo p on v.quit_pernr = p.alias
-                 inner join ImportData i on v.quit_pernr = i.quit_pernr
-        where v.quit_pernr = #{pernr}
-        group by v.quit_pernr, v.goodsRefund, v.documentNum, v.shortMoney, v.qualityMoney, v.careMoney, v.cardMoney,
-                 v.clothesMoney, p.name, i.division, i.absenteeism_doc
+        SELECT a.quit_pernr as pernr, p.name as name, p.zlzrq as leaveDate, i.absenteeism_doc as absenteeismDoc, i.division as division, p.mgtxt as leaveReson
+             ,MAX(case WHEN a.approve_content = 1 and send_time >= #{importTime} THEN a.goods_refund ELSE NULL END) as goodsMoney
+             ,MAX(case WHEN a.approve_content = 1 and send_time >= #{importTime} THEN a.document_num ELSE NULL END) as goodsMoneyDocument
+             ,MAX(case WHEN a.approve_content = 2 and send_time >= #{importTime} THEN a.short_money ELSE NULL END) as shortMoney
+             ,MAX(case WHEN a.approve_content = 3 and send_time >= #{importTime} THEN a.quality_money ELSE NULL END) as qualityMoney
+             ,MAX(case WHEN a.approve_content = 4 and send_time >= #{importTime} THEN a.card_money ELSE NULL END) as cardMoney
+             ,MAX(case WHEN a.approve_content = 4 and send_time >= #{importTime} THEN a.clothes_money ELSE NULL END) as clothesMoney
+             ,MAX(case WHEN a.approve_content = 5 and send_time >= #{importTime} THEN a.care_money ELSE NULL END) as careMoney
+        from Approve a
+                 inner join personInfo p on a.quit_pernr = p.alias
+                 inner join ImportData i on a.quit_pernr = i.quit_pernr
+        where a.quit_pernr = #{pernr}
+        GROUP BY a.quit_pernr, p.name, i.absenteeism_doc, p.mgtxt, p.zlzrq, i.division
     </select>
 
     <delete id="deleteApproveDataByPernr" parameterType="string">
@@ -136,4 +132,12 @@
         from Approve
         where quit_pernr = #{quitPernr}
     </delete>
+
+    <select id="getSendTimeByPernr" resultType="java.sql.Timestamp">
+        select max(send_time) from Approve where quit_pernr = #{pernr} and approve_content = #{approveContent}
+    </select>
+
+    <select id="getApproveResultList" resultType="int">
+        select approve_result from Approve where quit_pernr = #{quitPernr} and send_time >= #{importTime}
+    </select>
 </mapper>

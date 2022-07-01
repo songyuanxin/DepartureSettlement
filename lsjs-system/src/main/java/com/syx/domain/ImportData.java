@@ -24,4 +24,6 @@ public class ImportData {
     private Timestamp importTime;
     //旷工发文号
     private String absenteeismDoc;
+    //是否属于再入职
+    private Integer reEntry;
 }

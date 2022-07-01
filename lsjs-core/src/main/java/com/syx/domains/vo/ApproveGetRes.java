@@ -47,4 +47,7 @@ public class ApproveGetRes {
 
     @Excel(name = "旷工发文号(分部导入数据)",cellType = Excel.ColumnType.STRING)
     private String absenteeismDoc;
+
+    @Excel(name = "审批状态", cellType = Excel.ColumnType.STRING)
+    private String approveResult;
 }
