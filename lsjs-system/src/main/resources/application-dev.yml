@@ -14,7 +14,8 @@ spring:
     lsjsdb:
       driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
 #      jdbc-url: jdbc:sqlserver://10.8.1.119;DatabaseName=HRInfo;
-      jdbc-url: jdbc:sqlserver://127.0.0.1:1433;DatabaseName=HRInfo;
+#      jdbc-url: jdbc:sqlserver://127.0.0.1:1433;DatabaseName=HRInfo;
+      jdbc-url: jdbc:sqlserver://10.9.16.2:1433;DatabaseName=HRInfo;
       username: sa
       password: 20050311jzjcomm
 #      password: Jzj981228!

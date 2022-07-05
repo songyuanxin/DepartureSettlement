@@ -149,7 +149,7 @@
     <delete id="deleteApproveDataByPernr" parameterType="string">
         delete
         from Approve
-        where quit_pernr = #{quitPernr}
+        where quit_pernr = #{quitPernr} and convert(date,send_time) >= #{importTime}
     </delete>
 
     <select id="getSendTimeByPernr" resultType="java.sql.Timestamp">
@@ -196,11 +196,11 @@
         , MAX(case approve_content WHEN 4 THEN send_time ELSE NULL END) as 'cardSendTime'
         , MAX(case approve_content WHEN 4 THEN approve_time ELSE NULL END) as 'cardApproveTime'
         from Approve AP
-        inner join personInfo pI on pI.alias = AP.quit_pernr
         inner join ImportData IM on IM.quit_pernr = AP.quit_pernr
+        inner join personInfo pI on pI.alias = AP.quit_pernr
         <where>
-            <if test="importTime != null and importTime != ''">
-                convert(date,IM.import_time) = #{importTime}
+            <if test="importStartTime != null and importStartTime != ''">
+                convert(date,IM.import_time) between #{importStartTime} and #{importEndTime}
             </if>
             <if test="quitPernr != null and quitPernr != ''">
                 AND AP.quit_pernr = #{quitPernr}

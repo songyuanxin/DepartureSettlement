@@ -16,4 +16,8 @@ public class ImportDataGetDto {
     private String importPernr;
     //人员范围
     private String personScope;
+    //导入开始日期
+    private String importStartTime;
+    //导入结束日期
+    private String importEndTime;
 }

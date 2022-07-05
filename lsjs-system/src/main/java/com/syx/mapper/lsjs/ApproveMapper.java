@@ -80,7 +80,7 @@ public interface ApproveMapper {
      * @param quitPernr
      * @return
      */
-    int deleteApproveDataByPernr(String quitPernr);
+    int deleteApproveDataByPernr(@Param("quitPernr") String quitPernr,@Param("importTime")String importTime);
 
     Timestamp getSendTimeByPernr(@Param("pernr")String pernr, @Param("approveContent") Integer approveContent);
 
