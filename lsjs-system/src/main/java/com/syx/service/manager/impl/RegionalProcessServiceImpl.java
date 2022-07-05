@@ -45,8 +45,8 @@ public class RegionalProcessServiceImpl implements IRegionalProcessService {
             return sendMsgRes;
         }
 
-        String splicing = "离司结算审核提醒:\n您收到了"+ quitPernr + userName + "<a href=\"http://localhost:8080/approve/#/pages/index/manager/regionApproval?pernr=" + regionalPernr + "\">"+"审批入口</a>";
-//        String splicing = "离司结算审核提醒:\n您收到了"+ quitPernr + userName + "<a href=\"http://hrfico.jzj.cn:19004/approve/#/pages/index/manager/regionApproval?pernr=" + regionalPernr + "\">"+"审批入口</a>";
+        String splicing = "离司结算审核提醒:\n您收到了"+ quitPernr + userName + "的离司结算申请" + "<a href=\"http://localhost:8080/approve/#/pages/index/manager/regionApproval?pernr=" + regionalPernr + "\">"+"【审批入口】</a>";
+//        String splicing = "离司结算审核提醒:\n您收到了"+ quitPernr + userName + "的离司结算申请" + "<a href=\"http://hrfico.jzj.cn:19004/approve/#/pages/index/manager/regionApproval?pernr=" + regionalPernr + "\">"+"【审批入口】</a>";
         sendMsgRes = weChatServiceImpl.sendMsg(regionalPernr, splicing);
         //判断提醒消息是否发送成功，若发送成功则写入审核表以及审核记录表
         if (sendMsgRes.getErrcode() != 0){

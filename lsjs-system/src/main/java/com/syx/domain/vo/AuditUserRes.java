@@ -16,6 +16,7 @@ public class AuditUserRes {
     private String pernr;
     private String userName;
     private String sex;
+    private String position;
     private String department;
     private String joinedDate;
     private String confirDate;
