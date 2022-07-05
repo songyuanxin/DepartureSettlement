@@ -727,9 +727,6 @@ public class LsjsServiceImpl implements ILsjsService {
         } else if (importDataGetDto.getImportTime().length() == 0 && importDataGetDto.getQuitPernr().length() > 0) {
             //若查询条件中只有离职员工工号，则查询出该离职员工的所有离司结算导入数据(考虑到再入职又离职的员工)
             importDataList = importDataMapper.getImoprtDataByPernr(importDataGetDto.getQuitPernr());
-        } else if (importDataGetDto.getImportTime().length() == 0 && importDataGetDto.getQuitPernr().length() == 0) {
-            //若没有查询条件则查出当前导入数据表中的前500条数据
-            importDataList = importDataMapper.getImportDataList();
         }
         return importDataList;
     }
@@ -742,17 +739,18 @@ public class LsjsServiceImpl implements ILsjsService {
      */
     @Override
     public int deleteDataByPernr(String quitPernr) {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         int i = 0;
         //判断导入数据表中是否存在该离职员工的数据
-//        ImportData imoprtDataByPernr = importDataMapper.getImoprtDataByPernr(quitPernr);
-//        if (imoprtDataByPernr.getDirectPernr().length() > 0){
-//            int result = 0;
-//            result = importDataMapper.deleteImportData(quitPernr);
-//            if (result == 0){
-//                return result;
-//            }
-//            i = i + result;
-//        }
+        ImportData imoprtDataByPernr = importDataMapper.getImoprtDataByQuitPernr(quitPernr);
+        if (imoprtDataByPernr.getDirectPernr().length() > 0){
+            int result = 0;
+            result = importDataMapper.deleteImportData(quitPernr,df.format(imoprtDataByPernr.getImportTime()));
+            if (result == 0){
+                return result;
+            }
+            i = i + result;
+        }
         //判断审核表中是否存在该离职员工的审核数据
         List<Approve> approveByPernr = approveMapper.getApproveByPernr(quitPernr);
         if (approveByPernr.size() > 0) {

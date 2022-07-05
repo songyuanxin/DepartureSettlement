@@ -4,6 +4,7 @@ import com.syx.domain.ImportData;
 import com.syx.domains.dto.ApproveGetDto;
 import com.syx.domains.dto.ImportDataGetDto;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.w3c.dom.stylesheets.LinkStyle;
 
 import java.util.List;
@@ -41,5 +42,8 @@ public interface ImportDataMapper {
 
     List<ImportData> getImoprtDataByPernr(String quitPernr);
 
+    ImportData getImoprtDataByQuitPernr(String quitPernr);
+
     List<ImportData> getImportDataByImportPernr(String ImportPernr);
+
 }

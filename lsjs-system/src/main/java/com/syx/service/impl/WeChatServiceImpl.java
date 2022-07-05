@@ -120,7 +120,7 @@ public class WeChatServiceImpl {
             String access_token = redisTemplate.opsForValue().get("hr_access_token").toString();
             //调用企业微信接口获取用户ID
             //替换url，访问企业微信接口
-            UserInfoUrl = UserInfoUrl.replace("SUITE_TOKEN", access_token).replace("CODE", code);
+            UserInfoUrl = UserInfoUrl.replace("ACCESS_TOKEN", access_token).replace("CODE", code);
             //调用http方法
             String body = HttpRequest.get(UserInfoUrl).execute().body();
             try {
@@ -140,7 +140,7 @@ public class WeChatServiceImpl {
             String access_token = redisTemplate.opsForValue().get("hr_access_token").toString();
             //调用企业微信接口获取用户ID
             //替换url，访问企业微信接口
-            UserInfoUrl = UserInfoUrl.replace("SUITE_TOKEN", access_token).replace("CODE", code);
+            UserInfoUrl = UserInfoUrl.replace("ACCESS_TOKEN", access_token).replace("CODE", code);
             //调用http方法
             String body = HttpRequest.get(UserInfoUrl).execute().body();
             try {

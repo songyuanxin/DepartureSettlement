@@ -89,6 +89,7 @@ public class ImportDataController {
         List<String> quitPernrList = new ArrayList<>();
 
         for (ImportDataDto importDataDto : dataList) {
+//            importDataDto.setOriginatorPernr(uploadDto.getUserId().substring(uploadDto.getUserId().length()-6));
             //二、校验是否有人员范围超出“门店”、“职能”的
             if (!importDataDto.getPersonScope().equals("门店") && !importDataDto.getPersonScope().equals("职能")) {
                 pErrorList.add(importDataDto.getPernr() + importDataDto.getName());
@@ -234,7 +235,8 @@ public class ImportDataController {
                 importData.setDirectPernr(data.getDirectPernr());
                 importData.setDivision(data.getDivision());
                 importData.setAbsenteeismDoc(data.getAbsenteeismDoc());
-                importData.setOriginatorPernr(uploadDto.getUserId());
+                String userId = uploadDto.getUserId();
+                importData.setOriginatorPernr(userId.substring(userId.length()-6));
                 LocalDateTime now = LocalDateTime.now();
                 Timestamp timestamp = Timestamp.valueOf(now);
                 importData.setImportTime(timestamp);
@@ -250,7 +252,8 @@ public class ImportDataController {
                 importData.setDirectPernr(data.getDirectPernr());
                 importData.setDivision(data.getDivision());
                 importData.setAbsenteeismDoc(data.getAbsenteeismDoc());
-                importData.setOriginatorPernr(uploadDto.getUserId());
+                String userId = uploadDto.getUserId();
+//                importData.setOriginatorPernr(userId.substring(userId.length()-6));
                 LocalDateTime now = LocalDateTime.now();
                 Timestamp timestamp = Timestamp.valueOf(now);
                 importData.setImportTime(timestamp);

@@ -31,6 +31,7 @@
     <select id="getUserInfoByPernrList" parameterType="string" resultType="com.syx.domain.vo.AuditUserRes">
         select a.alias       as pernr,
                a.name        as userName,
+               a.sex         as sex,
                a.storename   as department,
                a.zrzrq       as joinedDate,
                a.zzzrq       as confirDate,
