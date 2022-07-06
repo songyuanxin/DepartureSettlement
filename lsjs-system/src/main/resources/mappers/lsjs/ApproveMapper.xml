@@ -196,7 +196,7 @@
         inner join ImportData IM on IM.quit_pernr = AP.quit_pernr
         inner join personInfo pI on pI.alias = AP.quit_pernr
         <where>
-            <if test="importStartTime != null and importStartTime != ''">
+            <if test="importTime != null and importTime != ''">
                 convert(date,IM.import_time) = #{importTime}
             </if>
             <if test="quitPernr != null and quitPernr != ''">
