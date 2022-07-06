@@ -65,12 +65,7 @@ public class ImportDataController {
     public AjaxResult importData(UploadDto uploadDto) throws Exception {
         ExcelUtil<ImportDataDto> util = new ExcelUtil<ImportDataDto>(ImportDataDto.class);
         List<ImportDataDto> dataList = util.importExcel(uploadDto.getFile().getInputStream());
-        /**
-         * 若出现表头被修改等情况直接报错
-         */
-        if (dataList.size() <= 0){
-            return AjaxResult.error("<div>未检测到离司结算申请数据，请检查修改后重新导入！<div style=\"color:#81b6dd;\">出现此问题可能原因：</br>导入模板中表头不正确</div></div>");
-        }
+
         List<String> repeatList = new ArrayList<>();//存放导入数据中重复数据
         List<String> pErrorList = new ArrayList<>();//存放人员范围选择错误的工号加姓名
         List<String> invalidList = new ArrayList<>();//存放无效的员工工号和姓名
@@ -94,6 +89,10 @@ public class ImportDataController {
         List<String> quitPernrList = new ArrayList<>();
 
         for (ImportDataDto importDataDto : dataList) {
+            //若出现表头被修改等情况直接报错
+            if (StringUtils.isBlank(importDataDto.getPernr()) || StringUtils.isBlank(importDataDto.getName()) || StringUtils.isBlank(importDataDto.getDirectPernr()) || StringUtils.isBlank(importDataDto.getDirectName()) || StringUtils.isBlank(importDataDto.getPersonScope())){
+                return AjaxResult.error("<div>未检测到离司结算申请数据，请检查修改后重新导入！<div style=\"color:#81b6dd;\">出现此问题可能原因：导入模板中表头不正确。</div></div>");
+            }
             importDataDto.setOriginatorPernr(uploadDto.getUserId().substring(uploadDto.getUserId().length()-6));
             //二、校验是否有人员范围超出“门店”、“职能”的
             if (!importDataDto.getPersonScope().equals("门店") && !importDataDto.getPersonScope().equals("职能")) {
