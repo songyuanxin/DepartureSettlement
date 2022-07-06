@@ -78,5 +78,5 @@ public interface ILsjsService {
 
     int deleteDataByPernr(String quitPernr);
 
-    List<ApproveDataRes> getApproveDataRes(ImportDataGetDto importDataGetDto);
+    List<ApproveDataRes> getApproveDataRes(ImportDataGetDto dataResByTime);
 }

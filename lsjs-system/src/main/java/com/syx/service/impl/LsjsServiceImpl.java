@@ -744,10 +744,10 @@ public class LsjsServiceImpl implements ILsjsService {
         int i = 0;
         //判断导入数据表中是否存在该离职员工的数据
         ImportData imoprtDataByPernr = importDataMapper.getImoprtDataByQuitPernr(quitPernr);
-        if (imoprtDataByPernr.getDirectPernr().length() > 0){
+        if (imoprtDataByPernr.getDirectPernr().length() > 0) {
             int result = 0;
-            result = importDataMapper.deleteImportData(quitPernr,df.format(imoprtDataByPernr.getImportTime()));
-            if (result == 0){
+            result = importDataMapper.deleteImportData(quitPernr, df.format(imoprtDataByPernr.getImportTime()));
+            if (result == 0) {
                 return result;
             }
             i = i + result;
@@ -756,7 +756,7 @@ public class LsjsServiceImpl implements ILsjsService {
         List<Approve> approveByPernr = approveMapper.getApproveByPernr(quitPernr);
         if (approveByPernr.size() > 0) {
             int result = 0;
-            result = approveMapper.deleteApproveDataByPernr(quitPernr,df.format(imoprtDataByPernr.getImportTime()));
+            result = approveMapper.deleteApproveDataByPernr(quitPernr, df.format(imoprtDataByPernr.getImportTime()));
             if (result == 0) {
                 return result;
             }
@@ -798,57 +798,67 @@ public class LsjsServiceImpl implements ILsjsService {
     /**
      * 查询离司监控报表实现方法
      *
-     * @param importDataGetDto
+     * @param
      * @return
      */
     @Override
-    public List<ApproveDataRes> getApproveDataRes(ImportDataGetDto importDataGetDto) {
+    public List<ApproveDataRes> getApproveDataRes(ImportDataGetDto dataResByTime) {
+        //TimeStamp转String的工具
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         //判断如果前端传过来的参数没有结束时间，就获取当前系统时间为结束时间
-        if (importDataGetDto.getImportEndTime().equals("")) {
+        if (StringUtils.isBlank(dataResByTime.getImportEndTime())) {
             //获取当前系统时间
             String importEndTime = DateUtils.getDate();
             //把获得的系统时间写进ImportDataGetDto
-            importDataGetDto.setImportEndTime(importEndTime);
+            dataResByTime.setImportEndTime(importEndTime);
         }
-        //调用 ApproveMapper 的方法获取离司结算流程监控报表的数据放进 list 返回给前端
-        List<ApproveDataRes> approveDataResList = approveMapper.getApproveDataRes(importDataGetDto);
+        if (dataResByTime.getImportEndTime().equals("")) {
+            //获取当前系统时间
+            String importEndTime = DateUtils.getDate();
+            //把获得的系统时间写进ImportDataGetDto
+            dataResByTime.setImportEndTime(importEndTime);
+        }
+        //创建ApproveGetDto对象
+        ApproveGetDto approveGetDto = new ApproveGetDto();
+        //把ImportDataGetDto赋值给ApproveGetDto
+        approveGetDto.setStartTime(dataResByTime.getImportStartTime());
+        approveGetDto.setEndTime(dataResByTime.getImportEndTime());
+        //调用mapper方法，获得ImportTime
+        List<ImportData> importDataList = importDataMapper.getImoprtDataByTime(approveGetDto);
+        List<ApproveDataRes> approveDataResList = new ArrayList<>();
+        //在importDataList中获得ImportTime
+        for (ImportData importData : importDataList) {
+            //通过ImportTime查询监控报表数据
+            dataResByTime.setImportTime(df.format(importData.getImportTime()));
+            approveDataResList = approveMapper.getApproveDataRes(dataResByTime);
+        }
         //如果前端传过来离职员工工号，执行以下代码
-        if (importDataGetDto.getQuitPernr() != null && importDataGetDto.getQuitPernr().length() != 0) {
-            //foreach循环遍历，获得list中的数据
+        if (dataResByTime.getQuitPernr() != null && dataResByTime.getQuitPernr().length() != 0) {
+            //取出人员范围字符串
             for (ApproveDataRes dataRes : approveDataResList) {
-                //判断人员范围
+                //如果人员范围为门店
                 if (dataRes.getPersonScope().equals("门店")) {
-                    //调用sql获得店编
-                    String storeName = sapUserInfoMapper.getDepartmentByPernr(dataRes.getQuitPernr());
-                    //调用 SAPStoreHeadMapper 的方法获得分部名称
+                    //通过前端传过来的离职员工工号查询店编
+                    String storeName = sapUserInfoMapper.getDepartmentByPernr(dataResByTime.getQuitPernr());
+                    //通过店编查询离职人员所属分部地区
                     SAPStoreHead sapStoreHeadByStoreId = sapStoreHeadMapper.getSAPStoreHeadByStoreId(storeName);
-                    //把分部字段写进 list 中
+                    //查询出来的店编写进监控报表中
                     dataRes.setDivision(sapStoreHeadByStoreId.getManageArea());
-                } else if (dataRes.getPersonScope().equals("职能")) {
-                    //把分部字段写进 list 中
-                    dataRes.setDivision(dataRes.getDivision());
                 }
             }
         }
+
         //如果前端传过来的数据没有离职员工号，进入以下方法
         else {
-            //foreach循环遍历，获得list中的数据
             for (ApproveDataRes dataRes : approveDataResList) {
-                //调用sql语句查询
-                List<ImportData> importDataList = importDataMapper.getImportDataByImportPernr(dataRes.getImportPernr());
-                for (ImportData importData : importDataList) {
-                    //判断人员范围，如果范围为门店
-                    if (importData.getPersonScope().equals("门店")) {
-                        //调用sql获得店编
-                        String storeName = sapUserInfoMapper.getDepartmentByPernr(importData.getQuitPernr());
-                        //调用 SAPStoreHeadMapper 的方法获得分部名称
-                        SAPStoreHead sapStoreHeadByStoreId = sapStoreHeadMapper.getSAPStoreHeadByStoreId(storeName);
-                        //把分部字段写进 list 中
-                        dataRes.setDivision(sapStoreHeadByStoreId.getManageArea());
-                    } else if (importData.getPersonScope().equals("职能")) {
-                        //把分部字段写进 list 中
-                        dataRes.setDivision(importData.getDivision());
-                    }
+                //判断人员范围，如果范围为门店
+                if (dataRes.getPersonScope().equals("门店")) {
+                    //通过离职员工号查询SPAStoreHead表中的店编
+                    String storeName = sapUserInfoMapper.getDepartmentByPernr(dataRes.getQuitPernr());
+                    //通过查出来的店编查询人员所属分部地区
+                    SAPStoreHead sapStoreHeadByStoreId = sapStoreHeadMapper.getSAPStoreHeadByStoreId(storeName);
+                    //把分部地区字段写进 list 中，返回
+                    dataRes.setDivision(sapStoreHeadByStoreId.getManageArea());
                 }
             }
         }
