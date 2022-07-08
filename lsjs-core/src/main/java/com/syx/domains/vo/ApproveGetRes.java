@@ -49,5 +49,5 @@ public class ApproveGetRes {
     private String absenteeismDoc;
 
     @Excel(name = "审批状态", cellType = Excel.ColumnType.STRING)
-    private String approveResult;
+    private Integer approveStatus;
 }

@@ -10,4 +10,6 @@ import lombok.Data;
 public class ApproveGetDto {
     private String startTime;
     private String endTime;
+    private Integer approveStatus;
+    private String division;
 }

@@ -36,8 +36,15 @@
     <select id="getImoprtDataByTime" parameterType="com.syx.domains.dto.ApproveGetDto" resultMap="ImportDataResult">
         select *
         from (select *, row_number() over(partition by quit_pernr order by import_time desc) rows from ImportData) t
-        where t.rows = 1
-          and convert(date,t.import_time) between #{startTime} and #{endTime}
+        <where>
+            t.rows = 1
+            <if test="startTime != null and endTime != null">
+                AND convert(date,t.import_time) between #{startTime} and #{endTime}
+            </if>
+            <if test="division != null and division != ''">
+                AND division = #{division}
+            </if>
+        </where>
     </select>
 
     <select id="getImoprtDataByTimeAndPernr" parameterType="com.syx.domains.dto.ImportDataGetDto"

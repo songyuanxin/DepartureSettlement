@@ -43,7 +43,6 @@ public class LsjsController {
     public AjaxResult getAuditQuitUser(String reviewerPernr) {
         List<String> auditQuitPernr = lsjsService.getAuditQuitPernr(reviewerPernr);
         List<AuditUserRes> auditUserRes = lsjsService.getUserInfoByPernrList(auditQuitPernr);
-
         if (auditUserRes == null) {
             return AjaxResult.success("暂无待审核的离司结算申请");
         }
@@ -94,7 +93,7 @@ public class LsjsController {
          * 1、无论是门店员工还是职能员工，若要走完所有流程最低会有4条审核记录，若没有4条表示离司结算任处于审批中。
          * 2、无论是门店员工还是职能员工，借款短款审核、质量简报扣款审核、工牌工装扣款审核是同步进行，且属于流程的最后一个审批环节。
          */
-        if (approveByPernrList.size() < 5){
+        if (approveByPernrList.size() < 4){
             approveStatusResList.setStatus(2);
             approveStatusResList.setName(userNameByPernr);
             approveStatusResList.setQueryApproveRes(approveByPernrList);
@@ -174,6 +173,9 @@ public class LsjsController {
     public AjaxResult getLsjsList(ApproveGetDto approveGetDto){
         if (StringUtils.isBlank(approveGetDto.getEndTime())){
             approveGetDto.setEndTime("");
+        }
+        if (approveGetDto.getApproveStatus() == null){
+            approveGetDto.setApproveStatus(0);
         }
         //判断结束日期是否为空，若没有选择结束日期则直接默认查询到当天
         if (approveGetDto.getEndTime().length() == 0){

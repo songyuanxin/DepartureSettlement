@@ -569,6 +569,18 @@ public class LsjsServiceImpl implements ILsjsService {
         List<ImportData> imoprtDataByTime = getImoprtDataByTime(approveGetDto);
         //根据工号查询离职员工离司结算审核数据
         List<ApproveGetRes> approveDataByPernr = getApproveDataByPernr(imoprtDataByTime);
+        //若请求参数中有审批状态作为参数则需要对查询出来的审核数据进行过滤
+        if (approveGetDto.getApproveStatus() > 0){
+            //若查询结果不为空时才需处理查询结果
+            if (approveDataByPernr.size() > 0){
+                for (int i = 0; i<approveDataByPernr.size(); i++){
+                    if (approveDataByPernr.get(i).getApproveStatus() != approveGetDto.getApproveStatus()){
+                        approveDataByPernr.remove(i);
+                        i--;
+                    }
+                }
+            }
+        }
         return approveDataByPernr;
     }
 
@@ -592,14 +604,15 @@ public class LsjsServiceImpl implements ILsjsService {
     public List<ApproveGetRes> getApproveDataByPernr(List<ImportData> importDataByTime) {
         List<ApproveGetRes> approveDataList = new ArrayList<>();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        //根据开始日期和结束日期查询到这一时间段内导入的数据
         for (ImportData importData : importDataByTime) {
             ApproveGetRes approveGetRes = new ApproveGetRes();
             //获取审核表中数据，例如审核扣款金额等
             ApproveGetRes approveDataByPernr = approveMapper.getApproveDataByPernr(importData.getQuitPernr(), df.format(importData.getImportTime()));
             BeanUtils.copyProperties(approveDataByPernr, approveGetRes);
             //获取【审核状态】
-            String approveResult = getApproveResult(importData.getImportTime(), importData.getQuitPernr());
-            approveGetRes.setApproveResult(approveResult);
+            Integer approveResult = getApproveResult(importData.getImportTime(), importData.getQuitPernr());
+            approveGetRes.setApproveStatus(approveResult);
             //获取【分部】
             if (importData.getPersonScope().equals("门店")) {
                 //根据离职员工工号查询所在门店店编
@@ -612,63 +625,10 @@ public class LsjsServiceImpl implements ILsjsService {
                 //职能员工所属分部取人事导入数据时填写【分部】
                 approveGetRes.setDivision(importData.getDivision());
             }
-            ApproveGetRes approveGetRes1 = processNull(approveGetRes);
             //返回值
-            approveDataList.add(approveGetRes1);
+            approveDataList.add(approveGetRes);
         }
         return approveDataList;
-    }
-
-    /**
-     * 处理人力资源中心查询审核数据时金额为0的数据
-     *
-     * @param approveGetRes
-     * @return
-     */
-    private ApproveGetRes processNull(ApproveGetRes approveGetRes) {
-        if (StringUtils.isBlank(approveGetRes.getGoodsMoney())) {
-            approveGetRes.setGoodsMoney("0.00");
-        } else {
-            if (approveGetRes.getGoodsMoney().length() <= 0) {
-                approveGetRes.setGoodsMoney("0.00");
-            }
-        }
-        if (StringUtils.isBlank(approveGetRes.getShortMoney())) {
-            approveGetRes.setShortMoney("0.00");
-        } else {
-            if (approveGetRes.getShortMoney().length() <= 0) {
-                approveGetRes.setShortMoney("0.00");
-            }
-        }
-        if (StringUtils.isBlank(approveGetRes.getQualityMoney())) {
-            approveGetRes.setQualityMoney("0.00");
-        } else {
-            if (approveGetRes.getQualityMoney().length() <= 0) {
-                approveGetRes.setQualityMoney("0.00");
-            }
-        }
-        if (StringUtils.isBlank(approveGetRes.getCareMoney())) {
-            approveGetRes.setCareMoney("0.00");
-        } else {
-            if (approveGetRes.getCareMoney().length() <= 0) {
-                approveGetRes.setCareMoney("0.00");
-            }
-        }
-        if (StringUtils.isBlank(approveGetRes.getCardMoney())) {
-            approveGetRes.setCardMoney("0.00");
-        } else {
-            if (approveGetRes.getCardMoney().length() <= 0) {
-                approveGetRes.setCardMoney("0.00");
-            }
-        }
-        if (StringUtils.isBlank(approveGetRes.getClothesMoney())) {
-            approveGetRes.setClothesMoney("0.00");
-        } else {
-            if (approveGetRes.getClothesMoney().length() <= 0) {
-                approveGetRes.setClothesMoney("0.00");
-            }
-        }
-        return approveGetRes;
     }
 
     /**
@@ -678,24 +638,26 @@ public class LsjsServiceImpl implements ILsjsService {
      * @param quitPernr
      * @return
      */
-    private String getApproveResult(Timestamp importTime, String quitPernr) {
+    private Integer getApproveResult(Timestamp importTime, String quitPernr) {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         List<Integer> resultList = new ArrayList<>();
-        String approveResult = "";
+        Integer approveStatus = 0;
         List<Integer> approveResultList = approveMapper.getApproveResultList(df.format(importTime), quitPernr);
-        if (approveResultList.size() < 5) {
-            return approveResult = "审批中";
-        }
-        for (Integer result : approveResultList) {
-            if (result == 1 || result == 3) {
-                resultList.add(result);
+        if (approveResultList.size() < 4) {
+            approveStatus = 1;
+        }else {
+            for (Integer result : approveResultList) {
+                if (result == 1 || result == 3) {
+                    resultList.add(result);
+                }
+            }
+            if (resultList.size() > 0) {
+                approveStatus = 1;
+            } else {
+                approveStatus = 2;
             }
         }
-        if (resultList.size() > 0) {
-            return approveResult = "审批中";
-        } else {
-            return approveResult = "审批完成";
-        }
+        return approveStatus;
     }
 
     /**
@@ -864,4 +826,5 @@ public class LsjsServiceImpl implements ILsjsService {
         }
         return approveDataResList;
     }
+
 }
