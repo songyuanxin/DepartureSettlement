@@ -75,7 +75,7 @@
         from ImportData
     </select>
 
-    <select id="getImoprtDataByPernr" parameterType="string" resultMap="ImportDataResult">
+    <select id="getImoprtDataByPernr" parameterType="string" resultType="com.syx.domain.vo.ImportDataVO">
         select distinct ImportData.quit_pernr,
                         ImportData.person_scope,
                         ImportData.direct_pernr,

@@ -1,21 +1,31 @@
-package com.syx.domain;
+package com.syx.domain.vo;
 
 import lombok.Data;
 
 import java.sql.Timestamp;
 
 /**
- * @author 宋远欣
- * @date 2022/5/18
- **/
+ * @author weiran-lsx
+ * @date 2022/7/11 15:52
+ */
 @Data
-public class ImportData {
+public class ImportDataVO {
     //离职员工工号
     private String quitPernr;
     //人员范围
     private String personScope;
     //直接上级工号
     private String directPernr;
+    //直接上级姓名
+    private String directPernrName;
+    //区域经理工号
+    private String areaPernr;
+    //区域经理姓名
+    private String areaPernrName;
+    //地区经理工号
+    private String regionalPernr;
+    //地区经理姓名
+    private String regionalPernrName;
     //所属分部
     private String division;
     //发起人工号

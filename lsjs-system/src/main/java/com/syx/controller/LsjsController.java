@@ -3,6 +3,7 @@ package com.syx.controller;
 import com.syx.domain.ImportData;
 import com.syx.domain.SAPUserInfo;
 import com.syx.domain.vo.AuditUserRes;
+import com.syx.domain.vo.ImportDataVO;
 import com.syx.domains.AjaxResult;
 import com.syx.domains.dto.ApproveGetDto;
 import com.syx.domains.dto.ImportDataGetDto;
@@ -241,7 +242,7 @@ public class LsjsController {
 //        }else if (StringUtils.isBlank(importDataGetDto.getQuitPernr())){
 //            importDataGetDto.setQuitPernr("");
 //        }
-        List<ImportData> importDataList = lsjsService.getImportDataList(importDataGetDto);
+        List<ImportDataVO> importDataList = lsjsService.getImportDataList(importDataGetDto);
         return AjaxResult.success(importDataList);
     }
 

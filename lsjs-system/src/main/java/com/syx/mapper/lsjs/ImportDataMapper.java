@@ -1,6 +1,7 @@
 package com.syx.mapper.lsjs;
 
 import com.syx.domain.ImportData;
+import com.syx.domain.vo.ImportDataVO;
 import com.syx.domains.dto.ApproveGetDto;
 import com.syx.domains.dto.ImportDataGetDto;
 import org.apache.ibatis.annotations.Mapper;
@@ -40,7 +41,7 @@ public interface ImportDataMapper {
 
     List<ImportData> getImportDataList();
 
-    List<ImportData> getImoprtDataByPernr(String quitPernr);
+    List<ImportDataVO> getImoprtDataByPernr(String quitPernr);
 
     ImportData getImoprtDataByQuitPernr(String quitPernr);
 
