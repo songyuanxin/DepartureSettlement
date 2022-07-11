@@ -207,7 +207,18 @@ public class LsjsServiceImpl implements ILsjsService {
      */
     @Override
     public List<QueryApproveRes> queryApproveByPernr(String pernr) {
-        List<QueryApproveRes> approve = approveMapper.queryApproveByPernr(pernr);
+        SimpleDateFormat df1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        //获取该离职员工最新的导入数据，考虑再入职的情况
+        ApproveGetDto approveGetDto = new ApproveGetDto();
+        approveGetDto.setQuitPernr(pernr);
+        //获取该离职员工最新导入数据
+        List<ImportData> imoprtDataByTime = importDataMapper.getImoprtDataByTime(approveGetDto);
+        List<QueryApproveRes> approve = new ArrayList<>();
+        for (ImportData importData:imoprtDataByTime){
+            //根据离职员工工号和导入时间查询最新审核数据
+            approve = approveMapper.queryApproveByPernr(pernr,df1.format(importData.getImportTime()));
+        }
+
         List<QueryApproveRes> queryApproveResList = new ArrayList<>();
         //获取当前系统时间
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");

@@ -37,7 +37,7 @@ public interface ApproveMapper {
      * @param pernr
      * @return
      */
-    List<QueryApproveRes> queryApproveByPernr(String pernr);
+    List<QueryApproveRes> queryApproveByPernr(@Param("pernr") String pernr, @Param("importTime") String importTime);
 
     /**
      * 根据审核人工号查询待自己审核的离职员工工号

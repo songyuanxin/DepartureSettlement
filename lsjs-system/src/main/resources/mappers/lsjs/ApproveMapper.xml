@@ -46,7 +46,7 @@
     <select id="queryApproveByPernr" parameterType="string" resultType="com.syx.domains.vo.QueryApproveRes">
         select *
         from VQueryApprove
-        where quit_pernr = #{pernr}
+        where quit_pernr = #{pernr} and sendTime >= #{importTime}
         order by isnull(approveTime, GETDATE()), approvecontent
     </select>
 

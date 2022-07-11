@@ -13,8 +13,12 @@ import com.syx.utils.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.dom4j.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
-import java.time.LocalDate;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -78,7 +82,7 @@ public class LsjsController {
      * @return
      */
     @PostMapping(value = "/query")
-    public AjaxResult query(String pernr) {
+    public AjaxResult query(String pernr) throws ParseException {
         //三、若工号与身份证后六位均正确查询该员工离司结算审核情况
         List<QueryApproveRes> approveByPernrList = lsjsService.queryApproveByPernr(pernr);
         String userNameByPernr = lsjsService.getUserNameByPernr(pernr);
@@ -118,6 +122,44 @@ public class LsjsController {
         approveStatusResList.setStatus(3);
         approveStatusResList.setName(userNameByPernr);
         approveStatusResList.setQueryApproveRes(approveByPernrList);
+        //3、如果该员工的离司结算已全部审核完成，则需要判断审核完成时间是否在当月5日之前，若在当月5日以及5日之前则只能在当月15日之前查询审核进度
+        //审核完成时间
+        if (approveStatusResList.getStatus() == 3){
+            //获取当前系统时间
+            LocalDate now = LocalDate.now();
+            //审核完成时间
+            QueryApproveRes queryApproveRes = approveByPernrList.stream().max(Comparator.comparing(QueryApproveRes::getApproveTime)).get();
+            String approveTime = queryApproveRes.getApproveTime();
+            //指定审核完成时间转换格式
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SS");
+            //将审核时间转换为Date类型
+            Date parse = format.parse(approveTime);
+            Instant instant = parse.toInstant();
+            //将审核时间转换为LocalDateTime类型
+            LocalDateTime allApproveTime = LocalDateTime.ofInstant(instant, ZoneId.ofOffset("GMT", ZoneOffset.ofHours(8)));
+            //跨年查询的直接返回查不到
+            if (now.getYear() != allApproveTime.getYear()){
+                approveStatusResList.setStatus(4);
+                return AjaxResult.error("您的离职工资结算流程已完结！", approveStatusResList);
+            }
+            //先判断查询时间与审核完成时间是否在同一个月
+            if (now.getMonth() == allApproveTime.getMonth()){
+                if (allApproveTime.getDayOfMonth() <= 5 && now.getDayOfMonth() >= 15){
+                    approveStatusResList.setStatus(4);
+                    return AjaxResult.error("您的离职工资结算流程已完结！", approveStatusResList);
+                }
+            }else {
+                if (now.getMonthValue() > allApproveTime.getMonthValue()){
+                    if (allApproveTime.getDayOfMonth() <= 5){
+                        approveStatusResList.setStatus(4);
+                        return AjaxResult.error("您的离职工资结算流程已完结！", approveStatusResList);
+                    }else if (allApproveTime.getDayOfMonth() > 5 && now.getDayOfMonth() > 15){
+                        approveStatusResList.setStatus(4);
+                        return AjaxResult.error("您的离职工资结算流程已完结！", approveStatusResList);
+                    }
+                }
+            }
+        }
         return AjaxResult.success("查询成功", approveStatusResList);
     }
 
