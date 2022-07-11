@@ -166,7 +166,7 @@
           and send_time >= #{importTime}
     </select>
 
-    <select id="getApproveDataRes" parameterType="com.syx.domains.dto.ImportDataGetDto" resultType="com.syx.domains.vo.ApproveDataRes">
+    <select id="getApproveDataRes" parameterType="string" resultType="com.syx.domains.vo.ApproveDataRes">
         SELECT IM.division as 'division'
         , AP.quit_pernr as 'quitPernr'
         , pI.name as 'quitName'
@@ -174,15 +174,18 @@
         , IM.person_scope as 'personScope'
         , IM.import_time as 'importTime'
         , IM.originator_pernr as 'importPernr'
+        , MAX(case when approve_content = 1 and send_time >= #{importTime} THEN reviewer_pernr ELSE NULL END) as 'directReviewerPernr'
         , MAX(case when approve_content = 1 and send_time >= #{importTime} THEN approve_result_desc ELSE NULL END) as 'directApproveResult'
         , MAX(case when approve_content = 1 and send_time >= #{importTime} THEN send_time ELSE NULL END) as 'directSendTime'
         , MAX(case when approve_content = 1 and send_time >= #{importTime} THEN approve_time ELSE NULL END) as 'directApproveTime'
-        , MIN(case when approve_content = 6 and send_time >= #{importTime} or
-                        approve_content = 7 and send_time >= #{importTime} THEN approve_result_desc ELSE NULL END) as 'areaApproveResult'
-        , MAX(case when approve_content = 6 and send_time >= #{importTime} or
-                        approve_content = 7 and send_time >= #{importTime} THEN send_time ELSE NULL END) as 'areaSendTime'
-        , MAX(case when approve_content = 6 and send_time >= #{importTime} or
-                        approve_content = 7 and send_time >= #{importTime} THEN approve_time ELSE NULL END) as 'areaApproveTime'
+        , MAX(case when approve_content = 6 and send_time >= #{importTime} THEN reviewer_pernr ELSE NULL END)as 'areaReviewerPernr'
+        , MAX(case when approve_content = 6 and send_time >= #{importTime} THEN approve_result_desc ELSE NULL END) as 'areaApproveResult'
+        , MAX(case when approve_content = 6 and send_time >= #{importTime} THEN send_time ELSE NULL END) as 'areaSendTime'
+        , MAX(case when approve_content = 6 and send_Time >= #{importTime} THEN approve_time ELSE NULL END) as 'areaApproveTime'
+        , MAX(case when approve_content = 7 and send_time >= #{importTime} THEN reviewer_pernr ELSE NULL END) as 'regionalReviewerPernr'
+        , MAX(case when approve_content = 7 and send_time >= #{importTime} THEN approve_result_desc ELSE NULL END) as 'regionalApproveResult'
+        , MAX(case when approve_content = 7 and send_time >= #{importTime} THEN send_time ELSE NULL END) as 'regionalSendTime'
+        , MAX(case when approve_content = 7 and send_time >= #{importTime} THEN approve_time ELSE NULL END) as 'regionalApproveTime'
         , MAX(case when approve_content = 2 and send_time >= #{importTime} THEN approve_result_desc ELSE NULL END) as 'loanApproveResult'
         , MAX(case when approve_content = 2 and send_time >= #{importTime} THEN send_time ELSE NULL END) as 'loanSendTime'
         , MAX(case when approve_content = 2 and send_time >= #{importTime} THEN approve_time ELSE NULL END) as 'loanApproveTime'

@@ -570,11 +570,11 @@ public class LsjsServiceImpl implements ILsjsService {
         //根据工号查询离职员工离司结算审核数据
         List<ApproveGetRes> approveDataByPernr = getApproveDataByPernr(imoprtDataByTime);
         //若请求参数中有审批状态作为参数则需要对查询出来的审核数据进行过滤
-        if (approveGetDto.getApproveStatus() > 0){
+        if (approveGetDto.getApproveStatus() > 0) {
             //若查询结果不为空时才需处理查询结果
-            if (approveDataByPernr.size() > 0){
-                for (int i = 0; i<approveDataByPernr.size(); i++){
-                    if (approveDataByPernr.get(i).getApproveStatus() != approveGetDto.getApproveStatus()){
+            if (approveDataByPernr.size() > 0) {
+                for (int i = 0; i < approveDataByPernr.size(); i++) {
+                    if (approveDataByPernr.get(i).getApproveStatus() != approveGetDto.getApproveStatus()) {
                         approveDataByPernr.remove(i);
                         i--;
                     }
@@ -645,7 +645,7 @@ public class LsjsServiceImpl implements ILsjsService {
         List<Integer> approveResultList = approveMapper.getApproveResultList(df.format(importTime), quitPernr);
         if (approveResultList.size() < 4) {
             approveStatus = 1;
-        }else {
+        } else {
             for (Integer result : approveResultList) {
                 if (result == 1 || result == 3) {
                     resultList.add(result);
@@ -679,18 +679,19 @@ public class LsjsServiceImpl implements ILsjsService {
      */
     @Override
     public List<ImportData> getImportDataList(ImportDataGetDto importDataGetDto) {
-        List<ImportData> importDataList = new ArrayList<>();
-        if (importDataGetDto.getImportTime().length() > 0 && importDataGetDto.getQuitPernr().length() > 0) {
-            //若查询条件中既有导入日期又有离职员工工号则能精确查出一条导入数据
-            ImportData list = importDataMapper.getImoprtDataByTimeAndPernr(importDataGetDto);
-            importDataList.add(list);
-        } else if (importDataGetDto.getImportTime().length() > 0 && importDataGetDto.getQuitPernr().length() == 0) {
-            //若查询条件只有导入日期，则查出当天导入的所有人的导入数据
-            importDataList = importDataMapper.getImoprtDataByImportTime(importDataGetDto.getImportTime());
-        } else if (importDataGetDto.getImportTime().length() == 0 && importDataGetDto.getQuitPernr().length() > 0) {
-            //若查询条件中只有离职员工工号，则查询出该离职员工的所有离司结算导入数据(考虑到再入职又离职的员工)
-            importDataList = importDataMapper.getImoprtDataByPernr(importDataGetDto.getQuitPernr());
-        }
+//        List<ImportData> importDataList = new ArrayList<>();
+//        if (importDataGetDto.getImportTime().length() > 0 && importDataGetDto.getQuitPernr().length() > 0) {
+//            //若查询条件中既有导入日期又有离职员工工号则能精确查出一条导入数据
+//            ImportData list = importDataMapper.getImoprtDataByTimeAndPernr(importDataGetDto);
+//            importDataList.add(list);
+//        } else if (importDataGetDto.getImportTime().length() > 0 && importDataGetDto.getQuitPernr().length() == 0) {
+//            //若查询条件只有导入日期，则查出当天导入的所有人的导入数据
+//            importDataList = importDataMapper.getImoprtDataByImportTime(importDataGetDto.getImportTime());
+//        } else if (importDataGetDto.getImportTime().length() == 0 && importDataGetDto.getQuitPernr().length() > 0) {
+//            //若查询条件中只有离职员工工号，则查询出该离职员工的所有离司结算导入数据(考虑到再入职又离职的员工)
+//            importDataList = importDataMapper.getImoprtDataByPernr(importDataGetDto.getQuitPernr());
+//        }
+        List<ImportData> importDataList = importDataMapper.getImoprtDataByPernr(importDataGetDto.getQuitPernr());
         return importDataList;
     }
 
@@ -780,49 +781,131 @@ public class LsjsServiceImpl implements ILsjsService {
             //把获得的系统时间写进ImportDataGetDto
             dataResByTime.setImportEndTime(importEndTime);
         }
-        //创建ApproveGetDto对象
-        ApproveGetDto approveGetDto = new ApproveGetDto();
-        //把ImportDataGetDto赋值给ApproveGetDto
-        approveGetDto.setStartTime(dataResByTime.getImportStartTime());
-        approveGetDto.setEndTime(dataResByTime.getImportEndTime());
-        //调用mapper方法，获得ImportTime
-        List<ImportData> importDataList = importDataMapper.getImoprtDataByTime(approveGetDto);
         List<ApproveDataRes> approveDataResList = new ArrayList<>();
-        //在importDataList中获得ImportTime
-        for (ImportData importData : importDataList) {
-            //通过ImportTime查询监控报表数据
-            dataResByTime.setImportTime(df.format(importData.getImportTime()));
-            approveDataResList = approveMapper.getApproveDataRes(dataResByTime);
-        }
-        //如果前端传过来离职员工工号，执行以下代码
+        //如果前端传过来离职员工工号
         if (dataResByTime.getQuitPernr() != null && dataResByTime.getQuitPernr().length() != 0) {
-            //取出人员范围字符串
-            for (ApproveDataRes dataRes : approveDataResList) {
-                //如果人员范围为门店
-                if (dataRes.getPersonScope().equals("门店")) {
+            //创建ApproveGetDto对象
+            ApproveGetDto approveGetDto = new ApproveGetDto();
+            //把ImportDataGetDto赋值给ApproveGetDto
+            approveGetDto.setStartTime(dataResByTime.getImportStartTime());
+            approveGetDto.setEndTime(dataResByTime.getImportEndTime());
+            //把离职员工工号赋值给approveGetDto进行查询
+            approveGetDto.setQuitPernr(dataResByTime.getQuitPernr());
+            //赋值导入人工号
+            approveGetDto.setImportPernr(dataResByTime.getImportPernr());
+            //赋值人员范围
+            approveGetDto.setPersonScope(dataResByTime.getPersonScope());
+            //调用mapper方法，获得ImportTime
+            List<ImportData> importDataList = importDataMapper.getImoprtDataByTime(approveGetDto);
+            for (ImportData importData : importDataList) {
+                //通过ImportTime查询监控报表数据
+                ApproveDataRes approveDataRes = approveMapper.getApproveDataRes((df.format(importData.getImportTime())),
+                        importData.getQuitPernr(),
+                        importData.getPersonScope(),
+                        importData.getOriginatorPernr());
+                if (approveDataRes.getPersonScope().equals("门店")) {
                     //通过前端传过来的离职员工工号查询店编
-                    String storeName = sapUserInfoMapper.getDepartmentByPernr(dataResByTime.getQuitPernr());
+                    String storeName = sapUserInfoMapper.getDepartmentByPernr(approveDataRes.getQuitPernr());
                     //通过店编查询离职人员所属分部地区
                     SAPStoreHead sapStoreHeadByStoreId = sapStoreHeadMapper.getSAPStoreHeadByStoreId(storeName);
                     //查询出来的店编写进监控报表中
-                    dataRes.setDivision(sapStoreHeadByStoreId.getManageArea());
+                    approveDataRes.setDivision(sapStoreHeadByStoreId.getManageArea());
+                    if (approveDataRes.getDirectApproveResult().equals("通过") &&
+                            approveDataRes.getAreaApproveResult().equals("通过") &&
+                            approveDataRes.getRegionalApproveResult().equals("通过") &&
+                            approveDataRes.getCardApproveResult().equals("通过") &&
+                            approveDataRes.getQualityApproveResult().equals("通过") &&
+                            approveDataRes.getLoanApproveResult().equals("通过")) {
+                        approveDataRes.setApproveStatus("审核完成");
+                    } else {
+                        approveDataRes.setApproveStatus("审核中");
+                    }
+                    //查询离职原因
+                    String leaveReson = sapUserInfoMapper.getLeaveResonByQuitPernr(approveDataRes.getQuitPernr());
+                    //把离职原因返回给前端
+                    approveDataRes.setLeaveReson(leaveReson);
+                    approveDataResList.add(approveDataRes);
+                }
+                if (approveDataRes.getPersonScope().equals("职能")) {
+                    if (approveDataRes.getDirectApproveResult().equals("通过") &&
+                            approveDataRes.getAreaApproveResult().equals("通过") &&
+                            approveDataRes.getRegionalApproveResult().equals("通过") &&
+                            approveDataRes.getCardApproveResult().equals("通过") &&
+                            approveDataRes.getQualityApproveResult().equals("通过") &&
+                            approveDataRes.getLoanApproveResult().equals("通过")) {
+                        approveDataRes.setApproveStatus("审核完成");
+                    } else {
+                        approveDataRes.setApproveStatus("审核中");
+                    }
+                    //查询离职原因
+                    String leaveReson = sapUserInfoMapper.getLeaveResonByQuitPernr(approveDataRes.getQuitPernr());
+                    //把离职原因返回给前端
+                    approveDataRes.setLeaveReson(leaveReson);
+                    approveDataResList.add(approveDataRes);
                 }
             }
-        }
-
-        //如果前端传过来的数据没有离职员工号，进入以下方法
-        else {
-            for (ApproveDataRes dataRes : approveDataResList) {
-                //判断人员范围，如果范围为门店
-                if (dataRes.getPersonScope().equals("门店")) {
-                    //通过离职员工号查询SPAStoreHead表中的店编
-                    String storeName = sapUserInfoMapper.getDepartmentByPernr(dataRes.getQuitPernr());
-                    //通过查出来的店编查询人员所属分部地区
+        } else {
+            //创建ApproveGetDto对象
+            ApproveGetDto approveGetDto = new ApproveGetDto();
+            //把ImportDataGetDto赋值给ApproveGetDto
+            approveGetDto.setStartTime(dataResByTime.getImportStartTime());
+            approveGetDto.setEndTime(dataResByTime.getImportEndTime());
+            //把离职员工工号赋值给approveGetDto进行查询
+            approveGetDto.setQuitPernr(dataResByTime.getQuitPernr());
+            //赋值导入人工号
+            approveGetDto.setImportPernr(dataResByTime.getImportPernr());
+            //赋值人员范围
+            approveGetDto.setPersonScope(dataResByTime.getPersonScope());
+            //调用mapper方法，获得ImportTime
+            List<ImportData> importDataList = importDataMapper.getImoprtDataByTime(approveGetDto);
+            for (ImportData importData : importDataList) {
+                //通过ImportTime查询监控报表数据
+                ApproveDataRes approveDataRes = approveMapper.getApproveDataRes((df.format(importData.getImportTime())),
+                        importData.getQuitPernr(),
+                        importData.getPersonScope(),
+                        importData.getOriginatorPernr());
+                if (approveDataRes.getPersonScope().equals("门店")) {
+                    //通过前端传过来的离职员工工号查询店编
+                    String storeName = sapUserInfoMapper.getDepartmentByPernr(approveDataRes.getQuitPernr());
+                    //通过店编查询离职人员所属分部地区
                     SAPStoreHead sapStoreHeadByStoreId = sapStoreHeadMapper.getSAPStoreHeadByStoreId(storeName);
-                    //把分部地区字段写进 list 中，返回
-                    dataRes.setDivision(sapStoreHeadByStoreId.getManageArea());
+                    //查询出来的店编写进监控报表中
+                    approveDataRes.setDivision(sapStoreHeadByStoreId.getManageArea());
+                    if (approveDataRes.getDirectApproveResult().equals("通过") &&
+                            approveDataRes.getAreaApproveResult().equals("通过") &&
+                            approveDataRes.getRegionalApproveResult().equals("通过") &&
+                            approveDataRes.getCardApproveResult().equals("通过") &&
+                            approveDataRes.getQualityApproveResult().equals("通过") &&
+                            approveDataRes.getLoanApproveResult().equals("通过")) {
+                        approveDataRes.setApproveStatus("审核完成");
+                    } else {
+                        approveDataRes.setApproveStatus("审核中");
+                    }
+                    //查询离职原因
+                    String leaveReson = sapUserInfoMapper.getLeaveResonByQuitPernr(approveDataRes.getQuitPernr());
+                    //把离职原因返回给前端
+                    approveDataRes.setLeaveReson(leaveReson);
+                    approveDataResList.add(approveDataRes);
+                }
+                if (approveDataRes.getPersonScope().equals("职能")) {
+                    if (approveDataRes.getDirectApproveResult().equals("通过") &&
+                            approveDataRes.getAreaApproveResult().equals("通过") &&
+                            approveDataRes.getRegionalApproveResult().equals("通过") &&
+                            approveDataRes.getCardApproveResult().equals("通过") &&
+                            approveDataRes.getQualityApproveResult().equals("通过") &&
+                            approveDataRes.getLoanApproveResult().equals("通过")) {
+                        approveDataRes.setApproveStatus("审核完成");
+                    } else {
+                        approveDataRes.setApproveStatus("审核中");
+                    }
+                    //查询离职原因
+                    String leaveReson = sapUserInfoMapper.getLeaveResonByQuitPernr(approveDataRes.getQuitPernr());
+                    //把离职原因返回给前端
+                    approveDataRes.setLeaveReson(leaveReson);
+                    approveDataResList.add(approveDataRes);
                 }
             }
+
         }
         return approveDataResList;
     }

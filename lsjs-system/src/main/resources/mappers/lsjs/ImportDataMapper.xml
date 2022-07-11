@@ -44,6 +44,15 @@
             <if test="division != null and division != ''">
                 AND division = #{division}
             </if>
+            <if test="personScope != null and personScope != ''">
+                AND person_scope = #{personScope}
+            </if>
+            <if test=" importPernr != null and importPernr != ''">
+                AND originator_pernr = #{importPernr}
+            </if>
+            <if test="quitPernr != null and quitPernr != '' ">
+                AND quit_Pernr = #{quitPernr}
+            </if>
         </where>
     </select>
 
@@ -67,9 +76,27 @@
     </select>
 
     <select id="getImoprtDataByPernr" parameterType="string" resultMap="ImportDataResult">
-        select *
+        select distinct ImportData.quit_pernr,
+                        ImportData.person_scope,
+                        ImportData.direct_pernr,
+                        p1.name                                                                                 as directPernrName,
+                        case when ImportData.person_scope = '门店' THEN Approve.region_pernr ELSE NULL END       as regionalPernr,
+                        case when ImportData.person_scope = '门店' THEN p2.name ELSE NULL END                    as regionalPernrName,
+                        case when ImportData.person_scope = '门店' THEN Approve.area_pernr ELSE NULL END         as areaPernr,
+                        case when ImportData.person_scope = '门店' THEN P3.name ELSE NULL END                    as areaPernrName,
+                        ImportData.division,
+                        ImportData.originator_pernr,
+                        ImportData.import_time,
+                        ImportData.absenteeism_doc                                                              as absenteeismDoc
         from ImportData
-        where quit_pernr = #{quitPernr}
+                 inner join personInfo p1 on p1.alias = ImportData.direct_pernr
+                 inner join Approve on Approve.quit_pernr = ImportData.quit_pernr
+                 inner join personInfo p2 on p2.alias = Approve.region_pernr
+                 inner join personInfo p3 on p3.alias = Approve.area_pernr
+        where Approve.quit_pernr = #{quitPernr}
+        group by ImportData.quit_pernr, ImportData.person_scope, ImportData.direct_pernr, Approve.region_pernr,
+                 Approve.area_pernr, ImportData.division, ImportData.originator_pernr, ImportData.import_time,
+                 ImportData.absenteeism_doc, p1.name, p2.name, p3.name
     </select>
 
     <select id="getImoprtDataByQuitPernr" parameterType="string" resultMap="ImportDataResult">

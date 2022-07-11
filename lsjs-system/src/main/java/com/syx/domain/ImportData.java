@@ -16,6 +16,16 @@ public class ImportData {
     private String personScope;
     //直接上级工号
     private String directPernr;
+    //直接上级姓名
+    private String directPernrName;
+    //区域经理工号
+    private String areaPernr;
+    //区域经理姓名
+    private String areaPernrName;
+    //地区经理工号
+    private String regionalPernr;
+    //地区经理姓名
+    private String regionalPernrName;
     //所属分部
     private String division;
     //发起人工号

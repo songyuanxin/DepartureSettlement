@@ -12,4 +12,7 @@ public class ApproveGetDto {
     private String endTime;
     private Integer approveStatus;
     private String division;
+    private String personScope;
+    private String importPernr;
+    private String quitPernr;
 }

@@ -86,5 +86,6 @@ public interface ApproveMapper {
 
     List<Integer> getApproveResultList(@Param("importTime")String importTime, @Param("quitPernr")String quitPernr);
 
-    List<ApproveDataRes> getApproveDataRes(ImportDataGetDto importDataGetDto);
+    ApproveDataRes getApproveDataRes(@Param("importTime")String importTime, @Param("quitPernr")String quitPernr
+            ,@Param("personScope")String personScope,@Param("importPernr")String importPernr);
 }

@@ -194,11 +194,11 @@ public class LsjsController {
      */
     @GetMapping(value = "/getImportDataList")
     public AjaxResult getImportDataList(ImportDataGetDto importDataGetDto){
-        if (StringUtils.isBlank(importDataGetDto.getImportTime())){
-            importDataGetDto.setImportTime("");
-        }else if (StringUtils.isBlank(importDataGetDto.getQuitPernr())){
-            importDataGetDto.setQuitPernr("");
-        }
+//        if (StringUtils.isBlank(importDataGetDto.getImportTime())){
+//            importDataGetDto.setImportTime("");
+//        }else if (StringUtils.isBlank(importDataGetDto.getQuitPernr())){
+//            importDataGetDto.setQuitPernr("");
+//        }
         List<ImportData> importDataList = lsjsService.getImportDataList(importDataGetDto);
         return AjaxResult.success(importDataList);
     }
