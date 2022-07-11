@@ -116,7 +116,6 @@
              , p.name                                                                                                 as name
              , p.zlzrq                                                                                                as leaveDate
              , i.absenteeism_doc                                                                                      as absenteeismDoc
-             , i.division                                                                                             as division
              , p.mgtxt                                                                                                as leaveReson
              , MAX(case
                        WHEN a.approve_content = 1 and send_time >= #{importTime} THEN a.goods_refund
@@ -143,7 +142,7 @@
                  inner join personInfo p on a.quit_pernr = p.alias
                  inner join ImportData i on a.quit_pernr = i.quit_pernr
         where a.quit_pernr = #{pernr}
-        GROUP BY a.quit_pernr, p.name, i.absenteeism_doc, p.mgtxt, p.zlzrq, i.division
+        GROUP BY a.quit_pernr, p.name, i.absenteeism_doc, p.mgtxt, p.zlzrq
     </select>
 
     <delete id="deleteApproveDataByPernr" parameterType="string">
