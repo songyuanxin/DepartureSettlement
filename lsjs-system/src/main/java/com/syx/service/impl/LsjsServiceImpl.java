@@ -1,5 +1,6 @@
 package com.syx.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.syx.client.HttpClientUtils;
 import com.syx.domain.*;
 import com.syx.domain.vo.AuditUserRes;
@@ -717,10 +718,19 @@ public class LsjsServiceImpl implements ILsjsService {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         int i = 0;
         //判断导入数据表中是否存在该离职员工的数据
-        ImportData imoprtDataByPernr = importDataMapper.getImoprtDataByQuitPernr(quitPernr);
-        if (imoprtDataByPernr.getDirectPernr().length() > 0) {
+//        ImportData imoprtDataByPernr = importDataMapper.getImoprtDataByQuitPernr(quitPernr);
+//        if (imoprtDataByPernr.getDirectPernr().length() > 0) {
+//            int result = 0;
+//            result = importDataMapper.deleteImportData(quitPernr, df.format(imoprtDataByPernr.getImportTime()));
+//            if (result == 0) {
+//                return result;
+//            }
+//            i = i + result;
+//        }
+        List<ImportData> importDataList = importDataMapper.getImportDataByQuitPernr(quitPernr);
+        if(importDataList.size() > 0 ){
             int result = 0;
-            result = importDataMapper.deleteImportData(quitPernr, df.format(imoprtDataByPernr.getImportTime()));
+            result = importDataMapper.deleteImportDataByPernr(quitPernr);
             if (result == 0) {
                 return result;
             }
@@ -730,7 +740,7 @@ public class LsjsServiceImpl implements ILsjsService {
         List<Approve> approveByPernr = approveMapper.getApproveByPernr(quitPernr);
         if (approveByPernr.size() > 0) {
             int result = 0;
-            result = approveMapper.deleteApproveDataByPernr(quitPernr, df.format(imoprtDataByPernr.getImportTime()));
+            result = approveMapper.deleteApproveDataByPernr(quitPernr);
             if (result == 0) {
                 return result;
             }

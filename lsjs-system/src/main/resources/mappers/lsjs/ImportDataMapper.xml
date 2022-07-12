@@ -32,6 +32,11 @@
         where quit_pernr = #{quitPernr}
           and convert(date, import_time) = #{importTime}
     </delete>
+    <delete id="deleteImportDataByPernr" parameterType="string">
+        delete
+        from ImportData
+        where quit_pernr = #{quitPernr}
+    </delete>
 
     <select id="getImoprtDataByTime" parameterType="com.syx.domains.dto.ApproveGetDto" resultMap="ImportDataResult">
         select *
@@ -76,28 +81,25 @@
     </select>
 
     <select id="getImoprtDataByPernr" parameterType="string" resultType="com.syx.domains.vo.ImportDataRes">
-        select distinct ImportData.quit_pernr,
-                        ImportData.person_scope,
-                        ImportData.direct_pernr,
-                        p1.name                                                                                 as directName,
-                        case when ImportData.person_scope = '门店' THEN Approve.region_pernr ELSE NULL END       as regionalPernr,
-                        case when ImportData.person_scope = '门店' THEN p2.name ELSE NULL END                    as regionalName,
-                        case when ImportData.person_scope = '门店' THEN Approve.area_pernr ELSE NULL END         as areaPernr,
-                        case when ImportData.person_scope = '门店' THEN P3.name ELSE NULL END                    as areaName,
-                        ImportData.division,
-                        ImportData.originator_pernr,
-                        ImportData.import_time,
-                        ImportData.absenteeism_doc                                                              as absenteeismDoc
-        from ImportData
-                 inner join personInfo p1 on p1.alias = ImportData.direct_pernr
-                 inner join Approve on Approve.quit_pernr = ImportData.quit_pernr
-                 inner join personInfo p2 on p2.alias = Approve.region_pernr
-                 inner join personInfo p3 on p3.alias = Approve.area_pernr
-        where Approve.quit_pernr = #{quitPernr}
-        group by ImportData.quit_pernr, ImportData.person_scope, ImportData.direct_pernr, Approve.region_pernr,
-                 Approve.area_pernr, ImportData.division, ImportData.originator_pernr, ImportData.import_time,
-                 ImportData.absenteeism_doc, p1.name, p2.name, p3.name
-        order by ImportData.import_time desc
+        select a.quit_pernr           工号
+             , max(person_scope)      职能体系
+             , max(direct_pernr)      直接上级工号
+             , max(p1.name)           直接上级姓名
+             , max(b.area_pernr)   as 区域经理
+             , max(p3.name)        as 区域经理姓名
+             , max(b.region_pernr) as 地区经理工号
+             , max(p2.name)        as 地区经理姓名
+             , max(division)          分部
+             , max(originator_pernr)  导入人工号
+             , max(import_time)       导入时间
+             , max(absenteeism_doc)   旷工文号
+        from ImportData a
+                 inner join Approve b on a.quit_pernr = b.quit_pernr
+                 left join personInfo p1 on p1.alias = a.direct_pernr
+                 left join personInfo p2 on p2.alias = b.region_pernr
+                 left join personInfo p3 on p3.alias = b.area_pernr
+        where a.quit_pernr in ('063504', '057140', '066119')
+        group by a.quit_pernr
     </select>
 
     <select id="getImoprtDataByQuitPernr" parameterType="string" resultMap="ImportDataResult">
@@ -113,5 +115,11 @@
         where t.rows = 1
           and t.originator_pernr = #{ImportPernr}
     </select>
+    <select id="getImportDataByQuitPernr" parameterType="string" resultType="com.syx.domain.ImportData">
+        select *
+        from ImportData
+        where quit_pernr = #{quitPernr}
+    </select>
+
 
 </mapper>

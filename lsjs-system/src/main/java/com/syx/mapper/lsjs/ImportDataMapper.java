@@ -31,6 +31,8 @@ public interface ImportDataMapper {
 
     int deleteImportData(String quitPernr,String importTime);
 
+    int deleteImportDataByPernr(String quitPernr);
+
     List<ImportData> getImoprtDataByTime(ApproveGetDto approveGetDto);
 
     ImportData getImoprtDataByTimeAndPernr(ImportDataGetDto importDataGetDto);
@@ -45,4 +47,5 @@ public interface ImportDataMapper {
 
     List<ImportData> getImportDataByImportPernr(String ImportPernr);
 
+    List<ImportData> getImportDataByQuitPernr(String quitPernr);
 }

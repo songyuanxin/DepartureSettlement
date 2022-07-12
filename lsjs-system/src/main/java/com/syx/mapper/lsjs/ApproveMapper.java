@@ -1,7 +1,6 @@
 package com.syx.mapper.lsjs;
 
 import com.syx.domain.Approve;
-import com.syx.domains.dto.ImportDataGetDto;
 import com.syx.domains.vo.ApproveDataRes;
 import com.syx.domains.vo.ApproveGetRes;
 import com.syx.domains.vo.QueryApproveRes;
@@ -80,7 +79,7 @@ public interface ApproveMapper {
      * @param quitPernr
      * @return
      */
-    int deleteApproveDataByPernr(@Param("quitPernr") String quitPernr,@Param("importTime")String importTime);
+    int deleteApproveDataByPernr(@Param("quitPernr") String quitPernr);
 
     Timestamp getSendTimeByPernr(@Param("pernr")String pernr, @Param("approveContent") Integer approveContent);
 

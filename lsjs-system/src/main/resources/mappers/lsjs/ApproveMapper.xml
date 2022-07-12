@@ -46,7 +46,8 @@
     <select id="queryApproveByPernr" parameterType="string" resultType="com.syx.domains.vo.QueryApproveRes">
         select *
         from VQueryApprove
-        where quit_pernr = #{pernr} and sendTime >= #{importTime}
+        where quit_pernr = #{pernr}
+          and sendTime >= #{importTime}
         order by isnull(approveTime, GETDATE()), approvecontent
     </select>
 
@@ -112,44 +113,46 @@
     </delete>
 
     <select id="getApproveDataByPernr" parameterType="string" resultType="com.syx.domains.vo.ApproveGetRes">
-        SELECT a.quit_pernr                                                                                           as pernr
-             , p.name                                                                                                 as name
-             , p.zlzrq                                                                                                as leaveDate
-             , i.absenteeism_doc                                                                                      as absenteeismDoc
-             , p.mgtxt                                                                                                as leaveReson
+        SELECT a.quit_pernr           as pernr
+             , p.name                 as name
+             , p.zlzrq                as leaveDate
+             , i.absenteeism_doc      as absenteeismDoc
+             , i.division             as division
+             , p.mgtxt                as leaveReson
              , MAX(case
                        WHEN a.approve_content = 1 and send_time >= #{importTime} THEN a.goods_refund
-                       ELSE NULL END)                                                                                 as goodsMoney
+                       ELSE NULL END) as goodsMoney
              , MAX(case
                        WHEN a.approve_content = 1 and send_time >= #{importTime} THEN a.document_num
-                       ELSE NULL END)                                                                                 as goodsMoneyDocument
+                       ELSE NULL END) as goodsMoneyDocument
              , MAX(case
                        WHEN a.approve_content = 2 and send_time >= #{importTime} THEN a.short_money
-                       ELSE NULL END)                                                                                 as shortMoney
+                       ELSE NULL END) as shortMoney
              , MAX(case
                        WHEN a.approve_content = 3 and send_time >= #{importTime} THEN a.quality_money
-                       ELSE NULL END)                                                                                 as qualityMoney
+                       ELSE NULL END) as qualityMoney
              , MAX(case
                        WHEN a.approve_content = 4 and send_time >= #{importTime} THEN a.card_money
-                       ELSE NULL END)                                                                                 as cardMoney
+                       ELSE NULL END) as cardMoney
              , MAX(case
                        WHEN a.approve_content = 4 and send_time >= #{importTime} THEN a.clothes_money
-                       ELSE NULL END)                                                                                 as clothesMoney
+                       ELSE NULL END) as clothesMoney
              , MAX(case
                        WHEN a.approve_content = 5 and send_time >= #{importTime} THEN a.care_money
-                       ELSE NULL END)                                                                                 as careMoney
+                       ELSE NULL END) as careMoney
         from Approve a
                  inner join personInfo p on a.quit_pernr = p.alias
                  inner join ImportData i on a.quit_pernr = i.quit_pernr
         where a.quit_pernr = #{pernr}
-        GROUP BY a.quit_pernr, p.name, i.absenteeism_doc, p.mgtxt, p.zlzrq
+        GROUP BY a.quit_pernr, p.name, i.absenteeism_doc, p.mgtxt, p.zlzrq, i.division
     </select>
 
     <delete id="deleteApproveDataByPernr" parameterType="string">
         delete
         from Approve
-        where quit_pernr = #{quitPernr} and convert(date,send_time) >= #{importTime}
+        where quit_pernr = #{quitPernr}
     </delete>
+
 
     <select id="getSendTimeByPernr" resultType="java.sql.Timestamp">
         select max(send_time)
@@ -173,27 +176,48 @@
         , IM.person_scope as 'personScope'
         , IM.import_time as 'importTime'
         , IM.originator_pernr as 'importPernr'
-        , MAX(case when approve_content = 1 and send_time >= #{importTime} THEN reviewer_pernr ELSE NULL END) as 'directReviewerPernr'
-        , MAX(case when approve_content = 1 and send_time >= #{importTime} THEN approve_result_desc ELSE NULL END) as 'directApproveResult'
-        , MAX(case when approve_content = 1 and send_time >= #{importTime} THEN send_time ELSE NULL END) as 'directSendTime'
-        , MAX(case when approve_content = 1 and send_time >= #{importTime} THEN approve_time ELSE NULL END) as 'directApproveTime'
-        , MAX(case when approve_content = 7 and send_time >= #{importTime} THEN reviewer_pernr ELSE NULL END)as 'areaReviewerPernr'
-        , MAX(case when approve_content = 7 and send_time >= #{importTime} THEN approve_result_desc ELSE NULL END) as 'areaApproveResult'
-        , MAX(case when approve_content = 7 and send_time >= #{importTime} THEN send_time ELSE NULL END) as 'areaSendTime'
-        , MAX(case when approve_content = 7 and send_Time >= #{importTime} THEN approve_time ELSE NULL END) as 'areaApproveTime'
-        , MAX(case when approve_content = 6 and send_time >= #{importTime} THEN reviewer_pernr ELSE NULL END) as 'regionalReviewerPernr'
-        , MAX(case when approve_content = 6 and send_time >= #{importTime} THEN approve_result_desc ELSE NULL END) as 'regionalApproveResult'
-        , MAX(case when approve_content = 6 and send_time >= #{importTime} THEN send_time ELSE NULL END) as 'regionalSendTime'
-        , MAX(case when approve_content = 6 and send_time >= #{importTime} THEN approve_time ELSE NULL END) as 'regionalApproveTime'
-        , MAX(case when approve_content = 2 and send_time >= #{importTime} THEN approve_result_desc ELSE NULL END) as 'loanApproveResult'
-        , MAX(case when approve_content = 2 and send_time >= #{importTime} THEN send_time ELSE NULL END) as 'loanSendTime'
-        , MAX(case when approve_content = 2 and send_time >= #{importTime} THEN approve_time ELSE NULL END) as 'loanApproveTime'
-        , MAX(case when approve_content = 3 and send_time >= #{importTime} THEN approve_result_desc ELSE NULL END) as 'qualityApproveResult'
-        , MAX(case when approve_content = 3 and send_time >= #{importTime} THEN send_time ELSE NULL END) as 'qualitySendTime'
-        , MAX(case when approve_content = 3 and send_time >= #{importTime} THEN approve_time ELSE NULL END) as 'qualityApproveTime'
-        , MAX(case when approve_content = 4 and send_time >= #{importTime} THEN approve_result_desc ELSE NULL END) as 'cardApproveResult'
-        , MAX(case when approve_content = 4 and send_time >= #{importTime} THEN send_time ELSE NULL END) as 'cardSendTime'
-        , MAX(case when approve_content = 4 and send_time >= #{importTime} THEN approve_time ELSE NULL END) as 'cardApproveTime'
+        , MAX(case when approve_content = 1 and send_time >= #{importTime} THEN reviewer_pernr ELSE NULL END) as
+        'directReviewerPernr'
+        , MAX(case when approve_content = 1 and send_time >= #{importTime} THEN approve_result_desc ELSE NULL END) as
+        'directApproveResult'
+        , MAX(case when approve_content = 1 and send_time >= #{importTime} THEN send_time ELSE NULL END) as
+        'directSendTime'
+        , MAX(case when approve_content = 1 and send_time >= #{importTime} THEN approve_time ELSE NULL END) as
+        'directApproveTime'
+        , MAX(case when approve_content = 7 and send_time >= #{importTime} THEN reviewer_pernr ELSE NULL END)as
+        'areaReviewerPernr'
+        , MAX(case when approve_content = 7 and send_time >= #{importTime} THEN approve_result_desc ELSE NULL END) as
+        'areaApproveResult'
+        , MAX(case when approve_content = 7 and send_time >= #{importTime} THEN send_time ELSE NULL END) as
+        'areaSendTime'
+        , MAX(case when approve_content = 7 and send_Time >= #{importTime} THEN approve_time ELSE NULL END) as
+        'areaApproveTime'
+        , MAX(case when approve_content = 6 and send_time >= #{importTime} THEN reviewer_pernr ELSE NULL END) as
+        'regionalReviewerPernr'
+        , MAX(case when approve_content = 6 and send_time >= #{importTime} THEN approve_result_desc ELSE NULL END) as
+        'regionalApproveResult'
+        , MAX(case when approve_content = 6 and send_time >= #{importTime} THEN send_time ELSE NULL END) as
+        'regionalSendTime'
+        , MAX(case when approve_content = 6 and send_time >= #{importTime} THEN approve_time ELSE NULL END) as
+        'regionalApproveTime'
+        , MAX(case when approve_content = 2 and send_time >= #{importTime} THEN approve_result_desc ELSE NULL END) as
+        'loanApproveResult'
+        , MAX(case when approve_content = 2 and send_time >= #{importTime} THEN send_time ELSE NULL END) as
+        'loanSendTime'
+        , MAX(case when approve_content = 2 and send_time >= #{importTime} THEN approve_time ELSE NULL END) as
+        'loanApproveTime'
+        , MAX(case when approve_content = 3 and send_time >= #{importTime} THEN approve_result_desc ELSE NULL END) as
+        'qualityApproveResult'
+        , MAX(case when approve_content = 3 and send_time >= #{importTime} THEN send_time ELSE NULL END) as
+        'qualitySendTime'
+        , MAX(case when approve_content = 3 and send_time >= #{importTime} THEN approve_time ELSE NULL END) as
+        'qualityApproveTime'
+        , MAX(case when approve_content = 4 and send_time >= #{importTime} THEN approve_result_desc ELSE NULL END) as
+        'cardApproveResult'
+        , MAX(case when approve_content = 4 and send_time >= #{importTime} THEN send_time ELSE NULL END) as
+        'cardSendTime'
+        , MAX(case when approve_content = 4 and send_time >= #{importTime} THEN approve_time ELSE NULL END) as
+        'cardApproveTime'
         from Approve AP
         inner join ImportData IM on IM.quit_pernr = AP.quit_pernr
         inner join personInfo pI on pI.alias = AP.quit_pernr
