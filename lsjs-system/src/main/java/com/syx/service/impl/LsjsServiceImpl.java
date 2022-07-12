@@ -3,7 +3,6 @@ package com.syx.service.impl;
 import com.syx.client.HttpClientUtils;
 import com.syx.domain.*;
 import com.syx.domain.vo.AuditUserRes;
-import com.syx.domain.vo.ImportDataVO;
 import com.syx.domains.dto.ApproveGetDto;
 import com.syx.domains.dto.ImportDataDto;
 import com.syx.domains.dto.ImportDataGetDto;
@@ -690,7 +689,7 @@ public class LsjsServiceImpl implements ILsjsService {
      * @return
      */
     @Override
-    public List<ImportDataVO> getImportDataList(ImportDataGetDto importDataGetDto) {
+    public List<ImportDataRes> getImportDataList(ImportDataGetDto importDataGetDto) {
 //        List<ImportData> importDataList = new ArrayList<>();
 //        if (importDataGetDto.getImportTime().length() > 0 && importDataGetDto.getQuitPernr().length() > 0) {
 //            //若查询条件中既有导入日期又有离职员工工号则能精确查出一条导入数据
@@ -703,7 +702,7 @@ public class LsjsServiceImpl implements ILsjsService {
 //            //若查询条件中只有离职员工工号，则查询出该离职员工的所有离司结算导入数据(考虑到再入职又离职的员工)
 //            importDataList = importDataMapper.getImoprtDataByPernr(importDataGetDto.getQuitPernr());
 //        }
-        List<ImportDataVO> importDataList = importDataMapper.getImoprtDataByPernr(importDataGetDto.getQuitPernr());
+        List<ImportDataRes> importDataList = importDataMapper.getImoprtDataByPernr(importDataGetDto.getQuitPernr());
         return importDataList;
     }
 

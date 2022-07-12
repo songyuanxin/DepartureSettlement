@@ -2,12 +2,10 @@ package com.syx.service;
 
 import com.syx.domain.*;
 import com.syx.domain.vo.AuditUserRes;
-import com.syx.domain.vo.ImportDataVO;
 import com.syx.domains.dto.ApproveGetDto;
 import com.syx.domains.dto.ImportDataDto;
 import com.syx.domains.dto.ImportDataGetDto;
 import com.syx.domains.vo.*;
-import org.dom4j.DocumentException;
 
 import java.text.ParseException;
 import java.util.List;
@@ -75,7 +73,7 @@ public interface ILsjsService {
 
     String getLeaveResonByQuitPernr(String pernr);
 
-    List<ImportDataVO> getImportDataList(ImportDataGetDto importDataGetDto);
+    List<ImportDataRes> getImportDataList(ImportDataGetDto importDataGetDto);
 
     int deleteDataByPernr(String quitPernr);
 

@@ -1,9 +1,7 @@
 package com.syx.controller;
 
-import com.syx.domain.ImportData;
 import com.syx.domain.SAPUserInfo;
 import com.syx.domain.vo.AuditUserRes;
-import com.syx.domain.vo.ImportDataVO;
 import com.syx.domains.AjaxResult;
 import com.syx.domains.dto.ApproveGetDto;
 import com.syx.domains.dto.ImportDataGetDto;
@@ -14,7 +12,6 @@ import com.syx.utils.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.dom4j.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
@@ -242,7 +239,7 @@ public class LsjsController {
 //        }else if (StringUtils.isBlank(importDataGetDto.getQuitPernr())){
 //            importDataGetDto.setQuitPernr("");
 //        }
-        List<ImportDataVO> importDataList = lsjsService.getImportDataList(importDataGetDto);
+        List<ImportDataRes> importDataList = lsjsService.getImportDataList(importDataGetDto);
         return AjaxResult.success(importDataList);
     }
 

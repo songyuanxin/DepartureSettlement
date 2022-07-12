@@ -75,15 +75,15 @@
         from ImportData
     </select>
 
-    <select id="getImoprtDataByPernr" parameterType="string" resultType="com.syx.domain.vo.ImportDataVO">
+    <select id="getImoprtDataByPernr" parameterType="string" resultType="com.syx.domains.vo.ImportDataRes">
         select distinct ImportData.quit_pernr,
                         ImportData.person_scope,
                         ImportData.direct_pernr,
-                        p1.name                                                                                 as directPernrName,
+                        p1.name                                                                                 as directName,
                         case when ImportData.person_scope = '门店' THEN Approve.region_pernr ELSE NULL END       as regionalPernr,
-                        case when ImportData.person_scope = '门店' THEN p2.name ELSE NULL END                    as regionalPernrName,
+                        case when ImportData.person_scope = '门店' THEN p2.name ELSE NULL END                    as regionalName,
                         case when ImportData.person_scope = '门店' THEN Approve.area_pernr ELSE NULL END         as areaPernr,
-                        case when ImportData.person_scope = '门店' THEN P3.name ELSE NULL END                    as areaPernrName,
+                        case when ImportData.person_scope = '门店' THEN P3.name ELSE NULL END                    as areaName,
                         ImportData.division,
                         ImportData.originator_pernr,
                         ImportData.import_time,
@@ -97,6 +97,7 @@
         group by ImportData.quit_pernr, ImportData.person_scope, ImportData.direct_pernr, Approve.region_pernr,
                  Approve.area_pernr, ImportData.division, ImportData.originator_pernr, ImportData.import_time,
                  ImportData.absenteeism_doc, p1.name, p2.name, p3.name
+        order by ImportData.import_time desc
     </select>
 
     <select id="getImoprtDataByQuitPernr" parameterType="string" resultMap="ImportDataResult">
