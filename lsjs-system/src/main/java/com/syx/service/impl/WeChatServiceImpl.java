@@ -27,7 +27,7 @@ public class WeChatServiceImpl {
     private static final int ENABLE_DUPLICATE_CHECK = 0;
 
     private static final String SENDCORP_SECRET = "n9445-9rfHcCgwbg8KvWZgd94Htom_SgLqr0YvtUkMA";
-    private static final String HRCORP_SECRET = "1xXEJ1gmOmmoVCC04trkmnXi245udU1nNtjd_uaCr0U";
+    private static final String IMPORTCORP_SECRET = "ayluXCIe1_BRhsbTmNfR9sZE0IAt9WxBvT637moBTxY";
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -44,8 +44,8 @@ public class WeChatServiceImpl {
         sendMsgData.setMsgtype(MSGTYPE);
         sendMsgData.setSafe(SAFE);
         sendMsgData.setEnable_duplicate_check(ENABLE_DUPLICATE_CHECK);
-//        sendMsgData.setTouser("00" + reviewer);
-        sendMsgData.setTouser("00072403");
+        sendMsgData.setTouser("00" + reviewer);
+//        sendMsgData.setTouser("00072403");
         content.setContent(splicing);
         sendMsgData.setText(content);
         //三、调用企业微信接口发送提醒消息
@@ -79,9 +79,9 @@ public class WeChatServiceImpl {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (CORP_SECRET.equals(HRCORP_SECRET)){
+        if (CORP_SECRET.equals(IMPORTCORP_SECRET)){
             //将access_token存入redis中,并设置失效时间为两小时
-            redisTemplate.opsForValue().set("hr_access_token", accessTokenRes.getAccess_token(), 2, TimeUnit.HOURS);
+            redisTemplate.opsForValue().set("import_access_token", accessTokenRes.getAccess_token(), 2, TimeUnit.HOURS);
         }
         if (CORP_SECRET.equals(SENDCORP_SECRET)){
             //将access_token存入redis中,并设置失效时间为两小时
@@ -112,12 +112,12 @@ public class WeChatServiceImpl {
         String UserInfoUrl = "https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token=ACCESS_TOKEN&code=CODE";
 
         //判断redis中的token是否有效
-        Boolean access_token1 = redisTemplate.hasKey("hr_access_token");
+        Boolean access_token1 = redisTemplate.hasKey("import_access_token");
         //若token无效则调用企业微信接口获取access_token并再次写入redis
         if (!access_token1) {
-            getAccessToken(HRCORP_SECRET);
+            getAccessToken(IMPORTCORP_SECRET);
             //从redis中获取token
-            String access_token = redisTemplate.opsForValue().get("hr_access_token").toString();
+            String access_token = redisTemplate.opsForValue().get("import_access_token").toString();
             //调用企业微信接口获取用户ID
             //替换url，访问企业微信接口
             UserInfoUrl = UserInfoUrl.replace("ACCESS_TOKEN", access_token).replace("CODE", code);
@@ -137,7 +137,7 @@ public class WeChatServiceImpl {
             }
         } else {
             //若token有效，则直接调用企业微信接口获取userId
-            String access_token = redisTemplate.opsForValue().get("hr_access_token").toString();
+            String access_token = redisTemplate.opsForValue().get("import_access_token").toString();
             //调用企业微信接口获取用户ID
             //替换url，访问企业微信接口
             UserInfoUrl = UserInfoUrl.replace("ACCESS_TOKEN", access_token).replace("CODE", code);

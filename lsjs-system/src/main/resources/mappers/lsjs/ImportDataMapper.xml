@@ -81,24 +81,24 @@
     </select>
 
     <select id="getImoprtDataByPernr" parameterType="string" resultType="com.syx.domains.vo.ImportDataRes">
-        select a.quit_pernr           工号
-             , max(person_scope)      职能体系
-             , max(direct_pernr)      直接上级工号
-             , max(p1.name)           直接上级姓名
-             , max(b.area_pernr)   as 区域经理
-             , max(p3.name)        as 区域经理姓名
-             , max(b.region_pernr) as 地区经理工号
-             , max(p2.name)        as 地区经理姓名
-             , max(division)          分部
-             , max(originator_pernr)  导入人工号
-             , max(import_time)       导入时间
-             , max(absenteeism_doc)   旷工文号
+        select a.quit_pernr           quitPernr
+             , max(person_scope)      personScope
+             , max(direct_pernr)      directPernr
+             , max(p1.name)           directName
+             , max(b.area_pernr)   as areaPernr
+             , max(p3.name)        as areaName
+             , max(b.region_pernr) as regionalPernr
+             , max(p2.name)        as regionalName
+             , max(division)          division
+             , max(originator_pernr)  originatorPernr
+             , max(import_time)       importTime
+             , max(absenteeism_doc)   absenteeismDoc
         from ImportData a
                  inner join Approve b on a.quit_pernr = b.quit_pernr
                  left join personInfo p1 on p1.alias = a.direct_pernr
                  left join personInfo p2 on p2.alias = b.region_pernr
                  left join personInfo p3 on p3.alias = b.area_pernr
-        where a.quit_pernr in ('063504', '057140', '066119')
+        where a.quit_pernr = #{quitPernr}
         group by a.quit_pernr
     </select>
 
