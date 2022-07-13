@@ -826,23 +826,32 @@ public class LsjsServiceImpl implements ILsjsService {
                     //查询出来的店编写进监控报表中
                     approveDataRes.setDivision(sapStoreHeadByStoreId.getManageArea());
                     List<String> approveResult = new ArrayList<>();
+                    if (StringUtils.isNotBlank(approveDataRes.getDirectApproveResult())){
+                        if (approveDataRes.getDirectApproveResult().equals("待审核") || approveDataRes.getDirectApproveResult().equals("不通过")){
+                            approveResult.add(approveDataRes.getDirectApproveResult());
+                        }
+                    }
                     if (StringUtils.isNotBlank(approveDataRes.getAreaApproveResult())){
                         if (approveDataRes.getAreaApproveResult().equals("待审核") || approveDataRes.getAreaApproveResult().equals("不通过")){
                             approveResult.add(approveDataRes.getAreaApproveResult());
                         }
-                    }else if(StringUtils.isNotBlank(approveDataRes.getRegionalApproveResult())){
+                    }
+                    if(StringUtils.isNotBlank(approveDataRes.getRegionalApproveResult())){
                         if (approveDataRes.getRegionalApproveResult().equals("待审核") || approveDataRes.getRegionalApproveResult().equals("不通过")){
                             approveResult.add(approveDataRes.getRegionalApproveResult());
                         }
-                    }else if(StringUtils.isNotBlank(approveDataRes.getLoanApproveResult())){
+                    }
+                    if(StringUtils.isNotBlank(approveDataRes.getLoanApproveResult())){
                         if (approveDataRes.getLoanApproveResult().equals("待审核") || approveDataRes.getLoanApproveResult().equals("不通过")){
                             approveResult.add(approveDataRes.getLoanApproveResult());
                         }
-                    }else if (StringUtils.isNotBlank(approveDataRes.getQualityApproveResult())){
+                    }
+                    if (StringUtils.isNotBlank(approveDataRes.getQualityApproveResult())){
                         if (approveDataRes.getQualityApproveResult().equals("待审核") || approveDataRes.getQualityApproveResult().equals("不通过")){
                             approveResult.add(approveDataRes.getQualityApproveResult());
                         }
-                    }else if (StringUtils.isNotBlank(approveDataRes.getCardApproveResult())){
+                    }
+                    if (StringUtils.isNotBlank(approveDataRes.getCardApproveResult())){
                         if (approveDataRes.getCardApproveResult().equals("待审核") || approveDataRes.getCardApproveResult().equals("不通过")){
                             approveResult.add(approveDataRes.getCardApproveResult());
                         }
@@ -860,23 +869,32 @@ public class LsjsServiceImpl implements ILsjsService {
                 }
                 if (approveDataRes.getPersonScope().equals("职能")) {
                     List<String> approveResult = new ArrayList<>();
+                    if (StringUtils.isNotBlank(approveDataRes.getDirectApproveResult())){
+                        if (approveDataRes.getDirectApproveResult().equals("待审核") || approveDataRes.getDirectApproveResult().equals("不通过")){
+                            approveResult.add(approveDataRes.getDirectApproveResult());
+                        }
+                    }
                     if (StringUtils.isNotBlank(approveDataRes.getAreaApproveResult())){
                         if (approveDataRes.getAreaApproveResult().equals("待审核") || approveDataRes.getAreaApproveResult().equals("不通过")){
                             approveResult.add(approveDataRes.getAreaApproveResult());
                         }
-                    }else if(StringUtils.isNotBlank(approveDataRes.getRegionalApproveResult())){
+                    }
+                    if(StringUtils.isNotBlank(approveDataRes.getRegionalApproveResult())){
                         if (approveDataRes.getRegionalApproveResult().equals("待审核") || approveDataRes.getRegionalApproveResult().equals("不通过")){
                             approveResult.add(approveDataRes.getRegionalApproveResult());
                         }
-                    }else if(StringUtils.isNotBlank(approveDataRes.getLoanApproveResult())){
+                    }
+                    if(StringUtils.isNotBlank(approveDataRes.getLoanApproveResult())){
                         if (approveDataRes.getLoanApproveResult().equals("待审核") || approveDataRes.getLoanApproveResult().equals("不通过")){
                             approveResult.add(approveDataRes.getLoanApproveResult());
                         }
-                    }else if (StringUtils.isNotBlank(approveDataRes.getQualityApproveResult())){
+                    }
+                    if (StringUtils.isNotBlank(approveDataRes.getQualityApproveResult())){
                         if (approveDataRes.getQualityApproveResult().equals("待审核") || approveDataRes.getQualityApproveResult().equals("不通过")){
                             approveResult.add(approveDataRes.getQualityApproveResult());
                         }
-                    }else if (StringUtils.isNotBlank(approveDataRes.getCardApproveResult())){
+                    }
+                    if (StringUtils.isNotBlank(approveDataRes.getCardApproveResult())){
                         if (approveDataRes.getCardApproveResult().equals("待审核") || approveDataRes.getCardApproveResult().equals("不通过")){
                             approveResult.add(approveDataRes.getCardApproveResult());
                         }
@@ -921,23 +939,32 @@ public class LsjsServiceImpl implements ILsjsService {
                     //查询出来的店编写进监控报表中
                     approveDataRes.setDivision(sapStoreHeadByStoreId.getManageArea());
                     List<String> approveResult = new ArrayList<>();
+                    if (StringUtils.isNotBlank(approveDataRes.getDirectApproveResult())){
+                        if (approveDataRes.getDirectApproveResult().equals("待审核") || approveDataRes.getDirectApproveResult().equals("不通过")){
+                            approveResult.add(approveDataRes.getDirectApproveResult());
+                        }
+                    }
                     if (StringUtils.isNotBlank(approveDataRes.getAreaApproveResult())){
                         if (approveDataRes.getAreaApproveResult().equals("待审核") || approveDataRes.getAreaApproveResult().equals("不通过")){
                             approveResult.add(approveDataRes.getAreaApproveResult());
                         }
-                    }else if(StringUtils.isNotBlank(approveDataRes.getRegionalApproveResult())){
+                    }
+                    if(StringUtils.isNotBlank(approveDataRes.getRegionalApproveResult())){
                         if (approveDataRes.getRegionalApproveResult().equals("待审核") || approveDataRes.getRegionalApproveResult().equals("不通过")){
                             approveResult.add(approveDataRes.getRegionalApproveResult());
                         }
-                    }else if(StringUtils.isNotBlank(approveDataRes.getLoanApproveResult())){
+                    }
+                    if(StringUtils.isNotBlank(approveDataRes.getLoanApproveResult())){
                         if (approveDataRes.getLoanApproveResult().equals("待审核") || approveDataRes.getLoanApproveResult().equals("不通过")){
                             approveResult.add(approveDataRes.getLoanApproveResult());
                         }
-                    }else if (StringUtils.isNotBlank(approveDataRes.getQualityApproveResult())){
+                    }
+                    if (StringUtils.isNotBlank(approveDataRes.getQualityApproveResult())){
                         if (approveDataRes.getQualityApproveResult().equals("待审核") || approveDataRes.getQualityApproveResult().equals("不通过")){
                             approveResult.add(approveDataRes.getQualityApproveResult());
                         }
-                    }else if (StringUtils.isNotBlank(approveDataRes.getCardApproveResult())){
+                    }
+                    if (StringUtils.isNotBlank(approveDataRes.getCardApproveResult())){
                         if (approveDataRes.getCardApproveResult().equals("待审核") || approveDataRes.getCardApproveResult().equals("不通过")){
                             approveResult.add(approveDataRes.getCardApproveResult());
                         }
@@ -955,23 +982,32 @@ public class LsjsServiceImpl implements ILsjsService {
                 }
                 if (approveDataRes.getPersonScope().equals("职能")) {
                     List<String> approveResult = new ArrayList<>();
+                    if (StringUtils.isNotBlank(approveDataRes.getDirectApproveResult())){
+                        if (approveDataRes.getDirectApproveResult().equals("待审核") || approveDataRes.getDirectApproveResult().equals("不通过")){
+                            approveResult.add(approveDataRes.getDirectApproveResult());
+                        }
+                    }
                     if (StringUtils.isNotBlank(approveDataRes.getAreaApproveResult())){
                         if (approveDataRes.getAreaApproveResult().equals("待审核") || approveDataRes.getAreaApproveResult().equals("不通过")){
                             approveResult.add(approveDataRes.getAreaApproveResult());
                         }
-                    }else if(StringUtils.isNotBlank(approveDataRes.getRegionalApproveResult())){
+                    }
+                    if(StringUtils.isNotBlank(approveDataRes.getRegionalApproveResult())){
                         if (approveDataRes.getRegionalApproveResult().equals("待审核") || approveDataRes.getRegionalApproveResult().equals("不通过")){
                             approveResult.add(approveDataRes.getRegionalApproveResult());
                         }
-                    }else if(StringUtils.isNotBlank(approveDataRes.getLoanApproveResult())){
+                    }
+                    if(StringUtils.isNotBlank(approveDataRes.getLoanApproveResult())){
                         if (approveDataRes.getLoanApproveResult().equals("待审核") || approveDataRes.getLoanApproveResult().equals("不通过")){
                             approveResult.add(approveDataRes.getLoanApproveResult());
                         }
-                    }else if (StringUtils.isNotBlank(approveDataRes.getQualityApproveResult())){
+                    }
+                    if (StringUtils.isNotBlank(approveDataRes.getQualityApproveResult())){
                         if (approveDataRes.getQualityApproveResult().equals("待审核") || approveDataRes.getQualityApproveResult().equals("不通过")){
                             approveResult.add(approveDataRes.getQualityApproveResult());
                         }
-                    }else if (StringUtils.isNotBlank(approveDataRes.getCardApproveResult())){
+                    }
+                    if (StringUtils.isNotBlank(approveDataRes.getCardApproveResult())){
                         if (approveDataRes.getCardApproveResult().equals("待审核") || approveDataRes.getCardApproveResult().equals("不通过")){
                             approveResult.add(approveDataRes.getCardApproveResult());
                         }
