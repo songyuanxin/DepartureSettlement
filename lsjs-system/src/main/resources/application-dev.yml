@@ -12,16 +12,6 @@ spring:
   #数据源的配置
   datasource:
     lsjsdb:
-      driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-#      jdbc-url: jdbc:sqlserver://10.8.1.119;DatabaseName=HRInfo;
-      jdbc-url: jdbc:sqlserver://10.9.16.2:1433;DatabaseName=HRInfo;
-      username: sa
-      password: 20050311jzjcomm
-    sapstoreheaddb:
-      driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-      jdbc-url: jdbc:sqlserver://116.55.231.200;databaseName=ZP;
-      username: jzjcomm
-      password: 20100531jzjcomm
 
 #mybatisplus的配置
 mybatis-plus:
