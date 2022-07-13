@@ -832,11 +832,11 @@ public class LsjsServiceImpl implements ILsjsService {
                     //查询出来的店编写进监控报表中
                     approveDataRes.setDivision(sapStoreHeadByStoreId.getManageArea());
                     if (approveDataRes.getDirectApproveResult().equals("通过") &&
-                            approveDataRes.getAreaApproveResult().equals("通过") &&
-                            approveDataRes.getRegionalApproveResult().equals("通过") &&
-                            approveDataRes.getCardApproveResult().equals("通过") &&
-                            approveDataRes.getQualityApproveResult().equals("通过") &&
-                            approveDataRes.getLoanApproveResult().equals("通过")) {
+                            approveDataRes.getAreaApproveResult().equals("通过") && approveDataRes.getAreaApproveResult() != null && approveDataRes.getAreaApproveResult().length() != 0 &&
+                            approveDataRes.getRegionalApproveResult().equals("通过") && approveDataRes.getRegionalApproveResult() != null && approveDataRes.getRegionalApproveResult().length() != 0 &&
+                            approveDataRes.getCardApproveResult().equals("通过") && approveDataRes.getCardApproveResult() != null && approveDataRes.getCardApproveResult().length() != 0 &&
+                            approveDataRes.getQualityApproveResult().equals("通过") && approveDataRes.getQualityApproveResult() != null && approveDataRes.getQualityApproveResult().length() != 0 &&
+                            approveDataRes.getLoanApproveResult().equals("通过") && approveDataRes.getLoanApproveResult() != null && approveDataRes.getLoanApproveResult().length() != 0 ) {
                         approveDataRes.setApproveStatus("审核完成");
                     } else {
                         approveDataRes.setApproveStatus("审核中");
