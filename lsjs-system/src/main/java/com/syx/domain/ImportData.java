@@ -10,6 +10,8 @@ import java.sql.Timestamp;
  **/
 @Data
 public class ImportData {
+    //发起ID
+    private Integer launchId;
     //离职员工工号
     private String quitPernr;
     //人员范围
