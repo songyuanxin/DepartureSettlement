@@ -1,5 +1,6 @@
 package com.syx.service.directly;
 
+import com.syx.domains.ImportDataInfo;
 import com.syx.domains.dto.ImportDataDto;
 import com.syx.domains.vo.SendMsgRes;
 
@@ -17,5 +18,5 @@ public interface IFuncterProcessService {
      * @param
      * @return
      */
-    public SendMsgRes sendDirectly(Map<String,List<ImportDataDto>> functionDirectMap, String isReturn);
+    public SendMsgRes sendDirectly(Map<String,List<ImportDataInfo>> functionDirectMap, String isReturn);
 }

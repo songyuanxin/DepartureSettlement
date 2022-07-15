@@ -1,6 +1,7 @@
 package com.syx.mapper.lsjs;
 
 import com.syx.domain.Approve;
+import com.syx.domain.ImportData;
 import com.syx.domains.vo.ApproveDataRes;
 import com.syx.domains.vo.ApproveGetRes;
 import com.syx.domains.vo.QueryApproveRes;
@@ -36,7 +37,7 @@ public interface ApproveMapper {
      * @param pernr
      * @return
      */
-    List<QueryApproveRes> queryApproveByPernr(@Param("pernr") String pernr, @Param("importTime") String importTime);
+    List<QueryApproveRes> queryApproveByPernr(@Param("pernr") String pernr, @Param("launchId") Integer launchId);
 
     /**
      * 根据审核人工号查询待自己审核的离职员工工号
@@ -72,19 +73,21 @@ public interface ApproveMapper {
      * @param
      * @return
      */
-    ApproveGetRes getApproveDataByPernr(@Param("pernr") String pernr, @Param("importTime") String importTime);
+    ApproveGetRes getApproveDataByPernr(ImportData importData);
 
     /**
      * 根据离职员工工号删除审核数据
      * @param quitPernr
      * @return
      */
-    int deleteApproveDataByPernr(@Param("quitPernr") String quitPernr);
+    int deleteApproveDataByPernr(@Param("quitPernr") String quitPernr, @Param("launchId") Integer launchId);
 
     Timestamp getSendTimeByPernr(@Param("pernr")String pernr, @Param("approveContent") Integer approveContent);
 
-    List<Integer> getApproveResultList(@Param("importTime")String importTime, @Param("quitPernr")String quitPernr);
+    List<Integer> getApproveResultList(@Param("launchId")Integer launchId, @Param("quitPernr")String quitPernr);
 
     ApproveDataRes getApproveDataRes(@Param("importTime")String importTime, @Param("quitPernr")String quitPernr
             ,@Param("personScope")String personScope,@Param("importPernr")String importPernr);
+
+    Approve getApproveByReviewAndQuitPernr(@Param("quitPernr")String quitPernr, @Param("reviewerPernr")String reviewerPernr);
 }

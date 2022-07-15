@@ -8,6 +8,8 @@ import lombok.Data;
  **/
 @Data
 public class LogisticsDto {
+    private Integer approveId;
+    private Integer launchId;
     private String quitPernr;
     private String reviewerPernr;
     private String cardMoney;

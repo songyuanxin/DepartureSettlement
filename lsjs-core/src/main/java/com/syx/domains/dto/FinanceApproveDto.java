@@ -8,6 +8,8 @@ import lombok.Data;
  **/
 @Data
 public class FinanceApproveDto {
+    private Integer launchId;
+    private Integer approveId;
     private String quitPernr;
     private String reviewerPernr;
     private String loanMoney;

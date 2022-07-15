@@ -1,6 +1,5 @@
 package com.syx.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.syx.client.HttpClientUtils;
 import com.syx.domain.*;
 import com.syx.domain.vo.AuditUserRes;
@@ -19,7 +18,6 @@ import org.dom4j.Element;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -63,6 +61,9 @@ public class LsjsServiceImpl implements ILsjsService {
 
     @Autowired
     private ResumeMapper resumeMapper;
+
+    @Autowired
+    private DeleteImportDataLogMapper deleteImportDataLogMapper;
 
     /**
      * 根据工号查询员工姓名
@@ -177,16 +178,23 @@ public class LsjsServiceImpl implements ILsjsService {
      * @return
      */
     @Override
-    public List<AuditUserRes> getUserInfoByPernrList(List<String> quitPernrList) {
+    public List<AuditUserRes> getUserInfoByPernrList(List<String> quitPernrList, String reviewerPernr) {
         if (quitPernrList.size() == 0) {
             return null;
         }
         List<AuditUserRes> auditUserResList = new ArrayList<>();
         for (String quitPernr : quitPernrList) {
+            //根据离职员工工号和审核人工号查询审核ID和发起ID
+            Approve approve = approveMapper.getApproveByReviewAndQuitPernr(quitPernr, reviewerPernr);
+            //根据离职员工工号查询基本信息
             AuditUserRes auditUserRes = sapUserInfoMapper.getUserInfoByPernrList(quitPernr);
+            //根据离职员工工号查询盘点扣款
             List<Deduction> deductionByPernr = deductionMapper.getDeductionByPernr(quitPernr);
+            //根据离职员工工号查询任职履历
             List<ResumeRes> resumeByPernr = resumeMapper.getResumeByPernr(quitPernr);
 
+            auditUserRes.setLaunchId(approve.getLaunchId());
+            auditUserRes.setApproveId(approve.getApproveId());
             auditUserRes.setDeductions(deductionByPernr);
             auditUserRes.setResumes(resumeByPernr);
 
@@ -208,17 +216,10 @@ public class LsjsServiceImpl implements ILsjsService {
      */
     @Override
     public List<QueryApproveRes> queryApproveByPernr(String pernr) {
-        SimpleDateFormat df1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        //获取该离职员工最新的导入数据，考虑再入职的情况
-        ApproveGetDto approveGetDto = new ApproveGetDto();
-        approveGetDto.setQuitPernr(pernr);
         //获取该离职员工最新导入数据
-        List<ImportData> imoprtDataByTime = importDataMapper.getImoprtDataByTime(approveGetDto);
-        List<QueryApproveRes> approve = new ArrayList<>();
-        for (ImportData importData:imoprtDataByTime){
-            //根据离职员工工号和导入时间查询最新审核数据
-            approve = approveMapper.queryApproveByPernr(pernr,df1.format(importData.getImportTime()));
-        }
+        ImportData lastImoprtDataByPernr = importDataMapper.getLastImoprtDataByPernr(pernr);
+        //根据离职员工工号和导入时间查询最新审核数据
+        List<QueryApproveRes> approve = approveMapper.queryApproveByPernr(lastImoprtDataByPernr.getQuitPernr(),lastImoprtDataByPernr.getLaunchId());
 
         List<QueryApproveRes> queryApproveResList = new ArrayList<>();
         //获取当前系统时间
@@ -620,10 +621,10 @@ public class LsjsServiceImpl implements ILsjsService {
         for (ImportData importData : importDataByTime) {
             ApproveGetRes approveGetRes = new ApproveGetRes();
             //获取审核表中数据，例如审核扣款金额等
-            ApproveGetRes approveDataByPernr = approveMapper.getApproveDataByPernr(importData.getQuitPernr(), df.format(importData.getImportTime()));
+            ApproveGetRes approveDataByPernr = approveMapper.getApproveDataByPernr(importData);
             BeanUtils.copyProperties(approveDataByPernr, approveGetRes);
             //获取【审核状态】
-            Integer approveResult = getApproveResult(importData.getImportTime(), importData.getQuitPernr());
+            Integer approveResult = getApproveResult(importData.getLaunchId(), importData.getQuitPernr());
             approveGetRes.setApproveStatus(approveResult);
             //获取【分部】
             if (importData.getPersonScope().equals("门店")) {
@@ -646,15 +647,14 @@ public class LsjsServiceImpl implements ILsjsService {
     /**
      * 获取审批状态字段值
      *
-     * @param importTime
+     * @param launchId
      * @param quitPernr
      * @return
      */
-    private Integer getApproveResult(Timestamp importTime, String quitPernr) {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private Integer getApproveResult(Integer launchId, String quitPernr) {
         List<Integer> resultList = new ArrayList<>();
         Integer approveStatus = 0;
-        List<Integer> approveResultList = approveMapper.getApproveResultList(df.format(importTime), quitPernr);
+        List<Integer> approveResultList = approveMapper.getApproveResultList(launchId, quitPernr);
         if (approveResultList.size() < 4) {
             approveStatus = 1;
         } else {
@@ -686,24 +686,12 @@ public class LsjsServiceImpl implements ILsjsService {
     /**
      * 人力资源中心删除导入数据前获取导入数据
      *
-     * @param importDataGetDto
+     * @param quitPernr
      * @return
      */
     @Override
-    public List<ImportDataRes> getImportDataList(ImportDataGetDto importDataGetDto) {
-//        List<ImportData> importDataList = new ArrayList<>();
-//        if (importDataGetDto.getImportTime().length() > 0 && importDataGetDto.getQuitPernr().length() > 0) {
-//            //若查询条件中既有导入日期又有离职员工工号则能精确查出一条导入数据
-//            ImportData list = importDataMapper.getImoprtDataByTimeAndPernr(importDataGetDto);
-//            importDataList.add(list);
-//        } else if (importDataGetDto.getImportTime().length() > 0 && importDataGetDto.getQuitPernr().length() == 0) {
-//            //若查询条件只有导入日期，则查出当天导入的所有人的导入数据
-//            importDataList = importDataMapper.getImoprtDataByImportTime(importDataGetDto.getImportTime());
-//        } else if (importDataGetDto.getImportTime().length() == 0 && importDataGetDto.getQuitPernr().length() > 0) {
-//            //若查询条件中只有离职员工工号，则查询出该离职员工的所有离司结算导入数据(考虑到再入职又离职的员工)
-//            importDataList = importDataMapper.getImoprtDataByPernr(importDataGetDto.getQuitPernr());
-//        }
-        List<ImportDataRes> importDataList = importDataMapper.getImoprtDataByPernr(importDataGetDto.getQuitPernr());
+    public List<ImportDataRes> getImportDataList(String quitPernr) {
+        List<ImportDataRes> importDataList = importDataMapper.getImoprtDataByPernr(quitPernr);
         return importDataList;
     }
 
@@ -714,33 +702,24 @@ public class LsjsServiceImpl implements ILsjsService {
      * @return
      */
     @Override
-    public int deleteDataByPernr(String quitPernr) {
+    public int deleteDataByPernr(String quitPernr, Integer launchId) {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         int i = 0;
         //判断导入数据表中是否存在该离职员工的数据
-//        ImportData imoprtDataByPernr = importDataMapper.getImoprtDataByQuitPernr(quitPernr);
-//        if (imoprtDataByPernr.getDirectPernr().length() > 0) {
-//            int result = 0;
-//            result = importDataMapper.deleteImportData(quitPernr, df.format(imoprtDataByPernr.getImportTime()));
-//            if (result == 0) {
-//                return result;
-//            }
-//            i = i + result;
-//        }
-        List<ImportData> importDataList = importDataMapper.getImportDataByQuitPernr(quitPernr);
-        if(importDataList.size() > 0 ){
+        ImportData importData = importDataMapper.getImportDataByQuitPernr(quitPernr, launchId);
+        if(importData != null){
             int result = 0;
-            result = importDataMapper.deleteImportDataByPernr(quitPernr);
+            result = importDataMapper.deleteImportDataByPernr(quitPernr, launchId);
             if (result == 0) {
                 return result;
             }
             i = i + result;
         }
         //判断审核表中是否存在该离职员工的审核数据
-        List<Approve> approveByPernr = approveMapper.getApproveByPernr(quitPernr);
+        List<QueryApproveRes> approveByPernr = approveMapper.queryApproveByPernr(quitPernr, launchId);
         if (approveByPernr.size() > 0) {
             int result = 0;
-            result = approveMapper.deleteApproveDataByPernr(quitPernr);
+            result = approveMapper.deleteApproveDataByPernr(quitPernr, launchId);
             if (result == 0) {
                 return result;
             }
@@ -1027,6 +1006,16 @@ public class LsjsServiceImpl implements ILsjsService {
 
         }
         return approveDataResList;
+    }
+
+    /**
+     * 记录删除操作
+     * @param deleteImportDataLog
+     * @return
+     */
+    @Override
+    public int insertDeleteLog(DeleteImportDataLog deleteImportDataLog) {
+        return deleteImportDataLogMapper.insertDeleteLog(deleteImportDataLog);
     }
 
 }

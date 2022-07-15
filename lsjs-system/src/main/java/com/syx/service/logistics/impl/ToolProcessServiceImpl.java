@@ -37,7 +37,7 @@ public class ToolProcessServiceImpl implements IToolProcessService {
      * @return
      */
     @Override
-    public SendMsgRes sendtoolMsg(String quitPernr, String userName) {
+    public SendMsgRes sendtoolMsg(Integer launchId, String quitPernr, String userName) {
         SendMsgRes sendMsgRes = new SendMsgRes();
         //一、根据离职员工工号到人事导入数据表中查询该员工所属分部以及人员范围
         ImportData imprtData = lsjsServiceImpl.getLastImoprtDataByPernr(quitPernr);
@@ -63,7 +63,7 @@ public class ToolProcessServiceImpl implements IToolProcessService {
         int insertApproveResult = 0;
         int approveContent = 4;
         String approveContentDesc = "工牌工装审核";
-        insertApproveResult = insertApprove(quitPernr,reviewer.getToolPernr(), approveContent, approveContentDesc);
+        insertApproveResult = insertApprove(launchId, quitPernr,reviewer.getToolPernr(), approveContent, approveContentDesc);
         if (insertApproveResult == 0){
             sendMsgRes.setErrcode(1);
             sendMsgRes.setErrmsg("写入数据库失败");
@@ -87,11 +87,12 @@ public class ToolProcessServiceImpl implements IToolProcessService {
      * @param
      * @return
      */
-    public int insertApprove(String quitPernr, String reviewerPernr,int approveContent, String approveContentDesc) {
+    public int insertApprove(Integer launchId, String quitPernr, String reviewerPernr,int approveContent, String approveContentDesc) {
         //根据员工工号查询员工基本信息
         Approve approve = new Approve();
         LocalDateTime now = LocalDateTime.now();
         Timestamp timestamp = Timestamp.valueOf(now);
+        approve.setLaunchId(launchId);
         approve.setQuitPernr(quitPernr);
         approve.setReviewerPernr(reviewerPernr);
         approve.setSendTime(timestamp);

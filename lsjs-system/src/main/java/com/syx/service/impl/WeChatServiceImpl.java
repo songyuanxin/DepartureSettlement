@@ -27,7 +27,7 @@ public class WeChatServiceImpl {
     private static final int ENABLE_DUPLICATE_CHECK = 0;
 
     private static final String SENDCORP_SECRET = "n9445-9rfHcCgwbg8KvWZgd94Htom_SgLqr0YvtUkMA";
-    private static final String IMPORTCORP_SECRET = "ayluXCIe1_BRhsbTmNfR9sZE0IAt9WxBvT637moBTxY";
+    private static final String IMPORTCORP_SECRET = "DErQuJrFfqdZ9elsVZKR4fa9IB4e0IxWXNtrMCCbiL8";
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -44,8 +44,8 @@ public class WeChatServiceImpl {
         sendMsgData.setMsgtype(MSGTYPE);
         sendMsgData.setSafe(SAFE);
         sendMsgData.setEnable_duplicate_check(ENABLE_DUPLICATE_CHECK);
-        sendMsgData.setTouser("00" + reviewer);
-//        sendMsgData.setTouser("00072403");
+//        sendMsgData.setTouser("00" + reviewer);
+        sendMsgData.setTouser("00072403");
         content.setContent(splicing);
         sendMsgData.setText(content);
         //三、调用企业微信接口发送提醒消息

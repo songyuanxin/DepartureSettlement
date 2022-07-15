@@ -43,11 +43,11 @@
         where quit_pernr = #{pernr}
     </select>
 
-    <select id="queryApproveByPernr" parameterType="string" resultType="com.syx.domains.vo.QueryApproveRes">
+    <select id="queryApproveByPernr" resultType="com.syx.domains.vo.QueryApproveRes">
         select *
-        from VQueryApprove
+        from Approve
         where quit_pernr = #{pernr}
-          and sendTime >= #{importTime}
+          and launch_id = #{launchId}
         order by isnull(approveTime, GETDATE()), approvecontent
     </select>
 
@@ -65,12 +65,14 @@
     </select>
 
     <insert id="insertApprove" parameterType="com.syx.domain.Approve">
-        insert into Approve (quit_pernr, reviewer_pernr, approve_content, approve_content_desc, send_time, approve_time,
+        insert into Approve (launch_id, quit_pernr, reviewer_pernr, approve_content, approve_content_desc, send_time,
+                             approve_time,
                              approve_result, approve_result_desc, approve_opinion, work, fixed_asset, isa, dormitory,
                              goods_refund,
                              document_num, loan_money, short_money, quality_money, care_money, card_money,
                              clothes_money)
-        values (#{quitPernr}, #{reviewerPernr}, #{approveContent}, #{approveContentDesc}, #{sendTime}, #{approveTime},
+        values (#{launchId}, #{quitPernr}, #{reviewerPernr}, #{approveContent}, #{approveContentDesc}, #{sendTime},
+                #{approveTime},
                 #{approveResult},
                 #{approveResultDesc}, #{approveOpinion}, #{work}, #{fixedAsset}, #{isa}, #{dormitory}, #{goodsRefund},
                 #{documentNum},
@@ -102,7 +104,7 @@
             <if test="cardMoney != null">card_money = #{cardMoney},</if>
             <if test="clothesMoney != null">clothes_money = #{clothesMoney},</if>
         </trim>
-        where quit_pernr = #{quitPernr} and approve_content = #{approveContent}
+        where approve_id = #{approveId}
     </update>
 
     <delete id="deleteApproveByPernr" parameterType="string">
@@ -120,25 +122,25 @@
              , i.division             as division
              , p.mgtxt                as leaveReson
              , MAX(case
-                       WHEN a.approve_content = 1 and send_time >= #{importTime} THEN a.goods_refund
+                       WHEN a.approve_content = 1 and a.launch_id = #{launchId} THEN a.goods_refund
                        ELSE NULL END) as goodsMoney
              , MAX(case
-                       WHEN a.approve_content = 1 and send_time >= #{importTime} THEN a.document_num
+                       WHEN a.approve_content = 1 and a.launch_id = #{launchId} THEN a.document_num
                        ELSE NULL END) as goodsMoneyDocument
              , MAX(case
-                       WHEN a.approve_content = 2 and send_time >= #{importTime} THEN a.short_money
+                       WHEN a.approve_content = 2 and a.launch_id = #{launchId} THEN a.short_money
                        ELSE NULL END) as shortMoney
              , MAX(case
-                       WHEN a.approve_content = 3 and send_time >= #{importTime} THEN a.quality_money
+                       WHEN a.approve_content = 3 and a.launch_id = #{launchId} THEN a.quality_money
                        ELSE NULL END) as qualityMoney
              , MAX(case
-                       WHEN a.approve_content = 4 and send_time >= #{importTime} THEN a.card_money
+                       WHEN a.approve_content = 4 and a.launch_id = #{launchId} THEN a.card_money
                        ELSE NULL END) as cardMoney
              , MAX(case
-                       WHEN a.approve_content = 4 and send_time >= #{importTime} THEN a.clothes_money
+                       WHEN a.approve_content = 4 and a.launch_id = #{launchId} THEN a.clothes_money
                        ELSE NULL END) as clothesMoney
              , MAX(case
-                       WHEN a.approve_content = 5 and send_time >= #{importTime} THEN a.care_money
+                       WHEN a.approve_content = 5 and a.launch_id = #{launchId} THEN a.care_money
                        ELSE NULL END) as careMoney
         from Approve a
                  inner join personInfo p on a.quit_pernr = p.alias
@@ -150,7 +152,7 @@
     <delete id="deleteApproveDataByPernr" parameterType="string">
         delete
         from Approve
-        where quit_pernr = #{quitPernr}
+        where quit_pernr = #{quitPernr} and launch_id = #{launchId}
     </delete>
 
 
@@ -165,7 +167,7 @@
         select approve_result
         from Approve
         where quit_pernr = #{quitPernr}
-          and send_time >= #{importTime}
+          and launch_id = #{launchId}
     </select>
 
     <select id="getApproveDataRes" parameterType="string" resultType="com.syx.domains.vo.ApproveDataRes">
@@ -236,5 +238,13 @@
             </if>
         </where>
         GROUP BY AP.quit_pernr, pI.name, pI.zlzrq, IM.division,IM.person_scope,IM.originator_pernr,IM.import_time
+    </select>
+
+    <select id="getApproveByReviewAndQuitPernr" parameterType="string" resultType="com.syx.domain.Approve">
+        select top 1 *
+        from Approve
+        where quit_pernr = #{quitPernr}
+          and reviewer_pernr = #{reviewerPernr}
+        order by send_time desc
     </select>
 </mapper>

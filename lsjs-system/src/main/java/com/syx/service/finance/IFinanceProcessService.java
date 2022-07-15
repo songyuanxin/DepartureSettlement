@@ -9,9 +9,9 @@ import com.syx.domains.vo.SendMsgRes;
  **/
 public interface IFinanceProcessService {
 
-    SendMsgRes sendLoanAndShortMsg(String quitPernr, String userName);
+    SendMsgRes sendLoanAndShortMsg(Integer launchId, String quitPernr, String userName);
 
-    SendMsgRes sendQualityMsg(String quitPernr, String userName);
+    SendMsgRes sendQualityMsg(Integer launchId, String quitPernr, String userName);
 
-    SendMsgRes sendCareMsg(String quitPernr, String userName);
+    SendMsgRes sendCareMsg(Integer launchId, String quitPernr, String userName);
 }

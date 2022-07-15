@@ -5,6 +5,7 @@ import com.syx.domain.Deduction;
 import com.syx.domain.ImportData;
 import com.syx.domain.SAPUserInfo;
 import com.syx.domains.AjaxResult;
+import com.syx.domains.ImportDataInfo;
 import com.syx.domains.dto.ImportDataDto;
 import com.syx.domains.dto.UploadDto;
 import com.syx.domains.vo.ResumeRes;
@@ -18,6 +19,7 @@ import com.syx.utils.ExcelUtil;
 import com.syx.utils.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.checkerframework.checker.units.qual.A;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -63,6 +65,7 @@ public class ImportDataController {
      */
     @PostMapping(path = "/import")
     public AjaxResult importData(UploadDto uploadDto) throws Exception {
+        uploadDto.setUserId("072403");
         ExcelUtil<ImportDataDto> util = new ExcelUtil<ImportDataDto>(ImportDataDto.class);
         List<ImportDataDto> dataList = util.importExcel(uploadDto.getFile().getInputStream());
 
@@ -231,42 +234,40 @@ public class ImportDataController {
         }
 
         int i = 0;
+        List<ImportDataInfo> importDataInfoList = new ArrayList<>();
         for (ImportDataDto data : dataList) {
-            ImportData importData = new ImportData();
             if (isReEntryList.contains(data.getPernr())) {
-                importData.setQuitPernr(data.getPernr());
-                importData.setPersonScope(data.getPersonScope());
-                importData.setDirectPernr(data.getDirectPernr());
-                importData.setDivision(data.getDivision());
-                importData.setAbsenteeismDoc(data.getAbsenteeismDoc());
-                String userId = uploadDto.getUserId();
-                importData.setOriginatorPernr(userId.substring(userId.length()-6));
-                LocalDateTime now = LocalDateTime.now();
-                Timestamp timestamp = Timestamp.valueOf(now);
-                importData.setImportTime(timestamp);
+                //给ImportData实体赋值
+                ImportData importData = setImportData(data, uploadDto);
                 importData.setReEntry(1);
                 //将导入数据写入数据库中备份
                 i = lsjsService.insertImportData(importData);
                 if (i == 0) {
                     return AjaxResult.error("流程发起失败，可能原因：导入数据备份时出现错误，请联系管理员处理！");
                 }
+                //写入导入数据成功后查询写入的导入数据
+                ImportData lastImportDataByPernr = importDataService.getLastImportDataByPernr(data.getPernr());
+                ImportDataInfo importDataInfo = new ImportDataInfo();
+                BeanUtils.copyProperties(lastImportDataByPernr, importDataInfo);
+                importDataInfo.setQuitName(data.getName());
+                importDataInfo.setDirectName(data.getDirectName());
+                importDataInfoList.add(importDataInfo);
             }else {
-                importData.setQuitPernr(data.getPernr());
-                importData.setPersonScope(data.getPersonScope());
-                importData.setDirectPernr(data.getDirectPernr());
-                importData.setDivision(data.getDivision());
-                importData.setAbsenteeismDoc(data.getAbsenteeismDoc());
-                String userId = uploadDto.getUserId();
-                importData.setOriginatorPernr(userId.substring(userId.length()-6));
-                LocalDateTime now = LocalDateTime.now();
-                Timestamp timestamp = Timestamp.valueOf(now);
-                importData.setImportTime(timestamp);
+                //给ImportData实体赋值
+                ImportData importData = setImportData(data, uploadDto);
                 importData.setReEntry(0);
                 //将导入数据写入数据库中备份
                 i = lsjsService.insertImportData(importData);
                 if (i == 0) {
                     return AjaxResult.error("流程发起失败，可能原因：导入数据备份时出现错误，请联系管理员处理！");
                 }
+                //写入导入数据成功后查询写入的导入数据
+                ImportData lastImportDataByPernr = importDataService.getLastImportDataByPernr(data.getPernr());
+                ImportDataInfo importDataInfo = new ImportDataInfo();
+                BeanUtils.copyProperties(lastImportDataByPernr, importDataInfo);
+                importDataInfo.setQuitName(data.getName());
+                importDataInfo.setDirectName(data.getDirectName());
+                importDataInfoList.add(importDataInfo);
             }
         }
 
@@ -278,13 +279,34 @@ public class ImportDataController {
         }
         String isReturn = "0";
         //导入数据时若以上校验通过则开始发起流程
-        SendMsgRes sendMsgRes = importDataService.launchProcess(dataList, isReturn);
+        SendMsgRes sendMsgRes = importDataService.launchProcess(importDataInfoList, isReturn);
         if (sendMsgRes.getErrcode() != 0) {
             lsjsService.deleteImportData(dataList);
             lsjsService.deletePDKKandRZLL(dataList);
             return AjaxResult.error("流程发起失败，可能原因：发送至直接上级审核时出错，请联系管理员处理！");
         }
         return AjaxResult.success("流程发起成功", dataList);
+    }
+
+    /**
+     * 插入导入数据前为ImportData赋值
+     * @param data
+     * @param uploadDto
+     * @return
+     */
+    private ImportData setImportData(ImportDataDto data, UploadDto uploadDto) {
+        ImportData importData = new ImportData();
+        importData.setQuitPernr(data.getPernr());
+        importData.setPersonScope(data.getPersonScope());
+        importData.setDirectPernr(data.getDirectPernr());
+        importData.setDivision(data.getDivision());
+        importData.setAbsenteeismDoc(data.getAbsenteeismDoc());
+        String userId = uploadDto.getUserId();
+        importData.setOriginatorPernr(userId.substring(userId.length()-6));
+        LocalDateTime now = LocalDateTime.now();
+        Timestamp timestamp = Timestamp.valueOf(now);
+        importData.setImportTime(timestamp);
+        return importData;
     }
 
     /**

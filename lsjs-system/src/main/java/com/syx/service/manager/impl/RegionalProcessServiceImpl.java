@@ -69,6 +69,7 @@ public class RegionalProcessServiceImpl implements IRegionalProcessService {
         Timestamp timestamp = Timestamp.valueOf(now);
 
         Approve approve = new Approve();
+        approve.setLaunchId(approveStoreDto.getLaunchId());
         approve.setQuitPernr(approveStoreDto.getQuitPernr());
         approve.setApproveContent(6);
         approve.setApproveContentDesc("区域经理审核");

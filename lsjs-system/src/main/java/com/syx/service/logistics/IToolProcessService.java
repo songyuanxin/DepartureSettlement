@@ -7,5 +7,5 @@ import com.syx.domains.vo.SendMsgRes;
  * @date 2022/5/20
  **/
 public interface IToolProcessService {
-    SendMsgRes sendtoolMsg(String quitPernr, String userName);
+    SendMsgRes sendtoolMsg(Integer launchId, String quitPernr, String userName);
 }

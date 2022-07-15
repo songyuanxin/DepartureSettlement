@@ -88,6 +88,7 @@ public class AreaProcessServiceImpl implements IAreaProcessService {
         Timestamp timestamp = Timestamp.valueOf(now);
 
         Approve approve = new Approve();
+        approve.setLaunchId(regionalOrAreaApproveDto.getLaunchId());
         approve.setQuitPernr(regionalOrAreaApproveDto.getQuitPernr());
         approve.setApproveContent(7);
         approve.setApproveContentDesc("地区经理审核");

@@ -1,9 +1,12 @@
 package com.syx.controller;
 
+import com.syx.domain.Approve;
+import com.syx.domain.DeleteImportDataLog;
 import com.syx.domain.SAPUserInfo;
 import com.syx.domain.vo.AuditUserRes;
 import com.syx.domains.AjaxResult;
 import com.syx.domains.dto.ApproveGetDto;
+import com.syx.domains.dto.DeleteImportDataDto;
 import com.syx.domains.dto.ImportDataGetDto;
 import com.syx.domains.vo.*;
 import com.syx.service.ILsjsService;
@@ -14,6 +17,7 @@ import org.dom4j.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
@@ -44,7 +48,7 @@ public class LsjsController {
     @PostMapping(value = "/getAuditQuitUser")
     public AjaxResult getAuditQuitUser(String reviewerPernr) {
         List<String> auditQuitPernr = lsjsService.getAuditQuitPernr(reviewerPernr);
-        List<AuditUserRes> auditUserRes = lsjsService.getUserInfoByPernrList(auditQuitPernr);
+        List<AuditUserRes> auditUserRes = lsjsService.getUserInfoByPernrList(auditQuitPernr, reviewerPernr);
         if (auditUserRes == null) {
             return AjaxResult.success("暂无待审核的离司结算申请");
         }
@@ -229,30 +233,37 @@ public class LsjsController {
 
     /**
      * 人力资源中心删除导入数据前查询导入数据(用于删除功能中)
-     * @param importDataGetDto
+     * @param quitPernr
      * @return
      */
     @GetMapping(value = "/getImportDataList")
-    public AjaxResult getImportDataList(ImportDataGetDto importDataGetDto){
-//        if (StringUtils.isBlank(importDataGetDto.getImportTime())){
-//            importDataGetDto.setImportTime("");
-//        }else if (StringUtils.isBlank(importDataGetDto.getQuitPernr())){
-//            importDataGetDto.setQuitPernr("");
-//        }
-        List<ImportDataRes> importDataList = lsjsService.getImportDataList(importDataGetDto);
+    public AjaxResult getImportDataList(String quitPernr){
+        List<ImportDataRes> importDataList = lsjsService.getImportDataList(quitPernr);
         return AjaxResult.success(importDataList);
     }
 
     /**
      * 人力资源中心删除人事导入时的错误数据(删除功能)
-     * @param quitPernr
+     * @param deleteImportDataDto
      * @return
      */
     @PostMapping(value = "/deleteDataByPernr/{quitPernr}")
-    public AjaxResult deleteDataByPernr(@PathVariable String quitPernr){
-        int i = lsjsService.deleteDataByPernr(quitPernr);
+    public AjaxResult deleteDataByPernr(@PathVariable DeleteImportDataDto deleteImportDataDto){
+        int i = lsjsService.deleteDataByPernr(deleteImportDataDto.getQuitPernr(), deleteImportDataDto.getLaunchId());
         if (i == 0){
             return AjaxResult.error("删除该离职员工数据失败，请重试或联系管理员");
+        }
+        //记录删除操作
+        DeleteImportDataLog deleteImportDataLog = new DeleteImportDataLog();
+        deleteImportDataLog.setQuitPernr(deleteImportDataDto.getQuitPernr());
+        deleteImportDataLog.setLaunchId(deleteImportDataDto.getLaunchId());
+        deleteImportDataLog.setOriginatorPernr(deleteImportDataDto.getUserId());
+        LocalDateTime now = LocalDateTime.now();
+        Timestamp timestamp = Timestamp.valueOf(now);
+        deleteImportDataLog.setDeleteTime(timestamp);
+        int i1 = lsjsService.insertDeleteLog(deleteImportDataLog);
+        if (i1 == 0){
+            return AjaxResult.error("记录删除操作时出错，请重试或联系管理员");
         }
         return AjaxResult.success("删除成功",i);
     }

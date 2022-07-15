@@ -1,6 +1,7 @@
 package com.syx.service;
 
 import com.syx.domain.ImportData;
+import com.syx.domains.ImportDataInfo;
 import com.syx.domains.dto.ImportDataDto;
 import com.syx.domains.vo.SendMsgRes;
 
@@ -15,7 +16,7 @@ public interface IImportDataService {
      * 发起流程
      * @param dataList 导入数据
      */
-    SendMsgRes launchProcess(List<ImportDataDto> dataList, String isReturn);
+    SendMsgRes launchProcess(List<ImportDataInfo> dataList, String isReturn);
 
     ImportData getLastImportDataByPernr(String quitPernr);
 

@@ -5,6 +5,7 @@ import com.syx.domains.dto.ApproveGetDto;
 import com.syx.domains.dto.ImportDataGetDto;
 import com.syx.domains.vo.ImportDataRes;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -31,7 +32,7 @@ public interface ImportDataMapper {
 
     int deleteImportData(String quitPernr,String importTime);
 
-    int deleteImportDataByPernr(String quitPernr);
+    int deleteImportDataByPernr(@Param("quitPernr") String quitPernr, @Param("launchId") Integer launchId);
 
     List<ImportData> getImoprtDataByTime(ApproveGetDto approveGetDto);
 
@@ -47,5 +48,5 @@ public interface ImportDataMapper {
 
     List<ImportData> getImportDataByImportPernr(String ImportPernr);
 
-    List<ImportData> getImportDataByQuitPernr(String quitPernr);
+    ImportData getImportDataByQuitPernr(@Param("quitPernr") String quitPernr, @Param("launchId") Integer launchId);
 }

@@ -60,6 +60,8 @@ public class DirectlyController {
         //获取当前系统时间
         LocalDateTime now = LocalDateTime.now();
         Timestamp timestamp = Timestamp.valueOf(now);
+        approve.setApproveId(functionDto.getApproveId());
+        approve.setLaunchId(functionDto.getLaunchId());
         approve.setApproveTime(timestamp);
         approve.setQuitPernr(functionDto.getQuitPernr());
         approve.setReviewerPernr(functionDto.getReviewerPernr());
@@ -74,18 +76,6 @@ public class DirectlyController {
         approve.setApproveResult(2);
         approve.setApproveResultDesc("通过");
 
-        //二、发送至财务和其他审核人审核
-        String quitPernr = functionDto.getQuitPernr();
-        String userName = lsjsService.getUserNameByPernr(quitPernr);
-        sendMsgRes = financeProcessService.sendLoanAndShortMsg(quitPernr, userName);
-        sendMsgRes = financeProcessService.sendQualityMsg(quitPernr, userName);
-        sendMsgRes = financeProcessService.sendCareMsg(quitPernr, userName);
-        sendMsgRes = toolProcessService.sendtoolMsg(quitPernr, userName);
-
-        if (sendMsgRes.getErrcode() != 0) {
-            return AjaxResult.error("审核结果提交失败，可能原因：发送至财务部或后勤部审核失败，请重试或联系管理员！");
-        }
-
         int i = lsjsService.updateApprove(approve);
 
         //将审核记录插入审核记录表
@@ -96,6 +86,17 @@ public class DirectlyController {
 
         if (i < 1 || i1 < 1) {
             return AjaxResult.error("审核结果提交失败，可能原因：审核结果记录失败！");
+        }
+
+        //二、发送至财务和其他审核人审核
+        String quitPernr = functionDto.getQuitPernr();
+        String userName = lsjsService.getUserNameByPernr(quitPernr);
+        sendMsgRes = financeProcessService.sendCareMsg(functionDto.getLaunchId(), quitPernr, userName);
+        sendMsgRes = financeProcessService.sendLoanAndShortMsg(functionDto.getLaunchId(), quitPernr, userName);
+        sendMsgRes = financeProcessService.sendQualityMsg(functionDto.getLaunchId(), quitPernr, userName);
+        sendMsgRes = toolProcessService.sendtoolMsg(functionDto.getLaunchId(), quitPernr, userName);
+        if (sendMsgRes.getErrcode() != 0) {
+            return AjaxResult.error("审核结果提交失败，可能原因：发送至财务部/后勤部审核人时失败，请重试！");
         }
         return AjaxResult.success("审核结果提交成功");
     }
@@ -113,6 +114,8 @@ public class DirectlyController {
         //获取当前系统时间
         LocalDateTime now = LocalDateTime.now();
         Timestamp timestamp = Timestamp.valueOf(now);
+        approve.setApproveId(functionDto.getApproveId());
+        approve.setLaunchId(functionDto.getLaunchId());
         approve.setApproveTime(timestamp);
         approve.setQuitPernr(functionDto.getQuitPernr());
         approve.setReviewerPernr(functionDto.getReviewerPernr());
@@ -181,7 +184,8 @@ public class DirectlyController {
         //获取当前系统时间
         LocalDateTime now = LocalDateTime.now();
         Timestamp timestamp = Timestamp.valueOf(now);
-
+        approve.setLaunchId(storeDto.getLaunchId());
+        approve.setApproveId(storeDto.getApproveId());
         approve.setQuitPernr(storeDto.getQuitPernr());
         approve.setReviewerPernr(storeDto.getReviewerPernr());
         approve.setApproveTime(timestamp);
@@ -231,6 +235,7 @@ public class DirectlyController {
                 return AjaxResult.success("审核结果提交成功");
             } else {
                 RegionalOrAreaApproveDto regionalOrAreaApproveDto = new RegionalOrAreaApproveDto();
+                regionalOrAreaApproveDto.setLaunchId(storeDto.getLaunchId());
                 regionalOrAreaApproveDto.setQuitPernr(storeDto.getQuitPernr());
                 regionalOrAreaApproveDto.setAreaPernr(storeDto.getAreaPernr());
                 sendMsgRes = areaProcessService.sendAreaMsg(regionalOrAreaApproveDto, storeDto.getIsShopowner());
@@ -264,7 +269,8 @@ public class DirectlyController {
             goodsRefund = new BigDecimal(str);
             goodsRefund.setScale(2, BigDecimal.ROUND_HALF_UP);
         }
-
+        approve.setApproveId(storeDto.getApproveId());
+        approve.setLaunchId(storeDto.getLaunchId());
         approve.setQuitPernr(storeDto.getQuitPernr());
         approve.setReviewerPernr(storeDto.getReviewerPernr());
         approve.setApproveTime(timestamp);
@@ -300,7 +306,6 @@ public class DirectlyController {
 
         approve.setAreaPernr(storeDto.getAreaPernr());
         approve.setRegionPernr(storeDto.getRegionalPernr());
-
         approve.setApproveOpinion(auditMind.toString() + storeDto.getAuditMind());
 
         int i = lsjsService.updateApprove(approve);

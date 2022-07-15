@@ -32,10 +32,12 @@
         where quit_pernr = #{quitPernr}
           and convert(date, import_time) = #{importTime}
     </delete>
-    <delete id="deleteImportDataByPernr" parameterType="string">
+
+    <delete id="deleteImportDataByPernr">
         delete
         from ImportData
         where quit_pernr = #{quitPernr}
+          and launch_id = #{launchId}
     </delete>
 
     <select id="getImoprtDataByTime" parameterType="com.syx.domains.dto.ApproveGetDto" resultMap="ImportDataResult">
@@ -81,25 +83,25 @@
     </select>
 
     <select id="getImoprtDataByPernr" parameterType="string" resultType="com.syx.domains.vo.ImportDataRes">
-        select a.quit_pernr           quitPernr
-             , max(person_scope)      personScope
-             , max(direct_pernr)      directPernr
-             , max(p1.name)           directName
-             , max(b.area_pernr)   as areaPernr
-             , max(p3.name)        as areaName
-             , max(b.region_pernr) as regionalPernr
-             , max(p2.name)        as regionalName
-             , max(division)          division
-             , max(originator_pernr)  originatorPernr
-             , max(import_time)       importTime
-             , max(absenteeism_doc)   absenteeismDoc
+        select a.quit_pernr       as quitPernr
+             , a.launch_id        as launchId
+             , a.person_scope     as personScope
+             , a.direct_pernr     as directPernr
+             , p1.name            as directName
+             , b.area_pernr       as areaPernr
+             , p3.name            as areaName
+             , b.region_pernr     as regionalPernr
+             , p2.name            as regionalName
+             , a.division         as division
+             , a.originator_pernr as originatorPernr
+             , a.import_time      as importTime
+             , a.absenteeism_doc  as absenteeismDoc
         from ImportData a
                  inner join Approve b on a.quit_pernr = b.quit_pernr
                  left join personInfo p1 on p1.alias = a.direct_pernr
                  left join personInfo p2 on p2.alias = b.region_pernr
                  left join personInfo p3 on p3.alias = b.area_pernr
         where a.quit_pernr = #{quitPernr}
-        group by a.quit_pernr
     </select>
 
     <select id="getImoprtDataByQuitPernr" parameterType="string" resultMap="ImportDataResult">
@@ -115,10 +117,12 @@
         where t.rows = 1
           and t.originator_pernr = #{ImportPernr}
     </select>
-    <select id="getImportDataByQuitPernr" parameterType="string" resultType="com.syx.domain.ImportData">
+
+    <select id="getImportDataByQuitPernr" resultType="com.syx.domain.ImportData">
         select *
         from ImportData
         where quit_pernr = #{quitPernr}
+          and launch_id = #{launchId}
     </select>
 
 

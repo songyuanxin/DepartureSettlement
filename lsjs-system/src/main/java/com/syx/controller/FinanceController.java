@@ -35,6 +35,8 @@ public class FinanceController {
     @PostMapping(path = "/loan/adopt")
     public AjaxResult loanAdopt(FinanceApproveDto financeApproveDto){
         Approve approve = setApprove(financeApproveDto);
+        approve.setApproveId(financeApproveDto.getApproveId());
+        approve.setLaunchId(financeApproveDto.getLaunchId());
         approve.setApproveResult(2);
         approve.setApproveResultDesc("通过");
         approve.setApproveContent(2);
@@ -139,39 +141,6 @@ public class FinanceController {
     }
 
     /**
-     * 质量简报扣款审核时点击【待办】按钮
-     * @return
-     */
-//    @PostMapping(path = "/quality/noAdopt")
-//    public AjaxResult qualityNoAdopt(FinanceApproveDto financeApproveDto){
-//        Approve approve = setApprove(financeApproveDto);
-//        approve.setApproveResult(3);
-//        approve.setApproveResultDesc("不通过");
-//        approve.setApproveContent(3);
-//
-//        StringBuilder auditMind = new StringBuilder();
-//        if (StringUtils.isNotBlank(financeApproveDto.getQualityMoney())){
-//            if (Double.valueOf(financeApproveDto.getQualityMoney()).intValue() > 0){
-//                auditMind.append("存在质量简报扣款：" + financeApproveDto.getQualityMoney() + "元；");
-//            }
-//        }
-//        approve.setApproveOpinion(auditMind.toString() + financeApproveDto.getAuditMind());
-//
-//        int i = lsjsService.updateApprove(approve);
-//
-//        //将审核记录插入审核记录表
-//        ApproveLog approveLog = new ApproveLog();
-//        BeanUtils.copyProperties(approve, approveLog);
-//        approveLog.setApproveContentDesc("质量简报扣款审核");
-//        int i1 = lsjsService.insertApproveLog(approveLog);
-//
-//        if (i < 1 || i1 < 1) {
-//            return AjaxResult.error("审核结果提交失败，请重试或联系管理员！");
-//        }
-//        return AjaxResult.success("审核结果提交成功");
-//    }
-
-    /**
      * 管理责任盘点扣款审核时点击【提交】按钮
      * @return
      */
@@ -206,39 +175,6 @@ public class FinanceController {
     }
 
     /**
-     * 管理责任盘点扣款审核时点击【待办】按钮
-     * @return
-     */
-//    @PostMapping(path = "/care/noAdopt")
-//    public AjaxResult careNoAdopt(FinanceApproveDto financeApproveDto){
-//        Approve approve = setApprove(financeApproveDto);
-//        approve.setApproveResult(3);
-//        approve.setApproveResultDesc("不通过");
-//        approve.setApproveContent(5);
-//
-//        StringBuilder auditMind = new StringBuilder();
-//        if (StringUtils.isNotBlank(financeApproveDto.getCareMoney())){
-//            if (Double.valueOf(financeApproveDto.getCareMoney()).intValue() > 0){
-//                auditMind.append("存在管理责任盘点扣款：" + financeApproveDto.getCareMoney() + "元；");
-//            }
-//        }
-//        approve.setApproveOpinion(auditMind.toString() + financeApproveDto.getAuditMind());
-//
-//        int i = lsjsService.updateApprove(approve);
-//
-//        //将审核记录插入审核记录表
-//        ApproveLog approveLog = new ApproveLog();
-//        BeanUtils.copyProperties(approve, approveLog);
-//        approveLog.setApproveContentDesc("管理责任盘点扣款审核");
-//        int i1 = lsjsService.insertApproveLog(approveLog);
-//
-//        if (i < 1 || i1 < 1) {
-//            return AjaxResult.error("审核结果提交失败，请重试或联系管理员！");
-//        }
-//        return AjaxResult.success("审核结果提交成功");
-//    }
-
-    /**
      * 更新审核表中审核数据时给Approve实体赋值
      * @param financeApproveDto
      * @return
@@ -248,7 +184,8 @@ public class FinanceController {
         //获取当前系统时间
         LocalDateTime now = LocalDateTime.now();
         Timestamp timestamp = Timestamp.valueOf(now);
-
+        approve.setApproveId(financeApproveDto.getApproveId());
+        approve.setLaunchId(financeApproveDto.getLaunchId());
         approve.setQuitPernr(financeApproveDto.getQuitPernr());
         approve.setReviewerPernr(financeApproveDto.getReviewerPernr());
         approve.setApproveTime(timestamp);

@@ -37,7 +37,7 @@ public interface ILsjsService {
 
     List<String> getAuditQuitPernr(String reviewerPernr);
 
-    List<AuditUserRes> getUserInfoByPernrList(List<String> quitPernrList);
+    List<AuditUserRes> getUserInfoByPernrList(List<String> quitPernrList, String reviewerPernr);
 
     List<QueryApproveRes> queryApproveByPernr(String pernr);
 
@@ -73,10 +73,11 @@ public interface ILsjsService {
 
     String getLeaveResonByQuitPernr(String pernr);
 
-    List<ImportDataRes> getImportDataList(ImportDataGetDto importDataGetDto);
+    List<ImportDataRes> getImportDataList(String quitPernr);
 
-    int deleteDataByPernr(String quitPernr);
+    int deleteDataByPernr(String quitPernr, Integer launchId);
 
     List<ApproveDataRes> getApproveDataRes(ImportDataGetDto dataResByTime);
 
+    int insertDeleteLog(DeleteImportDataLog deleteImportDataLog);
 }

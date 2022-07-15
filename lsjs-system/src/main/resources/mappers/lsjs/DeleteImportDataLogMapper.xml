@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.syx.mapper.lsjs.DeleteImportDataLogMapper">
+    <resultMap id="DeleteImportDataLogResult" type="com.syx.domain.DeleteImportDataLog">
+        <result property="id" column="id"/>
+        <result property="quitPernr" column="quit_pernr"/>
+        <result property="launchId" column="launch_id"/>
+        <result property="originatorPernr" column="originator_pernr"/>
+        <result property="deleteTime" column="delete_time"/>
+    </resultMap>
+
+    <insert id="insertDeleteLog" parameterType="com.syx.domain.DeleteImportDataLog">
+        insert into DeleteImportDataLog (quit_pernr, launch_id, originator_pernr, delete_time)
+        values (#{quitPernr}, #{launchId}, #{originatorPernr}, #{deleteTime})
+    </insert>
+
+</mapper>

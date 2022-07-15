@@ -32,7 +32,7 @@
         select a.alias       as pernr,
                a.name        as userName,
                a.sex         as sex,
-               a.position    as position,
+               a.job         as position,
                a.storename   as department,
                a.zrzrq       as joinedDate,
                a.zzzrq       as confirDate,

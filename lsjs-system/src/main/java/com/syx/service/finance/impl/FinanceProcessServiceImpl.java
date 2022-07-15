@@ -34,7 +34,7 @@ public class FinanceProcessServiceImpl implements IFinanceProcessService {
      * @return
      */
     @Override
-    public SendMsgRes sendLoanAndShortMsg(String quitPernr, String userName) {
+    public SendMsgRes sendLoanAndShortMsg(Integer launchId, String quitPernr, String userName) {
         SendMsgRes sendMsgRes = new SendMsgRes();
         //一、根据离职员工工号到人事导入数据表中查询该员工所属分部以及人员范围
         Reviewer reviewer = getReviewer(quitPernr);
@@ -45,7 +45,7 @@ public class FinanceProcessServiceImpl implements IFinanceProcessService {
         int insertApproveResult = 0;
         int approveContent = 2;
         String approveContentDesc = "借款短款审核";
-        insertApproveResult = insertApprove(quitPernr,reviewer.getLoanPernr(), approveContent, approveContentDesc);
+        insertApproveResult = insertApprove(launchId,quitPernr,reviewer.getLoanPernr(), approveContent, approveContentDesc);
         if (insertApproveResult == 0){
             sendMsgRes.setErrcode(1);
             sendMsgRes.setErrmsg("写入数据库失败");
@@ -69,7 +69,7 @@ public class FinanceProcessServiceImpl implements IFinanceProcessService {
      * @return
      */
     @Override
-    public SendMsgRes sendQualityMsg(String quitPernr, String userName) {
+    public SendMsgRes sendQualityMsg(Integer launchId, String quitPernr, String userName) {
         SendMsgRes sendMsgRes = new SendMsgRes();
         //一、根据离职员工工号到人事导入数据表中查询该员工所属分部以及人员范围
         Reviewer reviewer = getReviewer(quitPernr);
@@ -81,7 +81,7 @@ public class FinanceProcessServiceImpl implements IFinanceProcessService {
         int insertApproveResult = 0;
         int approveContent = 3;
         String approveContentDesc = "质量简报扣款审核";
-        insertApproveResult = insertApprove(quitPernr,reviewer.getQualityPernr(), approveContent, approveContentDesc);
+        insertApproveResult = insertApprove(launchId, quitPernr,reviewer.getQualityPernr(), approveContent, approveContentDesc);
         if (insertApproveResult == 0){
             sendMsgRes.setErrcode(1);
             sendMsgRes.setErrmsg("写入数据库失败");
@@ -104,7 +104,7 @@ public class FinanceProcessServiceImpl implements IFinanceProcessService {
      * @return
      */
     @Override
-    public SendMsgRes sendCareMsg(String quitPernr, String userName) {
+    public SendMsgRes sendCareMsg(Integer launchId, String quitPernr, String userName) {
         SendMsgRes sendMsgRes = new SendMsgRes();
         //根据离职员工工号查询员工职能体系
         String dutySystem = lsjsServiceImpl.getDutySystemByPernr(quitPernr);
@@ -121,7 +121,7 @@ public class FinanceProcessServiceImpl implements IFinanceProcessService {
                 int insertApproveResult = 0;
                 int approveContent = 5;
                 String approveContentDesc = "管理责任盘点扣款审核";
-                insertApproveResult = insertApprove(quitPernr,carePernr, approveContent, approveContentDesc);
+                insertApproveResult = insertApprove(launchId,quitPernr,carePernr, approveContent, approveContentDesc);
                 if (insertApproveResult == 0){
                     sendMsgRes.setErrcode(1);
                     sendMsgRes.setErrmsg("写入数据库失败");
@@ -151,11 +151,12 @@ public class FinanceProcessServiceImpl implements IFinanceProcessService {
      * @param
      * @return
      */
-    public int insertApprove(String quitPernr, String reviewerPernr,int approveContent, String approveContentDesc) {
+    public int insertApprove(Integer launchId, String quitPernr, String reviewerPernr,int approveContent, String approveContentDesc) {
         //根据员工工号查询员工基本信息
         Approve approve = new Approve();
         LocalDateTime now = LocalDateTime.now();
         Timestamp timestamp = Timestamp.valueOf(now);
+        approve.setLaunchId(launchId);
         approve.setQuitPernr(quitPernr);
         approve.setReviewerPernr(reviewerPernr);
         approve.setSendTime(timestamp);

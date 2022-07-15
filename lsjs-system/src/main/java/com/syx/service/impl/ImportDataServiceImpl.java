@@ -1,6 +1,7 @@
 package com.syx.service.impl;
 
 import com.syx.domain.ImportData;
+import com.syx.domains.ImportDataInfo;
 import com.syx.domains.dto.ImportDataDto;
 import com.syx.domains.vo.SendMsgRes;
 import com.syx.mapper.lsjs.ImportDataMapper;
@@ -39,27 +40,26 @@ public class ImportDataServiceImpl implements IImportDataService {
      * @param dataList 导入数据
      */
     @Override
-    public SendMsgRes launchProcess(List<ImportDataDto> dataList, String isReturn) {
-
+    public SendMsgRes launchProcess(List<ImportDataInfo> dataList, String isReturn) {
         SendMsgRes sendMsgRes = new SendMsgRes();
-        List<ImportDataDto> storeDataList = new ArrayList<>();//存放属于门店的离职员工数据
-        List<ImportDataDto> functionDataList = new ArrayList<>();//存放属于职能的离职员工数据
+        List<ImportDataInfo> storeDataList = new ArrayList<>();//存放属于门店的离职员工数据
+        List<ImportDataInfo> functionDataList = new ArrayList<>();//存放属于职能的离职员工数据
 
-        for (ImportDataDto importDataDto :dataList){
-            if (importDataDto.getPersonScope().equals("门店")){
-                storeDataList.add(importDataDto);
-            }else if (importDataDto.getPersonScope().equals("职能") || importDataDto.getPersonScope().equals("配送中心") || importDataDto.getPersonScope().equals("体检中心")){
-                functionDataList.add(importDataDto);
+        for (ImportDataInfo importDataInfo:dataList){
+            if (importDataInfo.getPersonScope().equals("门店")){
+                storeDataList.add(importDataInfo);
+            }else if (importDataInfo.getPersonScope().equals("职能")){
+                functionDataList.add(importDataInfo);
             }else {
                 sendMsgRes.setErrcode(400);
-                sendMsgRes.setErrmsg("流程发起失败，可能原因：导入模板中存在人员范围不属于【“门店”、“职能”、“体检中心”、“配送中心”】的离职员工！");
+                sendMsgRes.setErrmsg("流程发起失败，可能原因：导入模板中存在人员范围不属于【“门店”、“职能”】的离职员工！");
                 return sendMsgRes;
             }
         }
 
         //将属于门店和职能的离职员工数据按照直接上级工号分组，为后续发送至直接上级时做准备
-        Map<String,List<ImportDataDto>> storeDirectMap = storeDataList.stream().collect(Collectors.groupingBy(item -> item.getDirectPernr() + "_" + item.getDirectName()));
-        Map<String,List<ImportDataDto>> functionDirectMap = functionDataList.stream().collect(Collectors.groupingBy(item -> item.getDirectPernr() + "_" + item.getDirectName()));
+        Map<String,List<ImportDataInfo>> storeDirectMap = storeDataList.stream().collect(Collectors.groupingBy(item -> item.getDirectPernr() + "_" + item.getDirectName()));
+        Map<String,List<ImportDataInfo>> functionDirectMap = functionDataList.stream().collect(Collectors.groupingBy(item -> item.getDirectPernr() + "_" + item.getDirectName()));
 
         //发起门店离司结算流程
         if (!storeDirectMap.isEmpty()){
