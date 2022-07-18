@@ -88,12 +88,9 @@ public interface ApproveMapper {
 
     List<Integer> getApproveResultList(@Param("launchId")Integer launchId, @Param("quitPernr")String quitPernr);
 
-    ApproveDataRes getApproveDataRes(@Param("importTime")String importTime, @Param("quitPernr")String quitPernr
-            ,@Param("personScope")String personScope,@Param("importPernr")String importPernr);
-
     Approve getApproveByReviewAndQuitPernr(@Param("quitPernr")String quitPernr, @Param("reviewerPernr")String reviewerPernr);
 
     String getSAPStoreHeadByPernr(String pernr);
 
-    List<ApproveDataRes> getApproveDataResBySqlServer(String name,List<String> launchIds);
+    List<ApproveDataRes> getApproveDataResBySqlServer(String name,List<String> launchs);
 }

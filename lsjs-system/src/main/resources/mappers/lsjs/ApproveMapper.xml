@@ -195,8 +195,8 @@
     <select id="getApproveDataResBySqlServer" statementType="CALLABLE" resultType="com.syx.domains.vo.ApproveDataRes">
         {
             call spQueryApproveData(
-                #{TableName},
-                #{launchs,mode=IN,typeHandler=com.syx.client.mybatis.SetApproveTypeHandler}
+                #{name},
+                #{launchs,mode=IN,typeHandler=com.syx.mybatis.SetApproveTypeHandler}
             )
             }
     </select>

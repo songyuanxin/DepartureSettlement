@@ -45,7 +45,7 @@
         {
             call sp_ZP_GetManagement(
                 #{name},
-                #{storeNameList,mode=IN,typeHandler=com.syx.client.mybatis.SetApproveTypeHandler}
+                #{storeNameList,mode=IN,typeHandler=com.syx.mybatis.SetApproveTypeHandler}
             )
             }
     </select>

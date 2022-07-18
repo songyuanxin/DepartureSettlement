@@ -1,5 +1,8 @@
 package com.syx.domains.vo;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 /**
@@ -7,6 +10,7 @@ import lombok.Data;
  * @date 2022/6/29
  **/
 @Data
+@JsonInclude(value= JsonInclude.Include.NON_NULL)
 public class ApproveDataRes {
     //分部
     private String division;
@@ -78,5 +82,9 @@ public class ApproveDataRes {
 
     //离职原因
     private String leaveReson;
+
+    //商家名字,不返回给前端
+    @JSONField(serialize = false)
+    private String storeNameId;
 
 }

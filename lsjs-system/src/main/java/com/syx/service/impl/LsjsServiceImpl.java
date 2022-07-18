@@ -787,10 +787,10 @@ public class LsjsServiceImpl implements ILsjsService {
 
         //获得店编的集合，需要拼接成StoreName||1||的形式作为表值参数传给存储过程调用
         for (ApproveDataRes approveDataRes : approveDataResList) {
-            storeNameList.add("StoreName" + "||" + approveDataRes.getStoreName() + "||");
+            storeNameList.add("StoreName" + "||" + approveDataRes.getStoreNameId() + "||");
             //判断人员范围，把人员范围属于门店的对应离职店编放进集合，方便查询
             if(approveDataRes.getPersonScope().equals("门店")){
-                shopStoreNameList.add(approveDataRes.getStoreName());
+                shopStoreNameList.add(approveDataRes.getStoreNameId());
             }
         }
         //调用存储过程获得管理地区的List集合
