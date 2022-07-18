@@ -247,8 +247,8 @@ public class LsjsController {
      * @param deleteImportDataDto
      * @return
      */
-    @PostMapping(value = "/deleteDataByPernr/{quitPernr}")
-    public AjaxResult deleteDataByPernr(@PathVariable DeleteImportDataDto deleteImportDataDto){
+    @PostMapping(value = "/deleteDataByPernr")
+    public AjaxResult deleteDataByPernr(@RequestBody DeleteImportDataDto deleteImportDataDto){
         int i = lsjsService.deleteDataByPernr(deleteImportDataDto.getQuitPernr(), deleteImportDataDto.getLaunchId());
         if (i == 0){
             return AjaxResult.error("删除该离职员工数据失败，请重试或联系管理员");

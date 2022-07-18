@@ -58,7 +58,6 @@ public class ManagerController {
         //获取当前系统时间
         LocalDateTime now = LocalDateTime.now();
         Timestamp timestamp = Timestamp.valueOf(now);
-        approve.setApproveId(regionalOrAreaApproveDto.getApproveId());
         approve.setLaunchId(regionalOrAreaApproveDto.getLaunchId());
         approve.setQuitPernr(regionalOrAreaApproveDto.getQuitPernr());
         approve.setReviewerPernr(regionalOrAreaApproveDto.getReviewerPernr());
@@ -146,7 +145,6 @@ public class ManagerController {
         //获取当前系统时间
         LocalDateTime now = LocalDateTime.now();
         Timestamp timestamp = Timestamp.valueOf(now);
-        approve.setApproveId(regionalOrAreaApproveDto.getApproveId());
         approve.setLaunchId(regionalOrAreaApproveDto.getLaunchId());
         approve.setQuitPernr(regionalOrAreaApproveDto.getQuitPernr());
         approve.setReviewerPernr(regionalOrAreaApproveDto.getReviewerPernr());

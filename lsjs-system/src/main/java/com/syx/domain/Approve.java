@@ -15,8 +15,6 @@ import java.sql.Timestamp;
 public class Approve {
     //发起ID
     private Integer launchId;
-    //审核ID
-    private Integer approveId;
     //离职员工工号
     private String quitPernr;
     //审核结果(1:直接上级审核；2:借款、短款审核；3:质量简报扣款审核；4:工牌、工装审核；5:管理责任盘点扣款审核；6:区域经理审核；7:地区经理审核)

@@ -60,7 +60,6 @@ public class DirectlyController {
         //获取当前系统时间
         LocalDateTime now = LocalDateTime.now();
         Timestamp timestamp = Timestamp.valueOf(now);
-        approve.setApproveId(functionDto.getApproveId());
         approve.setLaunchId(functionDto.getLaunchId());
         approve.setApproveTime(timestamp);
         approve.setQuitPernr(functionDto.getQuitPernr());
@@ -114,7 +113,6 @@ public class DirectlyController {
         //获取当前系统时间
         LocalDateTime now = LocalDateTime.now();
         Timestamp timestamp = Timestamp.valueOf(now);
-        approve.setApproveId(functionDto.getApproveId());
         approve.setLaunchId(functionDto.getLaunchId());
         approve.setApproveTime(timestamp);
         approve.setQuitPernr(functionDto.getQuitPernr());
@@ -185,7 +183,6 @@ public class DirectlyController {
         LocalDateTime now = LocalDateTime.now();
         Timestamp timestamp = Timestamp.valueOf(now);
         approve.setLaunchId(storeDto.getLaunchId());
-        approve.setApproveId(storeDto.getApproveId());
         approve.setQuitPernr(storeDto.getQuitPernr());
         approve.setReviewerPernr(storeDto.getReviewerPernr());
         approve.setApproveTime(timestamp);
@@ -269,7 +266,6 @@ public class DirectlyController {
             goodsRefund = new BigDecimal(str);
             goodsRefund.setScale(2, BigDecimal.ROUND_HALF_UP);
         }
-        approve.setApproveId(storeDto.getApproveId());
         approve.setLaunchId(storeDto.getLaunchId());
         approve.setQuitPernr(storeDto.getQuitPernr());
         approve.setReviewerPernr(storeDto.getReviewerPernr());

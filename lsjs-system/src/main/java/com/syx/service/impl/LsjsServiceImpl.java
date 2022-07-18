@@ -194,7 +194,6 @@ public class LsjsServiceImpl implements ILsjsService {
             List<ResumeRes> resumeByPernr = resumeMapper.getResumeByPernr(quitPernr);
 
             auditUserRes.setLaunchId(approve.getLaunchId());
-            auditUserRes.setApproveId(approve.getApproveId());
             auditUserRes.setDeductions(deductionByPernr);
             auditUserRes.setResumes(resumeByPernr);
 
@@ -616,32 +615,25 @@ public class LsjsServiceImpl implements ILsjsService {
     @Override
     public List<ApproveGetRes> getApproveDataByPernr(List<ImportData> importDataByTime) {
         List<ApproveGetRes> approveDataList = new ArrayList<>();
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         //根据开始日期和结束日期查询到这一时间段内导入的数据
-        for (ImportData importData : importDataByTime) {
-            ApproveGetRes approveGetRes = new ApproveGetRes();
-            //获取审核表中数据，例如审核扣款金额等
-            ApproveGetRes approveDataByPernr = approveMapper.getApproveDataByPernr(importData);
-            BeanUtils.copyProperties(approveDataByPernr, approveGetRes);
-            //获取【审核状态】
-            Integer approveResult = getApproveResult(importData.getLaunchId(), importData.getQuitPernr());
-            approveGetRes.setApproveStatus(approveResult);
-            //获取【分部】
-            if (importData.getPersonScope().equals("门店")) {
-                //根据离职员工工号查询所在门店店编
-                SAPUserInfo userInfoByPernr = sapUserInfoMapper.getUserInfoByPernr(importData.getQuitPernr());
+        List<String> launchs = new ArrayList<>();
+        List<String> storeQuitPernrList = new ArrayList<>();
+        for (ImportData importData:importDataByTime){
+            launchs.add("LaunchID" + "||" + importData.getLaunchId().toString() + "||");
+            if (importData.getPersonScope().equals("门店")){
+                storeQuitPernrList.add(importData.getQuitPernr());
+            }
+        }
+        List<ApproveGetRes> exportApproveData = approveMapper.getApproveDataByLQ("exportApproveData", launchs);
+        for (ApproveGetRes approveGetRes:exportApproveData){
+            if (storeQuitPernrList.contains(approveGetRes.getPernr())){
                 //根据店编查询门店主数据
-                SAPStoreHead sapStoreHeadByStoreId = sapStoreHeadMapper.getSAPStoreHeadByStoreId(userInfoByPernr.getDepartment());
+                SAPStoreHead sapStoreHeadByStoreId = sapStoreHeadMapper.getSAPStoreHeadByStoreId(approveGetRes.getStoreName());
                 //门店员工所属分部取门店主数据中的管理地区
                 approveGetRes.setDivision(sapStoreHeadByStoreId.getManageArea());
-            } else if (importData.getPersonScope().equals("职能")) {
-                //职能员工所属分部取人事导入数据时填写【分部】
-                approveGetRes.setDivision(importData.getDivision());
             }
-            //返回值
-            approveDataList.add(approveGetRes);
         }
-        return approveDataList;
+        return exportApproveData;
     }
 
     /**

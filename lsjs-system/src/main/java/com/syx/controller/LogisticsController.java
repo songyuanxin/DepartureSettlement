@@ -70,7 +70,6 @@ public class LogisticsController {
         //获取当前系统时间
         LocalDateTime now = LocalDateTime.now();
         Timestamp timestamp = Timestamp.valueOf(now);
-        approve.setApproveId(logisticsDto.getApproveId());
         approve.setLaunchId(logisticsDto.getLaunchId());
         approve.setQuitPernr(logisticsDto.getQuitPernr());
         approve.setReviewerPernr(logisticsDto.getReviewerPernr());

@@ -15,4 +15,5 @@ public class DeleteImportDataLog {
     private Integer launchId;
     private String originatorPernr;
     private Timestamp deleteTime;
+    private Timestamp importTime;
 }

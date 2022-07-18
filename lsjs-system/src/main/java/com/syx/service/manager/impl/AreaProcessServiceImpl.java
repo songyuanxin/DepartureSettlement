@@ -47,8 +47,8 @@ public class AreaProcessServiceImpl implements IAreaProcessService {
                 sendMsgRes.setErrmsg("发送至地区经理审核时写入数据库失败");
                 return sendMsgRes;
             }
-//            String splicing = "离司结算审核提醒:\n您收到了"+ quitPernr + userName + "的离司结算申请" + "<a href=\"http://10.9.16.2:8080/approve/#/pages/index/manager/areaApproval?pernr=" + areaPernr + "\">"+"【审批入口】</a>";
-            String splicing = "离司结算审核提醒:\n您收到了"+ quitPernr + userName + "的离司结算申请" + "<a href=\"http://hrfico.jzj.cn:19004/approve/#/pages/index/manager/areaApproval?pernr=" + areaPernr + "\">"+"【审批入口】</a>";
+            String splicing = "离司结算审核提醒:\n您收到了"+ quitPernr + userName + "的离司结算申请" + "<a href=\"http://10.9.16.2:8080/approve/#/pages/index/manager/areaApproval?pernr=" + areaPernr + "\">"+"【审批入口】</a>";
+//            String splicing = "离司结算审核提醒:\n您收到了"+ quitPernr + userName + "的离司结算申请" + "<a href=\"http://hrfico.jzj.cn:19004/approve/#/pages/index/manager/areaApproval?pernr=" + areaPernr + "\">"+"【审批入口】</a>";
             sendMsgRes = weChatServiceImpl.sendMsg(areaPernr, splicing);
             if (sendMsgRes.getErrcode() != 0){
                 sendMsgRes.setErrcode(1);
@@ -63,8 +63,8 @@ public class AreaProcessServiceImpl implements IAreaProcessService {
                 sendMsgRes.setErrmsg("发送至地区经理审核时写入数据库失败");
                 return sendMsgRes;
             }
-//            String splicing = "离司结算审核提醒:\n您收到了"+ quitPernr + userName + "的离司结算申请" + "<a href=\"http://10.9.16.2:8080/approve/#/pages/index/manager/areaApproval?pernr=" + regionalOrAreaApproveDto.getAreaPernr() + "\">"+"【审批入口】</a>";
-            String splicing = "离司结算审核提醒:\n您收到了"+ quitPernr + userName + "的离司结算申请" + "<a href=\"http://hrfico.jzj.cn:19004/approve/#/pages/index/manager/areaApproval?pernr=" + regionalOrAreaApproveDto.getAreaPernr() + "\">"+"【审批入口】</a>";
+            String splicing = "离司结算审核提醒:\n您收到了"+ quitPernr + userName + "的离司结算申请" + "<a href=\"http://10.9.16.2:8080/approve/#/pages/index/manager/areaApproval?pernr=" + regionalOrAreaApproveDto.getAreaPernr() + "\">"+"【审批入口】</a>";
+//            String splicing = "离司结算审核提醒:\n您收到了"+ quitPernr + userName + "的离司结算申请" + "<a href=\"http://hrfico.jzj.cn:19004/approve/#/pages/index/manager/areaApproval?pernr=" + regionalOrAreaApproveDto.getAreaPernr() + "\">"+"【审批入口】</a>";
             sendMsgRes = weChatServiceImpl.sendMsg(regionalOrAreaApproveDto.getAreaPernr(), splicing);
             //判断提醒消息是否发送成功，若发送成功则写入审核表以及审核记录表
             if (sendMsgRes.getErrcode() != 0){

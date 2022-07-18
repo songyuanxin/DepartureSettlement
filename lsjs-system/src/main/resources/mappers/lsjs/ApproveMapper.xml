@@ -48,7 +48,7 @@
         from Approve
         where quit_pernr = #{pernr}
           and launch_id = #{launchId}
-        order by isnull(approveTime, GETDATE()), approvecontent
+        order by isnull(approve_time, GETDATE()), approve_content
     </select>
 
     <select id="getAuditQuitPernr" parameterType="string" resultType="string">
@@ -104,7 +104,7 @@
             <if test="cardMoney != null">card_money = #{cardMoney},</if>
             <if test="clothesMoney != null">clothes_money = #{clothesMoney},</if>
         </trim>
-        where approve_id = #{approveId}
+        where launch_id = #{launchId} and quit_pernr = #{quitPernr} and approve_content = #{approveContent}
     </update>
 
     <delete id="deleteApproveByPernr" parameterType="string">
@@ -114,47 +114,54 @@
           and approve_content = #{approveContent}
     </delete>
 
-    <select id="getApproveDataByPernr" parameterType="string" resultType="com.syx.domains.vo.ApproveGetRes">
+    <select id="getApproveDataByPernr" resultType="com.syx.domains.vo.ApproveGetRes">
         SELECT a.quit_pernr           as pernr
-             , p.name                 as name
-             , p.zlzrq                as leaveDate
-             , i.absenteeism_doc      as absenteeismDoc
-             , i.division             as division
-             , p.mgtxt                as leaveReson
+             , MAX(p.name)            as name
+             , MAX(p.zlzrq)           as leaveDate
+             , MAX(i.absenteeism_doc) as absenteeismDoc
+             , MAX(i.division)        as division
+             , MAX(p.mgtxt)           as leaveReson
              , MAX(case
-                       WHEN a.approve_content = 1 and a.launch_id = #{launchId} THEN a.goods_refund
+                       WHEN a.approve_content = 1 THEN a.goods_refund
                        ELSE NULL END) as goodsMoney
              , MAX(case
-                       WHEN a.approve_content = 1 and a.launch_id = #{launchId} THEN a.document_num
+                       WHEN a.approve_content = 1 THEN a.document_num
                        ELSE NULL END) as goodsMoneyDocument
              , MAX(case
-                       WHEN a.approve_content = 2 and a.launch_id = #{launchId} THEN a.short_money
+                       WHEN a.approve_content = 2 THEN a.short_money
                        ELSE NULL END) as shortMoney
              , MAX(case
-                       WHEN a.approve_content = 3 and a.launch_id = #{launchId} THEN a.quality_money
+                       WHEN a.approve_content = 3 THEN a.quality_money
                        ELSE NULL END) as qualityMoney
              , MAX(case
-                       WHEN a.approve_content = 4 and a.launch_id = #{launchId} THEN a.card_money
+                       WHEN a.approve_content = 4 THEN a.card_money
                        ELSE NULL END) as cardMoney
              , MAX(case
-                       WHEN a.approve_content = 4 and a.launch_id = #{launchId} THEN a.clothes_money
+                       WHEN a.approve_content = 4 THEN a.clothes_money
                        ELSE NULL END) as clothesMoney
              , MAX(case
-                       WHEN a.approve_content = 5 and a.launch_id = #{launchId} THEN a.care_money
+                       WHEN a.approve_content = 5 THEN a.care_money
                        ELSE NULL END) as careMoney
         from Approve a
                  inner join personInfo p on a.quit_pernr = p.alias
-                 inner join ImportData i on a.quit_pernr = i.quit_pernr
-        where a.quit_pernr = #{pernr}
-        GROUP BY a.quit_pernr, p.name, i.absenteeism_doc, p.mgtxt, p.zlzrq, i.division
+                 inner join ImportData i on a.launch_id = i.launch_id
+        where a.quit_pernr = #{quitPernr}
+          and a.launch_id = #{launchId}
+        GROUP BY a.quit_pernr
     </select>
 
-    <delete id="deleteApproveDataByPernr" parameterType="string">
+    <select id="getApproveDataByLQ" statementType="CALLABLE" resultType="com.syx.domains.vo.ApproveGetRes">
+        {call spQueryApproveByLQ(
+                #{TableName},
+                #{launchs, mode=IN,typeHandler=com.syx.mybatis.SetApproveTypeHandler})}
+    </select>
+
+    <delete id="deleteApproveDataByPernr">
         delete
         from Approve
-        where quit_pernr = #{quitPernr} and launch_id = #{launchId}
+        where quit_pernr = #{quitPernr}
+          and launch_id = #{launchId}
     </delete>
-
 
     <select id="getSendTimeByPernr" resultType="java.sql.Timestamp">
         select max(send_time)
@@ -246,5 +253,12 @@
         where quit_pernr = #{quitPernr}
           and reviewer_pernr = #{reviewerPernr}
         order by send_time desc
+    </select>
+
+    <select id="getSAPStoreHeadByPernr" parameterType="string" resultType="string">
+        select s.管理地区
+        from personInfo p
+                 inner join (SELECT * FROM [116.55.231.200].ZP.dbo.SAPStoreHead) s on p.storename = s.门店编码
+        where p.alias = #{pernr}
     </select>
 </mapper>

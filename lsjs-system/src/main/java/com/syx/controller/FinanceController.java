@@ -35,7 +35,10 @@ public class FinanceController {
     @PostMapping(path = "/loan/adopt")
     public AjaxResult loanAdopt(FinanceApproveDto financeApproveDto){
         Approve approve = setApprove(financeApproveDto);
-        approve.setApproveId(financeApproveDto.getApproveId());
+        if (StringUtils.isNotBlank(financeApproveDto.getShortMoney()) && !financeApproveDto.getShortMoney().equals("null")){
+            approve.setShortMoney(new BigDecimal(financeApproveDto.getShortMoney()).setScale(2,BigDecimal.ROUND_HALF_UP));
+        }
+        approve.setShortStoreId(financeApproveDto.getStoreId());
         approve.setLaunchId(financeApproveDto.getLaunchId());
         approve.setApproveResult(2);
         approve.setApproveResultDesc("通过");
@@ -71,6 +74,13 @@ public class FinanceController {
     @PostMapping(path = "/loan/noAdopt")
     public AjaxResult loanNoAdopt(FinanceApproveDto financeApproveDto){
         Approve approve = setApprove(financeApproveDto);
+        if (StringUtils.isNotBlank(financeApproveDto.getLoanMoney()) && !financeApproveDto.getLoanMoney().equals("null")){
+            approve.setLoanMoney(new BigDecimal(financeApproveDto.getLoanMoney()).setScale(2,BigDecimal.ROUND_HALF_UP));
+        }
+        if (StringUtils.isNotBlank(financeApproveDto.getShortMoney()) && !financeApproveDto.getShortMoney().equals("null")){
+            approve.setShortMoney(new BigDecimal(financeApproveDto.getShortMoney()).setScale(2,BigDecimal.ROUND_HALF_UP));
+        }
+        approve.setShortStoreId(financeApproveDto.getStoreId());
 
         StringBuilder auditMind = new StringBuilder();
         //存在短款
@@ -113,6 +123,9 @@ public class FinanceController {
     @PostMapping(path = "/quality/adopt")
     public AjaxResult qualityAdopt(FinanceApproveDto financeApproveDto){
         Approve approve = setApprove(financeApproveDto);
+        if (StringUtils.isNotBlank(financeApproveDto.getQualityMoney()) && !financeApproveDto.getQualityMoney().equals("null")){
+            approve.setQualityMoney(new BigDecimal(financeApproveDto.getQualityMoney()).setScale(2, BigDecimal.ROUND_HALF_UP));
+        }
         approve.setApproveResult(2);
         approve.setApproveResultDesc("通过");
         approve.setApproveContent(3);
@@ -147,6 +160,10 @@ public class FinanceController {
     @PostMapping(path = "/care/adopt")
     public AjaxResult careAdopt(FinanceApproveDto financeApproveDto){
         Approve approve = setApprove(financeApproveDto);
+        if (StringUtils.isNotBlank(financeApproveDto.getCareMoney()) && !financeApproveDto.getCareMoney().equals("null")){
+            approve.setCareMoney(new BigDecimal(financeApproveDto.getCareMoney()).setScale(2, BigDecimal.ROUND_HALF_UP));
+        }
+        approve.setCareDocumentNum(financeApproveDto.getCareDocumentNum());
         approve.setApproveResult(2);
         approve.setApproveResultDesc("通过");
         approve.setApproveContent(5);
@@ -184,26 +201,10 @@ public class FinanceController {
         //获取当前系统时间
         LocalDateTime now = LocalDateTime.now();
         Timestamp timestamp = Timestamp.valueOf(now);
-        approve.setApproveId(financeApproveDto.getApproveId());
         approve.setLaunchId(financeApproveDto.getLaunchId());
         approve.setQuitPernr(financeApproveDto.getQuitPernr());
         approve.setReviewerPernr(financeApproveDto.getReviewerPernr());
         approve.setApproveTime(timestamp);
-        approve.setShortStoreId(financeApproveDto.getStoreId());
-        approve.setCareDocumentNum(financeApproveDto.getCareDocumentNum());
-        if (StringUtils.isNotBlank(financeApproveDto.getLoanMoney()) && !financeApproveDto.getLoanMoney().equals("null")){
-            approve.setLoanMoney(new BigDecimal(financeApproveDto.getLoanMoney()).setScale(2,BigDecimal.ROUND_HALF_UP));
-        }
-        if (StringUtils.isNotBlank(financeApproveDto.getShortMoney()) && !financeApproveDto.getShortMoney().equals("null")){
-            approve.setShortMoney(new BigDecimal(financeApproveDto.getShortMoney()).setScale(2,BigDecimal.ROUND_HALF_UP));
-        }
-        if (StringUtils.isNotBlank(financeApproveDto.getQualityMoney()) && !financeApproveDto.getQualityMoney().equals("null")){
-            approve.setQualityMoney(new BigDecimal(financeApproveDto.getQualityMoney()).setScale(2, BigDecimal.ROUND_HALF_UP));
-        }
-        if (StringUtils.isNotBlank(financeApproveDto.getCareMoney()) && !financeApproveDto.getCareMoney().equals("null")){
-            approve.setCareMoney(new BigDecimal(financeApproveDto.getCareMoney()).setScale(2, BigDecimal.ROUND_HALF_UP));
-        }
-
         return approve;
     }
 }

@@ -83,25 +83,26 @@
     </select>
 
     <select id="getImoprtDataByPernr" parameterType="string" resultType="com.syx.domains.vo.ImportDataRes">
-        select a.quit_pernr       as quitPernr
-             , a.launch_id        as launchId
-             , a.person_scope     as personScope
-             , a.direct_pernr     as directPernr
-             , p1.name            as directName
-             , b.area_pernr       as areaPernr
-             , p3.name            as areaName
-             , b.region_pernr     as regionalPernr
-             , p2.name            as regionalName
-             , a.division         as division
-             , a.originator_pernr as originatorPernr
-             , a.import_time      as importTime
-             , a.absenteeism_doc  as absenteeismDoc
+        select a.quit_pernr            as quitPernr
+             , a.launch_id             as launchId
+             , max(a.person_scope)     as personScope
+             , max(a.direct_pernr)     as directPernr
+             , max(p1.name)            as directName
+             , max(b.area_pernr)       as areaPernr
+             , max(p3.name)            as areaName
+             , max(b.region_pernr)     as regionalPernr
+             , max(p2.name)            as regionalName
+             , max(division)           as division
+             , max(a.originator_pernr) as originatorPernr
+             , max(a.import_time)      as importTime
+             , max(a.absenteeism_doc)  as absenteeismDoc
         from ImportData a
                  inner join Approve b on a.quit_pernr = b.quit_pernr
                  left join personInfo p1 on p1.alias = a.direct_pernr
                  left join personInfo p2 on p2.alias = b.region_pernr
                  left join personInfo p3 on p3.alias = b.area_pernr
         where a.quit_pernr = #{quitPernr}
+        group by a.quit_pernr, a.launch_id
     </select>
 
     <select id="getImoprtDataByQuitPernr" parameterType="string" resultMap="ImportDataResult">

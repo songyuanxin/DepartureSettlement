@@ -185,6 +185,10 @@
             <artifactId>mybatis-plus-extension</artifactId>
             <version>3.4.2</version>
         </dependency>
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

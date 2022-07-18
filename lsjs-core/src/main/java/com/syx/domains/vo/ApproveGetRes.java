@@ -15,8 +15,12 @@ public class ApproveGetRes {
     @Excel(name = "工号",cellType = Excel.ColumnType.STRING)
     private String pernr;
 
+    private Integer launchId;
+
     @Excel(name = "姓名",cellType = Excel.ColumnType.STRING)
     private String name;
+
+    private String storeName;
 
     @Excel(name = "离职日期",cellType = Excel.ColumnType.STRING)
     private String leaveDate;

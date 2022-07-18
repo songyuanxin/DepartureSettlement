@@ -75,6 +75,8 @@ public interface ApproveMapper {
      */
     ApproveGetRes getApproveDataByPernr(ImportData importData);
 
+    List<ApproveGetRes> getApproveDataByLQ(String TableName,List<String> launchs);
+
     /**
      * 根据离职员工工号删除审核数据
      * @param quitPernr
@@ -90,4 +92,6 @@ public interface ApproveMapper {
             ,@Param("personScope")String personScope,@Param("importPernr")String importPernr);
 
     Approve getApproveByReviewAndQuitPernr(@Param("quitPernr")String quitPernr, @Param("reviewerPernr")String reviewerPernr);
+
+    String getSAPStoreHeadByPernr(String pernr);
 }
