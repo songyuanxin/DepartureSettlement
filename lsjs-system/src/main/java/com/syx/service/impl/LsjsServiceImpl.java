@@ -758,8 +758,6 @@ public class LsjsServiceImpl implements ILsjsService {
      */
     @Override
     public List<ApproveDataRes> getApproveDataRes(ImportDataGetDto dataResByTime) {
-        //TimeStamp转String的工具
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         //判断如果前端传过来的参数没有结束时间，就获取当前系统时间为结束时间
         if (StringUtils.isBlank(dataResByTime.getImportEndTime()) || dataResByTime.getImportEndTime().equals("")) {
             //获取当前系统时间
@@ -767,235 +765,47 @@ public class LsjsServiceImpl implements ILsjsService {
             //把获得的系统时间写进ImportDataGetDto
             dataResByTime.setImportEndTime(importEndTime);
         }
-        List<ApproveDataRes> approveDataResList = new ArrayList<>();
-        //如果前端传过来离职员工工号
-        if (dataResByTime.getQuitPernr() != null && dataResByTime.getQuitPernr().length() != 0) {
-            //创建ApproveGetDto对象
-            ApproveGetDto approveGetDto = new ApproveGetDto();
-            //把ImportDataGetDto赋值给ApproveGetDto
-            approveGetDto.setStartTime(dataResByTime.getImportStartTime());
-            approveGetDto.setEndTime(dataResByTime.getImportEndTime());
-            //把离职员工工号赋值给approveGetDto进行查询
-            approveGetDto.setQuitPernr(dataResByTime.getQuitPernr());
-            //赋值导入人工号
-            approveGetDto.setImportPernr(dataResByTime.getImportPernr());
-            //赋值人员范围
-            approveGetDto.setPersonScope(dataResByTime.getPersonScope());
-            //调用mapper方法，获得ImportTime
-            List<ImportData> importDataList = importDataMapper.getImoprtDataByTime(approveGetDto);
-            for (ImportData importData : importDataList) {
-                //通过ImportTime查询监控报表数据
-                ApproveDataRes approveDataRes = approveMapper.getApproveDataRes((df.format(importData.getImportTime())),
-                        importData.getQuitPernr(),
-                        importData.getPersonScope(),
-                        importData.getOriginatorPernr());
-                if (approveDataRes.getPersonScope().equals("门店")) {
-                    //通过前端传过来的离职员工工号查询店编
-                    String storeName = sapUserInfoMapper.getDepartmentByPernr(approveDataRes.getQuitPernr());
-                    //通过店编查询离职人员所属分部地区
-                    SAPStoreHead sapStoreHeadByStoreId = sapStoreHeadMapper.getSAPStoreHeadByStoreId(storeName);
-                    //查询出来的店编写进监控报表中
-                    approveDataRes.setDivision(sapStoreHeadByStoreId.getManageArea());
-                    List<String> approveResult = new ArrayList<>();
-                    if (StringUtils.isNotBlank(approveDataRes.getDirectApproveResult())){
-                        if (approveDataRes.getDirectApproveResult().equals("待审核") || approveDataRes.getDirectApproveResult().equals("不通过")){
-                            approveResult.add(approveDataRes.getDirectApproveResult());
-                        }
-                    }
-                    if (StringUtils.isNotBlank(approveDataRes.getAreaApproveResult())){
-                        if (approveDataRes.getAreaApproveResult().equals("待审核") || approveDataRes.getAreaApproveResult().equals("不通过")){
-                            approveResult.add(approveDataRes.getAreaApproveResult());
-                        }
-                    }
-                    if(StringUtils.isNotBlank(approveDataRes.getRegionalApproveResult())){
-                        if (approveDataRes.getRegionalApproveResult().equals("待审核") || approveDataRes.getRegionalApproveResult().equals("不通过")){
-                            approveResult.add(approveDataRes.getRegionalApproveResult());
-                        }
-                    }
-                    if(StringUtils.isNotBlank(approveDataRes.getLoanApproveResult())){
-                        if (approveDataRes.getLoanApproveResult().equals("待审核") || approveDataRes.getLoanApproveResult().equals("不通过")){
-                            approveResult.add(approveDataRes.getLoanApproveResult());
-                        }
-                    }
-                    if (StringUtils.isNotBlank(approveDataRes.getQualityApproveResult())){
-                        if (approveDataRes.getQualityApproveResult().equals("待审核") || approveDataRes.getQualityApproveResult().equals("不通过")){
-                            approveResult.add(approveDataRes.getQualityApproveResult());
-                        }
-                    }
-                    if (StringUtils.isNotBlank(approveDataRes.getCardApproveResult())){
-                        if (approveDataRes.getCardApproveResult().equals("待审核") || approveDataRes.getCardApproveResult().equals("不通过")){
-                            approveResult.add(approveDataRes.getCardApproveResult());
-                        }
-                    }
-                    if (approveResult.size() > 0){
-                        approveDataRes.setApproveStatus("审批中");
-                    }else {
-                        approveDataRes.setApproveStatus("审批完成");
-                    }
-                    //查询离职原因
-                    String leaveReson = sapUserInfoMapper.getLeaveResonByQuitPernr(approveDataRes.getQuitPernr());
-                    //把离职原因返回给前端
-                    approveDataRes.setLeaveReson(leaveReson);
-                    approveDataResList.add(approveDataRes);
-                }
-                if (approveDataRes.getPersonScope().equals("职能")) {
-                    List<String> approveResult = new ArrayList<>();
-                    if (StringUtils.isNotBlank(approveDataRes.getDirectApproveResult())){
-                        if (approveDataRes.getDirectApproveResult().equals("待审核") || approveDataRes.getDirectApproveResult().equals("不通过")){
-                            approveResult.add(approveDataRes.getDirectApproveResult());
-                        }
-                    }
-                    if (StringUtils.isNotBlank(approveDataRes.getAreaApproveResult())){
-                        if (approveDataRes.getAreaApproveResult().equals("待审核") || approveDataRes.getAreaApproveResult().equals("不通过")){
-                            approveResult.add(approveDataRes.getAreaApproveResult());
-                        }
-                    }
-                    if(StringUtils.isNotBlank(approveDataRes.getRegionalApproveResult())){
-                        if (approveDataRes.getRegionalApproveResult().equals("待审核") || approveDataRes.getRegionalApproveResult().equals("不通过")){
-                            approveResult.add(approveDataRes.getRegionalApproveResult());
-                        }
-                    }
-                    if(StringUtils.isNotBlank(approveDataRes.getLoanApproveResult())){
-                        if (approveDataRes.getLoanApproveResult().equals("待审核") || approveDataRes.getLoanApproveResult().equals("不通过")){
-                            approveResult.add(approveDataRes.getLoanApproveResult());
-                        }
-                    }
-                    if (StringUtils.isNotBlank(approveDataRes.getQualityApproveResult())){
-                        if (approveDataRes.getQualityApproveResult().equals("待审核") || approveDataRes.getQualityApproveResult().equals("不通过")){
-                            approveResult.add(approveDataRes.getQualityApproveResult());
-                        }
-                    }
-                    if (StringUtils.isNotBlank(approveDataRes.getCardApproveResult())){
-                        if (approveDataRes.getCardApproveResult().equals("待审核") || approveDataRes.getCardApproveResult().equals("不通过")){
-                            approveResult.add(approveDataRes.getCardApproveResult());
-                        }
-                    }
-                    if (approveResult.size() > 0){
-                        approveDataRes.setApproveStatus("审批中");
-                    }else {
-                        approveDataRes.setApproveStatus("审批完成");
-                    }
-                    //查询离职原因
-                    String leaveReson = sapUserInfoMapper.getLeaveResonByQuitPernr(approveDataRes.getQuitPernr());
-                    //把离职原因返回给前端
-                    approveDataRes.setLeaveReson(leaveReson);
-                    approveDataResList.add(approveDataRes);
-                }
-            }
-        } else {
-            //创建ApproveGetDto对象
-            ApproveGetDto approveGetDto = new ApproveGetDto();
-            //把ImportDataGetDto赋值给ApproveGetDto
-            approveGetDto.setStartTime(dataResByTime.getImportStartTime());
-            approveGetDto.setEndTime(dataResByTime.getImportEndTime());
-            //把离职员工工号赋值给approveGetDto进行查询
-            approveGetDto.setQuitPernr(dataResByTime.getQuitPernr());
-            //赋值导入人工号
-            approveGetDto.setImportPernr(dataResByTime.getImportPernr());
-            //赋值人员范围
-            approveGetDto.setPersonScope(dataResByTime.getPersonScope());
-            //调用mapper方法，获得ImportTime
-            List<ImportData> importDataList = importDataMapper.getImoprtDataByTime(approveGetDto);
-            for (ImportData importData : importDataList) {
-                //通过ImportTime查询监控报表数据
-                ApproveDataRes approveDataRes = approveMapper.getApproveDataRes((df.format(importData.getImportTime())),
-                        importData.getQuitPernr(),
-                        importData.getPersonScope(),
-                        importData.getOriginatorPernr());
-                if (approveDataRes.getPersonScope().equals("门店")) {
-                    //通过前端传过来的离职员工工号查询店编
-                    String storeName = sapUserInfoMapper.getDepartmentByPernr(approveDataRes.getQuitPernr());
-                    //通过店编查询离职人员所属分部地区
-                    SAPStoreHead sapStoreHeadByStoreId = sapStoreHeadMapper.getSAPStoreHeadByStoreId(storeName);
-                    //查询出来的店编写进监控报表中
-                    approveDataRes.setDivision(sapStoreHeadByStoreId.getManageArea());
-                    List<String> approveResult = new ArrayList<>();
-                    if (StringUtils.isNotBlank(approveDataRes.getDirectApproveResult())){
-                        if (approveDataRes.getDirectApproveResult().equals("待审核") || approveDataRes.getDirectApproveResult().equals("不通过")){
-                            approveResult.add(approveDataRes.getDirectApproveResult());
-                        }
-                    }
-                    if (StringUtils.isNotBlank(approveDataRes.getAreaApproveResult())){
-                        if (approveDataRes.getAreaApproveResult().equals("待审核") || approveDataRes.getAreaApproveResult().equals("不通过")){
-                            approveResult.add(approveDataRes.getAreaApproveResult());
-                        }
-                    }
-                    if(StringUtils.isNotBlank(approveDataRes.getRegionalApproveResult())){
-                        if (approveDataRes.getRegionalApproveResult().equals("待审核") || approveDataRes.getRegionalApproveResult().equals("不通过")){
-                            approveResult.add(approveDataRes.getRegionalApproveResult());
-                        }
-                    }
-                    if(StringUtils.isNotBlank(approveDataRes.getLoanApproveResult())){
-                        if (approveDataRes.getLoanApproveResult().equals("待审核") || approveDataRes.getLoanApproveResult().equals("不通过")){
-                            approveResult.add(approveDataRes.getLoanApproveResult());
-                        }
-                    }
-                    if (StringUtils.isNotBlank(approveDataRes.getQualityApproveResult())){
-                        if (approveDataRes.getQualityApproveResult().equals("待审核") || approveDataRes.getQualityApproveResult().equals("不通过")){
-                            approveResult.add(approveDataRes.getQualityApproveResult());
-                        }
-                    }
-                    if (StringUtils.isNotBlank(approveDataRes.getCardApproveResult())){
-                        if (approveDataRes.getCardApproveResult().equals("待审核") || approveDataRes.getCardApproveResult().equals("不通过")){
-                            approveResult.add(approveDataRes.getCardApproveResult());
-                        }
-                    }
-                    if (approveResult.size() > 0){
-                        approveDataRes.setApproveStatus("审批中");
-                    }else {
-                        approveDataRes.setApproveStatus("审批完成");
-                    }
-                    //查询离职原因
-                    String leaveReson = sapUserInfoMapper.getLeaveResonByQuitPernr(approveDataRes.getQuitPernr());
-                    //把离职原因返回给前端
-                    approveDataRes.setLeaveReson(leaveReson);
-                    approveDataResList.add(approveDataRes);
-                }
-                if (approveDataRes.getPersonScope().equals("职能")) {
-                    List<String> approveResult = new ArrayList<>();
-                    if (StringUtils.isNotBlank(approveDataRes.getDirectApproveResult())){
-                        if (approveDataRes.getDirectApproveResult().equals("待审核") || approveDataRes.getDirectApproveResult().equals("不通过")){
-                            approveResult.add(approveDataRes.getDirectApproveResult());
-                        }
-                    }
-                    if (StringUtils.isNotBlank(approveDataRes.getAreaApproveResult())){
-                        if (approveDataRes.getAreaApproveResult().equals("待审核") || approveDataRes.getAreaApproveResult().equals("不通过")){
-                            approveResult.add(approveDataRes.getAreaApproveResult());
-                        }
-                    }
-                    if(StringUtils.isNotBlank(approveDataRes.getRegionalApproveResult())){
-                        if (approveDataRes.getRegionalApproveResult().equals("待审核") || approveDataRes.getRegionalApproveResult().equals("不通过")){
-                            approveResult.add(approveDataRes.getRegionalApproveResult());
-                        }
-                    }
-                    if(StringUtils.isNotBlank(approveDataRes.getLoanApproveResult())){
-                        if (approveDataRes.getLoanApproveResult().equals("待审核") || approveDataRes.getLoanApproveResult().equals("不通过")){
-                            approveResult.add(approveDataRes.getLoanApproveResult());
-                        }
-                    }
-                    if (StringUtils.isNotBlank(approveDataRes.getQualityApproveResult())){
-                        if (approveDataRes.getQualityApproveResult().equals("待审核") || approveDataRes.getQualityApproveResult().equals("不通过")){
-                            approveResult.add(approveDataRes.getQualityApproveResult());
-                        }
-                    }
-                    if (StringUtils.isNotBlank(approveDataRes.getCardApproveResult())){
-                        if (approveDataRes.getCardApproveResult().equals("待审核") || approveDataRes.getCardApproveResult().equals("不通过")){
-                            approveResult.add(approveDataRes.getCardApproveResult());
-                        }
-                    }
-                    if (approveResult.size() > 0){
-                        approveDataRes.setApproveStatus("审批中");
-                    }else {
-                        approveDataRes.setApproveStatus("审批完成");
-                    }
-                    //查询离职原因
-                    String leaveReson = sapUserInfoMapper.getLeaveResonByQuitPernr(approveDataRes.getQuitPernr());
-                    //把离职原因返回给前端
-                    approveDataRes.setLeaveReson(leaveReson);
-                    approveDataResList.add(approveDataRes);
-                }
-            }
+        //创建ApproveGetDto对象
+        ApproveGetDto approveGetDto = new ApproveGetDto();
+        //把dataResByTime的值赋给approveGetDto
+        approveGetDto.setStartTime(dataResByTime.getImportStartTime());
+        approveGetDto.setEndTime(dataResByTime.getImportEndTime());
+        approveGetDto.setQuitPernr(dataResByTime.getQuitPernr());
+        approveGetDto.setImportPernr(dataResByTime.getImportPernr());
+        approveGetDto.setPersonScope(dataResByTime.getPersonScope());
+        //调用Mapper方法获得launchId
+        List<ImportData> importDataList = importDataMapper.getImoprtDataByTime(approveGetDto);
+        List<String> launchs = new ArrayList<>();//创建存放launchId的集合
+        List<String> storeNameList = new ArrayList<>();//创建存放店编的集合
+        List<String> shopStoreNameList = new ArrayList<>();//创建属于门店范围员工的店编的集合
+        //获得launchId的集合，需要拼接成LaunchId||1||的形式作为表值参数传给存储过程调用
+        for (ImportData importData : importDataList) {
+            launchs.add("LaunchId" + "||" + importData.getLaunchId().toString() + "||");
+        }
+        //调用存储过程获得监控报表的List集合
+        List<ApproveDataRes> approveDataResList = approveMapper.getApproveDataResBySqlServer("监控报表", launchs);
 
+        //获得店编的集合，需要拼接成StoreName||1||的形式作为表值参数传给存储过程调用
+        for (ApproveDataRes approveDataRes : approveDataResList) {
+            storeNameList.add("StoreName" + "||" + approveDataRes.getStoreName() + "||");
+            //判断人员范围，把人员范围属于门店的对应离职店编放进集合，方便查询
+            if(approveDataRes.getPersonScope().equals("门店")){
+                shopStoreNameList.add(approveDataRes.getStoreName());
+            }
+        }
+        //调用存储过程获得管理地区的List集合
+        List<SAPStoreHead> sapStoreHeadList = sapStoreHeadMapper.getSAPStoreHeadByStoreIdAndSqlserver("管理地区",storeNameList);
+        for (ApproveDataRes approveDataRes : approveDataResList) {
+            //判断包含关系
+            if (shopStoreNameList.contains(approveDataRes.getStoreName())){
+                for (SAPStoreHead sapStoreHead : sapStoreHeadList) {
+                    //如果店编相等且包含
+                    if(sapStoreHead.getStoreId().equals(approveDataRes.getStoreName())){
+                        //替换人员所属分部范围
+                        approveDataRes.setDivision(sapStoreHead.getManageArea());
+                    }
+                }
+            }
         }
         return approveDataResList;
     }

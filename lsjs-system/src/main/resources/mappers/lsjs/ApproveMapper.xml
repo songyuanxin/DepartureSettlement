@@ -177,76 +177,6 @@
           and launch_id = #{launchId}
     </select>
 
-    <select id="getApproveDataRes" parameterType="string" resultType="com.syx.domains.vo.ApproveDataRes">
-        SELECT IM.division as 'division'
-        , AP.quit_pernr as 'quitPernr'
-        , pI.name as 'quitName'
-        , pI.zlzrq as 'leaveDate'
-        , IM.person_scope as 'personScope'
-        , IM.import_time as 'importTime'
-        , IM.originator_pernr as 'importPernr'
-        , MAX(case when approve_content = 1 and send_time >= #{importTime} THEN reviewer_pernr ELSE NULL END) as
-        'directReviewerPernr'
-        , MAX(case when approve_content = 1 and send_time >= #{importTime} THEN approve_result_desc ELSE NULL END) as
-        'directApproveResult'
-        , MAX(case when approve_content = 1 and send_time >= #{importTime} THEN send_time ELSE NULL END) as
-        'directSendTime'
-        , MAX(case when approve_content = 1 and send_time >= #{importTime} THEN approve_time ELSE NULL END) as
-        'directApproveTime'
-        , MAX(case when approve_content = 6 and send_time >= #{importTime} THEN reviewer_pernr ELSE NULL END)as
-        'areaReviewerPernr'
-        , MAX(case when approve_content = 6 and send_time >= #{importTime} THEN approve_result_desc ELSE NULL END) as
-        'areaApproveResult'
-        , MAX(case when approve_content = 6 and send_time >= #{importTime} THEN send_time ELSE NULL END) as
-        'areaSendTime'
-        , MAX(case when approve_content = 6 and send_Time >= #{importTime} THEN approve_time ELSE NULL END) as
-        'areaApproveTime'
-        , MAX(case when approve_content = 7 and send_time >= #{importTime} THEN reviewer_pernr ELSE NULL END) as
-        'regionalReviewerPernr'
-        , MAX(case when approve_content = 7 and send_time >= #{importTime} THEN approve_result_desc ELSE NULL END) as
-        'regionalApproveResult'
-        , MAX(case when approve_content = 7 and send_time >= #{importTime} THEN send_time ELSE NULL END) as
-        'regionalSendTime'
-        , MAX(case when approve_content = 7 and send_time >= #{importTime} THEN approve_time ELSE NULL END) as
-        'regionalApproveTime'
-        , MAX(case when approve_content = 2 and send_time >= #{importTime} THEN approve_result_desc ELSE NULL END) as
-        'loanApproveResult'
-        , MAX(case when approve_content = 2 and send_time >= #{importTime} THEN send_time ELSE NULL END) as
-        'loanSendTime'
-        , MAX(case when approve_content = 2 and send_time >= #{importTime} THEN approve_time ELSE NULL END) as
-        'loanApproveTime'
-        , MAX(case when approve_content = 3 and send_time >= #{importTime} THEN approve_result_desc ELSE NULL END) as
-        'qualityApproveResult'
-        , MAX(case when approve_content = 3 and send_time >= #{importTime} THEN send_time ELSE NULL END) as
-        'qualitySendTime'
-        , MAX(case when approve_content = 3 and send_time >= #{importTime} THEN approve_time ELSE NULL END) as
-        'qualityApproveTime'
-        , MAX(case when approve_content = 4 and send_time >= #{importTime} THEN approve_result_desc ELSE NULL END) as
-        'cardApproveResult'
-        , MAX(case when approve_content = 4 and send_time >= #{importTime} THEN send_time ELSE NULL END) as
-        'cardSendTime'
-        , MAX(case when approve_content = 4 and send_time >= #{importTime} THEN approve_time ELSE NULL END) as
-        'cardApproveTime'
-        from Approve AP
-        inner join ImportData IM on IM.quit_pernr = AP.quit_pernr
-        inner join personInfo pI on pI.alias = AP.quit_pernr
-        <where>
-            <if test="importTime != null and importTime != ''">
-                convert(date,IM.import_time) = #{importTime}
-            </if>
-            <if test="quitPernr != null and quitPernr != ''">
-                AND AP.quit_pernr = #{quitPernr}
-            </if>
-            <if test="personScope != null and personScope != ''">
-                AND IM.person_scope = #{personScope}
-            </if>
-            <if test=" importPernr != null and importPernr != ''">
-                AND IM.originator_pernr = #{importPernr}
-            </if>
-        </where>
-        GROUP BY AP.quit_pernr, pI.name, pI.zlzrq, IM.division,IM.person_scope,IM.originator_pernr,IM.import_time
-    </select>
-
     <select id="getApproveByReviewAndQuitPernr" parameterType="string" resultType="com.syx.domain.Approve">
         select top 1 *
         from Approve
@@ -260,5 +190,14 @@
         from personInfo p
                  inner join (SELECT * FROM [116.55.231.200].ZP.dbo.SAPStoreHead) s on p.storename = s.门店编码
         where p.alias = #{pernr}
+    </select>
+
+    <select id="getApproveDataResBySqlServer" statementType="CALLABLE" resultType="com.syx.domains.vo.ApproveDataRes">
+        {
+            call spQueryApproveData(
+                #{TableName},
+                #{launchs,mode=IN,typeHandler=com.syx.client.mybatis.SetApproveTypeHandler}
+            )
+            }
     </select>
 </mapper>

@@ -94,4 +94,6 @@ public interface ApproveMapper {
     Approve getApproveByReviewAndQuitPernr(@Param("quitPernr")String quitPernr, @Param("reviewerPernr")String reviewerPernr);
 
     String getSAPStoreHeadByPernr(String pernr);
+
+    List<ApproveDataRes> getApproveDataResBySqlServer(String name,List<String> launchIds);
 }

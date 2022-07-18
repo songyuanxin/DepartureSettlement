@@ -14,6 +14,8 @@ public class ApproveDataRes {
     private String quitPernr;
     //姓名
     private String quitName;
+    //部门
+    private String storeName;
     //离职日期
     private String leaveDate;
     //人员范围
