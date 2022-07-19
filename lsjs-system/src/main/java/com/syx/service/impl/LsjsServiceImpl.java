@@ -797,10 +797,10 @@ public class LsjsServiceImpl implements ILsjsService {
         List<SAPStoreHead> sapStoreHeadList = sapStoreHeadMapper.getSAPStoreHeadByStoreIdAndSqlserver("管理地区",storeNameList);
         for (ApproveDataRes approveDataRes : approveDataResList) {
             //判断包含关系
-            if (shopStoreNameList.contains(approveDataRes.getStoreName())){
+            if (shopStoreNameList.contains(approveDataRes.getStoreNameId())){
                 for (SAPStoreHead sapStoreHead : sapStoreHeadList) {
                     //如果店编相等且包含
-                    if(sapStoreHead.getStoreId().equals(approveDataRes.getStoreName())){
+                    if(sapStoreHead.getStoreId().equals(approveDataRes.getStoreNameId())){
                         //替换人员所属分部范围
                         approveDataRes.setDivision(sapStoreHead.getManageArea());
                     }

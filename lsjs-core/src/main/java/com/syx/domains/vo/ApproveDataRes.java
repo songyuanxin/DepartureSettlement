@@ -18,8 +18,6 @@ public class ApproveDataRes {
     private String quitPernr;
     //姓名
     private String quitName;
-    //部门
-    private String storeName;
     //离职日期
     private String leaveDate;
     //人员范围
@@ -83,7 +81,7 @@ public class ApproveDataRes {
     //离职原因
     private String leaveReson;
 
-    //商家名字,不返回给前端
+    //店编,不返回给前端
     @JSONField(serialize = false)
     private String storeNameId;
 
