@@ -14,4 +14,6 @@ public class DeleteImportDataDto {
     private String quitPernr;
     //操作人Id
     private String userId;
+    //导入时间
+    private String importTime;
 }

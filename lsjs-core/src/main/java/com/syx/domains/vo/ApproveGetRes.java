@@ -20,7 +20,11 @@ public class ApproveGetRes {
     @Excel(name = "姓名",cellType = Excel.ColumnType.STRING)
     private String name;
 
+    //店编/部门
     private String storeName;
+
+    //人员范围
+    private String personScope;
 
     @Excel(name = "离职日期",cellType = Excel.ColumnType.STRING)
     private String leaveDate;

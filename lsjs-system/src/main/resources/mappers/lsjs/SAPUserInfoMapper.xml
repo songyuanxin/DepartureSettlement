@@ -28,37 +28,42 @@
         where alias = #{pernr}
     </select>
 
-    <select id="getUserInfoByPernrList" parameterType="string" resultType="com.syx.domain.vo.AuditUserRes">
-        select a.alias       as pernr,
-               a.name        as userName,
-               a.sex         as sex,
-               a.job         as position,
-               a.storename   as department,
-               a.zrzrq       as joinedDate,
-               a.zzzrq       as confirDate,
-               a.zlzrq       as leaveDate,
-               a.mobilephone as phone,
-               a.text        as division,
-               b.work as work,
-               b.fixed_asset   as fixedAsset,
-	           b.isa           as isa,
-               b.dormitory     as dormitory,
-               b.goods_refund  as goodsRefund,
-               b.document_num  as documentNum,
-	           c.loan_money    as loanMoney,
-	           c.short_money   as shortMoney,
-	           d.quality_money as qualityMoney,
-	           e.card_money    as cardMoney,
-	           e.clothes_money as clothesMoney,
-	           f.care_money    as careMoney,
-               f.care_document_num as careDocumentNum
+    <select id="getUserInfoByPernrList" resultType="com.syx.domain.vo.AuditUserRes">
+        select
+            a.alias       as pernr,
+            a.name        as userName,
+            a.sex         as sex,
+            a.job         as position,
+            a.storename   as department,
+			i.person_scope as personScope,
+            a.persg       as persg,
+            a.zrzrq       as joinedDate,
+            a.zzzrq       as confirDate,
+            a.zlzrq       as leaveDate,
+            a.mobilephone as phone,
+            i.division    as division,
+		    b.launch_id   as launchId,
+		    case when b.approve_content = 1 then b.work else null end as work,
+			case when b.approve_content = 1 then b.fixed_asset else null end as fixedAsset,
+		    case when b.approve_content = 1 then b.isa else null end as isa,
+		    case when b.approve_content = 1 then b.dormitory else null end as dormitory,
+		    case when b.approve_content = 1 then b.goods_refund else null end as goodsRefund,
+		    case when b.approve_content = 1 then b.document_num else null end as documentNum,
+		    case when b.approve_content = 2 then b.loan_money else null end as loanMoney,
+		    case when b.approve_content = 2 then b.short_money else null end as shortMoney,
+		    case when b.approve_content = 3 then b.quality_money else null end as qualityMoney,
+		    case when b.approve_content = 4 then b.card_money else null end as cardMoney,
+		    case when b.approve_content = 4 then b.clothes_money else null end as clothesMoney,
+		    case when b.approve_content = 5 then b.care_money else null end as careMoney,
+		    case when b.approve_content = 5 then b.care_document_num else null end as careDocumentNum
         from personInfo a left join Approve b
         on a.alias = b.quit_pernr and b.approve_content=1
             left join Approve c on a.alias = c.quit_pernr and c.approve_content=2
             left join Approve d on a.alias = d.quit_pernr and d.approve_content = 3
             left join Approve e on a.alias = e.quit_pernr and e.approve_content = 4
             left join Approve f on a.alias = f.quit_pernr and f.approve_content = 5
-        where a.alias = #{quitPernr}
+			left join ImportData i on b.launch_id = i.launch_id
+        where a.alias = #{quitPernr} and b.launch_id = #{launchId}
     </select>
 
     <select id="getDepartmentByPernr" parameterType="string" resultType="string">

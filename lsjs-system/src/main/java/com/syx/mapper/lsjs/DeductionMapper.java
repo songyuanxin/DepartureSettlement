@@ -16,4 +16,5 @@ public interface DeductionMapper {
     int insertDeduction(Deduction deduction);
 
     int deleteDeduction(String pernr);
+
 }

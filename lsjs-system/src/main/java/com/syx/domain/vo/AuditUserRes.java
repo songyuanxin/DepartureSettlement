@@ -15,11 +15,13 @@ import java.util.List;
 public class AuditUserRes {
     private Integer approveId;
     private Integer launchId;
+    private String personScope;
     private String pernr;
     private String userName;
     private String sex;
     private String position;
     private String department;
+    private String persg;
     private String joinedDate;
     private String confirDate;
     private String leaveDate;

@@ -10,8 +10,8 @@
     </resultMap>
 
     <insert id="insertDeleteLog" parameterType="com.syx.domain.DeleteImportDataLog">
-        insert into DeleteImportDataLog (quit_pernr, launch_id, originator_pernr, delete_time)
-        values (#{quitPernr}, #{launchId}, #{originatorPernr}, #{deleteTime})
+        insert into DeleteImportDataLog (quit_pernr, launch_id, originator_pernr, delete_time, import_time)
+        values (#{quitPernr}, #{launchId}, #{originatorPernr}, #{deleteTime}, #{importTime})
     </insert>
 
 </mapper>

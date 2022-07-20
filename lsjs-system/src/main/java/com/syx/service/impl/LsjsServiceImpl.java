@@ -187,7 +187,24 @@ public class LsjsServiceImpl implements ILsjsService {
             //根据离职员工工号和审核人工号查询审核ID和发起ID
             Approve approve = approveMapper.getApproveByReviewAndQuitPernr(quitPernr, reviewerPernr);
             //根据离职员工工号查询基本信息
-            AuditUserRes auditUserRes = sapUserInfoMapper.getUserInfoByPernrList(quitPernr);
+            AuditUserRes auditUserRes = sapUserInfoMapper.getUserInfoByPernrList(quitPernr, approve.getLaunchId());
+            if (auditUserRes.getPersg().equals("A")){
+                auditUserRes.setPersg("正式");
+            }else if (auditUserRes.getPersg().equals("B")){
+                auditUserRes.setPersg("试用");
+            }else if (auditUserRes.getPersg().equals("C")){
+                auditUserRes.setPersg("兼职");
+            }else if (auditUserRes.getPersg().equals("D")){
+                auditUserRes.setPersg("实习生");
+            }else if (auditUserRes.getPersg().equals("E")){
+                auditUserRes.setPersg("退休");
+            }else if (auditUserRes.getPersg().equals("F")){
+                auditUserRes.setPersg("退休返聘");
+            }else if (auditUserRes.getPersg().equals("G")){
+                auditUserRes.setPersg("不在岗");
+            }else if (auditUserRes.getPersg().equals("I")){
+                auditUserRes.setPersg("劳务工");
+            }
             //根据离职员工工号查询盘点扣款
             List<Deduction> deductionByPernr = deductionMapper.getDeductionByPernr(quitPernr);
             //根据离职员工工号查询任职履历
@@ -197,13 +214,12 @@ public class LsjsServiceImpl implements ILsjsService {
             auditUserRes.setDeductions(deductionByPernr);
             auditUserRes.setResumes(resumeByPernr);
 
-            String department = "";
-            department = sapStoreHeadMapper.getSAPStoreNameByStoreId(auditUserRes.getDepartment());
-            if (StringUtils.isNotBlank(department)) {
-                auditUserRes.setDepartment(department);
+            if (auditUserRes.getPersonScope().equals("门店")){
+                auditUserRes.setDivision(sapStoreHeadMapper.getSAPStoreNameByStoreId(auditUserRes.getDepartment()));
             }
             auditUserResList.add(auditUserRes);
         }
+
         return auditUserResList;
     }
 
@@ -618,6 +634,8 @@ public class LsjsServiceImpl implements ILsjsService {
         //根据开始日期和结束日期查询到这一时间段内导入的数据
         List<String> launchs = new ArrayList<>();
         List<String> storeQuitPernrList = new ArrayList<>();
+        List<String> storeNameList = new ArrayList<>();//创建存放店编的集合
+        List<String> shopStoreNameList = new ArrayList<>();//创建属于门店范围员工的店编的集合
         for (ImportData importData:importDataByTime){
             launchs.add("LaunchID" + "||" + importData.getLaunchId().toString() + "||");
             if (importData.getPersonScope().equals("门店")){
@@ -626,42 +644,26 @@ public class LsjsServiceImpl implements ILsjsService {
         }
         List<ApproveGetRes> exportApproveData = approveMapper.getApproveDataByLQ("exportApproveData", launchs);
         for (ApproveGetRes approveGetRes:exportApproveData){
-            if (storeQuitPernrList.contains(approveGetRes.getPernr())){
-                //根据店编查询门店主数据
-                SAPStoreHead sapStoreHeadByStoreId = sapStoreHeadMapper.getSAPStoreHeadByStoreId(approveGetRes.getStoreName());
-                //门店员工所属分部取门店主数据中的管理地区
-                approveGetRes.setDivision(sapStoreHeadByStoreId.getManageArea());
+            //若属于门店员工则将店编拼接作为表入参传给存储过程
+            if (approveGetRes.getPersonScope().equals("门店")){
+                storeNameList.add("StoreName" + "||" + approveGetRes.getStoreName() + "||");
+                shopStoreNameList.add(approveGetRes.getStoreName());
+            }
+        }
+        //调用存储过程获得管理地区的List集合
+        List<SAPStoreHead> sapStoreHeadList = sapStoreHeadMapper.getSAPStoreHeadByStoreIdAndSqlserver("管理地区",storeNameList);
+        //遍历查询出来的审核数据数组
+        for (ApproveGetRes approveGetRes:exportApproveData){
+            //若存储人员范围为门店的店编list中包含该离职员工所属门店店编则遍历门店主数据为门店员工所属分部赋值
+            if (shopStoreNameList.contains(approveGetRes.getStoreName())){
+                for (SAPStoreHead sapStoreHead:sapStoreHeadList){
+                    if (sapStoreHead.getStoreId().equals(approveGetRes.getStoreName())){
+                        approveGetRes.setDivision(sapStoreHead.getManageArea());
+                    }
+                }
             }
         }
         return exportApproveData;
-    }
-
-    /**
-     * 获取审批状态字段值
-     *
-     * @param launchId
-     * @param quitPernr
-     * @return
-     */
-    private Integer getApproveResult(Integer launchId, String quitPernr) {
-        List<Integer> resultList = new ArrayList<>();
-        Integer approveStatus = 0;
-        List<Integer> approveResultList = approveMapper.getApproveResultList(launchId, quitPernr);
-        if (approveResultList.size() < 4) {
-            approveStatus = 1;
-        } else {
-            for (Integer result : approveResultList) {
-                if (result == 1 || result == 3) {
-                    resultList.add(result);
-                }
-            }
-            if (resultList.size() > 0) {
-                approveStatus = 1;
-            } else {
-                approveStatus = 2;
-            }
-        }
-        return approveStatus;
     }
 
     /**
@@ -695,7 +697,6 @@ public class LsjsServiceImpl implements ILsjsService {
      */
     @Override
     public int deleteDataByPernr(String quitPernr, Integer launchId) {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         int i = 0;
         //判断导入数据表中是否存在该离职员工的数据
         ImportData importData = importDataMapper.getImportDataByQuitPernr(quitPernr, launchId);

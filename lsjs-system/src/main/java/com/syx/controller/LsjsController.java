@@ -253,19 +253,26 @@ public class LsjsController {
         if (i == 0){
             return AjaxResult.error("删除该离职员工数据失败，请重试或联系管理员");
         }
-        //记录删除操作
         DeleteImportDataLog deleteImportDataLog = new DeleteImportDataLog();
+        //离职员工工号
         deleteImportDataLog.setQuitPernr(deleteImportDataDto.getQuitPernr());
+        //发起ID
         deleteImportDataLog.setLaunchId(deleteImportDataDto.getLaunchId());
+        //操作人工号
         deleteImportDataLog.setOriginatorPernr(deleteImportDataDto.getUserId());
+        //导入时间
+        Timestamp date = Timestamp.valueOf(deleteImportDataDto.getImportTime());
+        deleteImportDataLog.setImportTime(date);
+        //删除操作时间
         LocalDateTime now = LocalDateTime.now();
         Timestamp timestamp = Timestamp.valueOf(now);
         deleteImportDataLog.setDeleteTime(timestamp);
+        //记录删除操作
         int i1 = lsjsService.insertDeleteLog(deleteImportDataLog);
         if (i1 == 0){
             return AjaxResult.error("记录删除操作时出错，请重试或联系管理员");
         }
-        return AjaxResult.success("删除成功",i);
+        return AjaxResult.success("删除成功");
     }
 
     /**

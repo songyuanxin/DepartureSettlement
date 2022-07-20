@@ -5,6 +5,7 @@ import com.syx.domain.SAPUserInfo;
 import com.syx.domain.vo.AuditUserRes;
 import com.syx.domains.vo.SearchUserInfoRes;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -31,7 +32,7 @@ public interface SAPUserInfoMapper extends BaseMapper<SAPUserInfo> {
 
     String getDepartmentByPernr(String quitPernr);
 
-    AuditUserRes getUserInfoByPernrList(String quitPernr);
+    AuditUserRes getUserInfoByPernrList(@Param("quitPernr") String quitPernr, @Param("launchId") Integer launchId);
 
     List<SearchUserInfoRes> searchUserInfoByPernr(String pernr);
 
