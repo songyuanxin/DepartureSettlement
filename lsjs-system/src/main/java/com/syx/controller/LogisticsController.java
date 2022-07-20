@@ -74,11 +74,15 @@ public class LogisticsController {
         approve.setQuitPernr(logisticsDto.getQuitPernr());
         approve.setReviewerPernr(logisticsDto.getReviewerPernr());
 
-        if (StringUtils.isNotBlank(logisticsDto.getCardMoney()) && !logisticsDto.getCardMoney().equals("null")){
+        if (StringUtils.isNotBlank(logisticsDto.getCardMoney()) && logisticsDto.getCardMoney().length() > 0){
             approve.setCardMoney(new BigDecimal(logisticsDto.getCardMoney()).setScale(2,BigDecimal.ROUND_HALF_UP));
+        }else {
+            approve.setCardMoney(new BigDecimal("0").setScale(2,BigDecimal.ROUND_HALF_UP));
         }
-        if (StringUtils.isNotBlank(logisticsDto.getClothesMoney()) && !logisticsDto.getClothesMoney().equals("null")){
+        if (StringUtils.isNotBlank(logisticsDto.getClothesMoney()) && logisticsDto.getClothesMoney().length() > 0){
             approve.setClothesMoney(new BigDecimal(logisticsDto.getClothesMoney()).setScale(2,BigDecimal.ROUND_HALF_UP));
+        }else {
+            approve.setClothesMoney(new BigDecimal("0").setScale(2,BigDecimal.ROUND_HALF_UP));
         }
 
         approve.setApproveTime(timestamp);

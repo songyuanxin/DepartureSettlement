@@ -774,6 +774,7 @@ public class LsjsServiceImpl implements ILsjsService {
         approveGetDto.setQuitPernr(dataResByTime.getQuitPernr());
         approveGetDto.setImportPernr(dataResByTime.getImportPernr());
         approveGetDto.setPersonScope(dataResByTime.getPersonScope());
+        approveGetDto.setDivision(dataResByTime.getDivision());
         //调用Mapper方法获得launchId
         List<ImportData> importDataList = importDataMapper.getImoprtDataByTime(approveGetDto);
         List<String> launchs = new ArrayList<>();//创建存放launchId的集合

@@ -20,4 +20,6 @@ public class ImportDataGetDto {
     private String importStartTime;
     //导入结束日期
     private String importEndTime;
+    //所属分部
+    private String division;
 }
