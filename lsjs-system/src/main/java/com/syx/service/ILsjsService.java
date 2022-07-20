@@ -80,4 +80,25 @@ public interface ILsjsService {
     List<ApproveDataRes> getApproveDataRes(ImportDataGetDto dataResByTime);
 
     int insertDeleteLog(DeleteImportDataLog deleteImportDataLog);
+
+    /**
+     * 删除借款余额数据表
+     * @param dataList
+     * @return
+     */
+    int deleteJKYE (List<ImportDataDto> dataList);
+    /**
+     * 调用SAP接口获得借款余额
+     * @param quitPernrList
+     * @return
+     * @throws Exception
+     */
+    int getJKYE(List<String> quitPernrList) throws Exception;
+
+    /**
+     * 借款余额插入数据库
+     * @return
+     * @throws Exception
+     */
+    int insertLoanBalance(Map<String,List<ItJKYE>> itJKYEMap);
 }

@@ -65,6 +65,9 @@ public class LsjsServiceImpl implements ILsjsService {
     @Autowired
     private DeleteImportDataLogMapper deleteImportDataLogMapper;
 
+    @Autowired
+    private LoanBalanceMapper loanBalanceMapper;
+
     /**
      * 根据工号查询员工姓名
      *
@@ -822,4 +825,120 @@ public class LsjsServiceImpl implements ILsjsService {
         return deleteImportDataLogMapper.insertDeleteLog(deleteImportDataLog);
     }
 
+    /**
+     * 获取离职员工的借款余额
+     *
+     * @param quitPernrList
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public int getJKYE(List<String> quitPernrList) throws Exception {
+        String postUrl = "http://s4hanaqas.jzj.cn:8002/sap/bc/srt/rfc/sap/zfi_interface_01/800/zfi_interface_01/zfi_interface_01";
+        String Username = "055564";
+        String Password = "JZJ055564@1";
+        String soapXml = getJKYEXml(quitPernrList);
+        String result = HttpClientUtils.postSoapOne(soapXml, postUrl, Username, Password);
+        List<ItJKYE> jkyeList = new ArrayList<>();
+
+        List<Map<String, String>> maps = parseSoap(result);
+
+        maps.stream().forEach(map -> {
+            ItJKYE itJKYE = new ItJKYE();
+            itJKYE.setPernr(map.get("PERNR"));
+            itJKYE.setZjkye(map.get("ZJKYE"));
+            jkyeList.add(itJKYE);
+        });
+
+        Map<String, List<ItJKYE>> itJKYEMap = jkyeList.stream().filter(item -> item.getPernr() != null)
+                .collect(Collectors.groupingBy(item -> item.getPernr()));
+
+        int i = 0;
+        if (itJKYEMap.size() > 0) {
+            int insertLoanBalance = insertLoanBalance(itJKYEMap);
+            if (itJKYEMap.size() > 0 && insertLoanBalance <= 0) {
+                return -1;
+            }
+            i = i + insertLoanBalance;
+        }
+        return i;
+    }
+
+
+    /**
+     * 拼接请求SAP WebService的请求报文（借款余额）
+     *
+     * @param pernrList
+     * @return
+     */
+    private String getJKYEXml(List<String> pernrList) {
+        StringBuilder pernr = new StringBuilder();
+        for (String quitPernr : pernrList) {
+            pernr.append("<item>" + "<LIFNR>" + quitPernr + "</LIFNR>" + "</item>");
+        }
+        String soapXml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+                + "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:urn=\"urn:sap-com:document:sap:rfc:functions\">"
+                + "<soapenv:Header/>"
+                + "<soapenv:Body>"
+                + "<urn:ZFI_INTERFACE_01>"
+                + "<INPUT>"
+                + pernr
+                + "</INPUT>"
+                + "</urn:ZFI_INTERFACE_01>"
+                + "</soapenv:Body>"
+                + "</soapenv:Envelope>";
+        return soapXml;
+    }
+
+    /**
+     * 将借款余额插入数据库
+     *
+     * @param itJKYEMap
+     * @return
+     */
+    @Override
+    public int insertLoanBalance(Map<String, List<ItJKYE>> itJKYEMap) {
+        int i = 0;
+        List<ItJKYE> itJKYEList = new ArrayList<>();
+        for (String pernr : itJKYEMap.keySet()) {
+            List<ItJKYE> itJKYEList1 = itJKYEMap.get(pernr);
+            for (ItJKYE itJKYE:itJKYEList1){
+                itJKYEList.add(itJKYE);
+            }
+        }
+        for (ItJKYE itJKYE : itJKYEList) {
+            LoanBalance loanBalance = new LoanBalance();
+            String itJKYEPernr = itJKYE.getPernr().substring(2);
+            loanBalance.setPernr(itJKYEPernr);
+            loanBalance.setMoney(new BigDecimal(itJKYE.getZjkye()).setScale(2, BigDecimal.ROUND_HALF_UP));
+            LoanBalance loanBalance1 = loanBalanceMapper.getLoanBalanceByPernr(loanBalance.getPernr());
+            int insertResult = 0;
+            //如果借款余额表中存在工号相同的数据
+            if (loanBalance1 != null) {
+                insertResult = loanBalanceMapper.updateLoanBalance(loanBalance);
+                i = insertResult + i;
+            } else {
+                insertResult = loanBalanceMapper.insertLoanBalance(loanBalance);
+                i = insertResult + i;
+            }
+        }
+
+        return i;
+    }
+
+    /**
+     * 根据离职员工工号删除借款余额
+     *
+     * @param dataList
+     * @return
+     */
+    @Override
+    public int deleteJKYE(List<ImportDataDto> dataList) {
+        int i = 0;
+        for (ImportDataDto importDataDto : dataList) {
+            int deleteLoanBalance = loanBalanceMapper.deleteLoanBalance(importDataDto.getPernr());
+            i = deleteLoanBalance + i;
+        }
+        return 0;
+    }
 }

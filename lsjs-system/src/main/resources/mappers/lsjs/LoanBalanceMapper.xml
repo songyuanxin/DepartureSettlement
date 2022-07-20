@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.syx.mapper.lsjs.LoanBalanceMapper">
+    <update id="updateLoanBalance" parameterType="com.syx.domain.LoanBalance">
+        update LoanBalance
+        set money = #{money}
+        where pernr = #{pernr}
+    </update>
+    <delete id="deleteLoanBalance" parameterType="string">
+        delete
+        from LoanBalance
+        where pernr = #{quitPernr}
+    </delete>
+
+    <select id="getLoanBalanceByPernr" parameterType="string" resultType="com.syx.domain.LoanBalance">
+        select pernr, money
+        from loanBalance
+        where pernr = #{quitPernr}
+    </select>
+
+    <insert id="insertLoanBalance" parameterType="com.syx.domain.LoanBalance">
+        insert into LoanBalance(pernr, money)
+        values (#{pernr}, #{money})
+    </insert>
+
+</mapper>

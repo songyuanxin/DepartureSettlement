@@ -277,12 +277,20 @@ public class ImportDataController {
             lsjsService.deleteImportData(dataList);
             return AjaxResult.error("流程发起失败，可能原因：保存离职员工盘点扣款或任职履历时出错，请联系管理员处理！");
         }
+        //2、获取借款余额写入数据库
+        int insertJKYE = lsjsService.getJKYE(quitPernrList);
+        if (insertJKYE == -1) {
+            lsjsService.deleteImportData(dataList);
+            lsjsService.deletePDKKandRZLL(dataList);
+            return AjaxResult.error("流程发起失败，可能原因：保存借款余额时出错，请联系管理员处理");
+        }
         String isReturn = "0";
         //导入数据时若以上校验通过则开始发起流程
         SendMsgRes sendMsgRes = importDataService.launchProcess(importDataInfoList, isReturn);
         if (sendMsgRes.getErrcode() != 0) {
             lsjsService.deleteImportData(dataList);
             lsjsService.deletePDKKandRZLL(dataList);
+            lsjsService.deleteJKYE(dataList);
             return AjaxResult.error("流程发起失败，可能原因：发送至直接上级审核时出错，请联系管理员处理！");
         }
         return AjaxResult.success("流程发起成功", dataList);

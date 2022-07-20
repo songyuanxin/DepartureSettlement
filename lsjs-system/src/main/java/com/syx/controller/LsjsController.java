@@ -285,4 +285,16 @@ public class LsjsController {
         List<ApproveDataRes> approveDataRes = lsjsService.getApproveDataRes(importDataGetDto);
         return AjaxResult.success("返回成功", approveDataRes);
     }
+
+    /**
+     * 调用Web service接口获取借款余额
+     * @param quitPernrList
+     * @return
+     * @throws Exception
+     */
+    @PostMapping(value = "/getJKYE")
+    public AjaxResult getJKYE(@RequestBody  List<String> quitPernrList) throws Exception{
+        int insertResult = lsjsService.getJKYE(quitPernrList);
+        return AjaxResult.success("请求成功",insertResult);
+    }
 }
