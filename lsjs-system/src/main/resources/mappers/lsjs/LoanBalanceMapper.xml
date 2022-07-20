@@ -6,6 +6,7 @@
         set money = #{money}
         where pernr = #{pernr}
     </update>
+
     <delete id="deleteLoanBalance" parameterType="string">
         delete
         from LoanBalance

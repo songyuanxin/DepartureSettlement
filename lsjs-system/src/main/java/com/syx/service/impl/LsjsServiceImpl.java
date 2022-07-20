@@ -874,7 +874,7 @@ public class LsjsServiceImpl implements ILsjsService {
     private String getJKYEXml(List<String> pernrList) {
         StringBuilder pernr = new StringBuilder();
         for (String quitPernr : pernrList) {
-            pernr.append("<item>" + "<LIFNR>" + quitPernr + "</LIFNR>" + "</item>");
+            pernr.append("<item>" + "<LIFNR>" + "00" + quitPernr + "</LIFNR>" + "</item>");
         }
         String soapXml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
                 + "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:urn=\"urn:sap-com:document:sap:rfc:functions\">"
