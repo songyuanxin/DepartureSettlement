@@ -13,7 +13,6 @@ import java.util.List;
  **/
 @Data
 public class AuditUserRes {
-    private Integer approveId;
     private Integer launchId;
     private String personScope;
     private String pernr;
