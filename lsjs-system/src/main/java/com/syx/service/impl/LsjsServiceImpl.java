@@ -834,9 +834,9 @@ public class LsjsServiceImpl implements ILsjsService {
      */
     @Override
     public int getJKYE(List<String> quitPernrList) throws Exception {
-        String postUrl = "http://s4hanaqas.jzj.cn:8002/sap/bc/srt/rfc/sap/zfi_interface_01/800/zfi_interface_01/zfi_interface_01";
-        String Username = "055564";
-        String Password = "JZJ055564@1";
+        String postUrl = "http://s4hanadb01.jzj.cn:8002/sap/bc/srt/rfc/sap/zfi_interface_01/800/zfi_interface_01/zfi_interface_01";
+        String Username = "S4CONN";
+        String Password = "SAP_po1234**";
         String soapXml = getJKYEXml(quitPernrList);
         String result = HttpClientUtils.postSoapOne(soapXml, postUrl, Username, Password);
         List<ItJKYE> jkyeList = new ArrayList<>();
