@@ -92,34 +92,35 @@ public class ImportDataController {
         List<String> quitPernrList = new ArrayList<>();
 
         for (ImportDataDto importDataDto : dataList) {
-            //若出现表头被修改等情况直接报错
+            //设置操作人工号
+            importDataDto.setOriginatorPernr(uploadDto.getUserId().substring(uploadDto.getUserId().length()-6));
+            //二、若出现表头被修改等情况直接报错
             if (StringUtils.isBlank(importDataDto.getPernr()) || StringUtils.isBlank(importDataDto.getName()) || StringUtils.isBlank(importDataDto.getDirectPernr()) || StringUtils.isBlank(importDataDto.getDirectName()) || StringUtils.isBlank(importDataDto.getPersonScope())){
                 return AjaxResult.error("<div>未检测到离司结算申请数据，请检查修改后重新导入！<div style=\"color:#81b6dd;\">出现此问题可能原因：导入模板中表头不正确。</div></div>");
             }
-            importDataDto.setOriginatorPernr(uploadDto.getUserId().substring(uploadDto.getUserId().length()-6));
-            //二、校验是否有人员范围超出“门店”、“职能”的
+            //三、校验是否有人员范围超出“门店”、“职能”的
             if (!importDataDto.getPersonScope().equals("门店") && !importDataDto.getPersonScope().equals("职能")) {
                 pErrorList.add(importDataDto.getPernr() + importDataDto.getName());
                 return AjaxResult.error("导入数据中" + pErrorList + "所属人员范围选择错误，人员范围只能选择门店或职能，请检查修改后重新导入数据");
             }
             //获取人事导入所有人的工号
             quitPernrList.add(importDataDto.getPernr());
-            //三、校验是否缺少直接上级等关键数据
+            //四、校验是否缺少直接上级等关键数据
             if (importDataDto.getDirectPernr().equals("") || importDataDto.getPersonScope().equals("") || importDataDto.getPernr().equals("") || importDataDto.getDirectName().equals("") || importDataDto.getName().equals("")) {
                 return AjaxResult.error("<div>导入数据中缺少关键数据，请检查修改后重新导入数据！<div style=\"color:#81b6dd;\">导入数据模板要求：</br>1、必须填写离职员工工号、离职员工姓名、直接上级工号、直接上级姓名、人员范围；</br>2、若离职员工属于职能部门则必须填写所属分部</div></div>");
             }
-            //四、校验离职原因为旷工的是否已填写旷工发文号
+            //五、校验离职原因为旷工的是否已填写旷工发文号
             //1、查询离职员工离职原因
             String leaveResonByQuitPernr = lsjsService.getLeaveResonByQuitPernr(importDataDto.getPernr());
             if (StringUtils.isNotBlank(leaveResonByQuitPernr)) {
-                //2、判断该离职原因离职原因是否是旷工，若为旷工但没填写旷工发文号时不允许导入
+                //2、判断该离职员工的离职原因是否是旷工，若为旷工但没填写旷工发文号时不允许导入
                 if (leaveResonByQuitPernr.equals("旷工") && importDataDto.getAbsenteeismDoc().equals("")) {
                     return AjaxResult.error("导入数据中" + importDataDto.getPernr() + importDataDto.getName() + "缺少旷工发文号，请检查修改后重新导入数据!(离职原因为旷工的离职员工必须填写旷工发文号)");
                 }
             }
             String pernr = importDataDto.getPernr();
             String directPernr = importDataDto.getDirectPernr();
-            //五、校验是否有无效的工号
+            //六、校验是否有无效的工号
             //1、校验是否有离职员工工号无效的
             String quitNameByPernr = lsjsService.getUserNameByPernr(pernr);
             if (StringUtils.isNotBlank(quitNameByPernr)) {
@@ -144,7 +145,7 @@ public class ImportDataController {
             if (invalidList.size() > 0) {
                 return AjaxResult.error("导入数据中" + invalidList + "直接上级不存在企业中或工号错误，请检查修改后重新导入数据！");
             }
-            //六、检验导入数据中是否有未离职员工
+            //七、检验导入数据中是否有未离职员工
             //1、检验是否有未离职的员工确存在导入数据中
             String leaveDateByPernr = lsjsService.getLeaveDateByPernr(pernr);
             if (StringUtils.isBlank(leaveDateByPernr)) {
@@ -165,7 +166,7 @@ public class ImportDataController {
             if (idErrorDirectPernrList.size() > 0) {
                 return AjaxResult.error("导入数据中" + idErrorDirectPernrList + "直接上级已经离职，请检查修改后重新导入数据！");
             }
-            //七、校验工号和姓名是否匹配
+            //八、校验工号和姓名是否匹配
             //根据工号查询离职员工姓名
             String name = "";
             String directName = "";
@@ -184,7 +185,7 @@ public class ImportDataController {
             if (noMatchingList.size() > 0) {
                 return AjaxResult.error("导入数据中" + noMatchingList + "的工号与姓名不匹配，请检查修改后重新导入数据！！");
             }
-            //八、校验是否存在已经发起过离司结算的员工
+            //九、校验是否存在已经发起过离司结算的员工
             List<Approve> approve = lsjsService.getApproveByPernr(pernr);
             List<ResumeRes> resume = lsjsService.getResume(pernr);
             List<Deduction> deduction = lsjsService.getDeduction(pernr);

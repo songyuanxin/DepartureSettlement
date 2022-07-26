@@ -45,10 +45,10 @@
 
     <select id="queryApproveByPernr" resultType="com.syx.domains.vo.QueryApproveRes">
         select *
-        from Approve
+        from VQueryApprove
         where quit_pernr = #{pernr}
-          and launch_id = #{launchId}
-        order by isnull(approve_time, GETDATE()), approve_content
+          and launchId = #{launchId}
+        order by isnull(approveTime, GETDATE()), approvecontent
     </select>
 
     <select id="getAuditQuitPernr" parameterType="string" resultType="string">

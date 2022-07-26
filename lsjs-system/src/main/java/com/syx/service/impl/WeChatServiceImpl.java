@@ -44,8 +44,8 @@ public class WeChatServiceImpl {
         sendMsgData.setMsgtype(MSGTYPE);
         sendMsgData.setSafe(SAFE);
         sendMsgData.setEnable_duplicate_check(ENABLE_DUPLICATE_CHECK);
-//        sendMsgData.setTouser("00" + reviewer);
-        sendMsgData.setTouser("00072403");
+        sendMsgData.setTouser("00" + reviewer);
+//        sendMsgData.setTouser("00072403");
         content.setContent(splicing);
         sendMsgData.setText(content);
         //三、调用企业微信接口发送提醒消息
