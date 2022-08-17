@@ -170,8 +170,8 @@ public class LsjsServiceImpl implements ILsjsService {
      * @return
      */
     @Override
-    public List<String> getAuditQuitPernr(String reviewerPernr) {
-        return approveMapper.getAuditQuitPernr(reviewerPernr);
+    public List<String> getAuditQuitPernr(String reviewerPernr, Integer approveContent) {
+        return approveMapper.getAuditQuitPernr(reviewerPernr, approveContent);
     }
 
     /**
@@ -451,15 +451,14 @@ public class LsjsServiceImpl implements ILsjsService {
                 deduction.setPernr(itPDKK.getPernr().substring(2));
                 deduction.setMonth(itPDKK.getZyyyynn());
                 deduction.setMoney(new BigDecimal(itPDKK.getBetrg()).setScale(2, BigDecimal.ROUND_HALF_UP));
-                List<Deduction> deductionByPernr = deductionMapper.getDeductionByPernr(deduction.getPernr());
+                Deduction deductionByPernr = deductionMapper.getDeductionByPernrAndMonth(deduction.getPernr(),deduction.getMonth());
                 int insertResult = 0;
-                if (deductionByPernr.size() == 0) {
+                if (deductionByPernr == null) {
                     insertResult = deductionMapper.insertDeduction(deduction);
                     i = insertResult + i;
-                } else if (deductionByPernr.size() > 0) {
-                    int deleteResult = deductionMapper.deleteDeduction(deduction.getPernr());
-                    insertResult = deductionMapper.insertDeduction(deduction);
-                    i = insertResult + i;
+                } else if (deductionByPernr != null) {
+                    int updateResult = deductionMapper.updateDeduction(deduction);
+                    i = updateResult + i;
                 }
             }
         }
@@ -488,15 +487,14 @@ public class LsjsServiceImpl implements ILsjsService {
                 resume.setStoreName(itRZLI.getStoreName());
                 resume.setPosition(itRZLI.getPosition());
                 resume.setPost(itRZLI.getPost());
-                List<ResumeRes> resumeByPernr = resumeMapper.getResumeByPernr(resume.getPernr());
+                ResumeRes resumeByPernr = resumeMapper.getResumeByPernrAndStartDate(resume.getPernr(), resume.getStartDate());
                 int insertResult = 0;
-                if (resumeByPernr.size() == 0) {
+                if (resumeByPernr == null) {
                     insertResult = resumeMapper.insertResume(resume);
                     i = insertResult + i;
-                } else if (resumeByPernr.size() > 0) {
-                    int deleteResult = resumeMapper.deleteResume(resume.getPernr());
-                    insertResult = resumeMapper.insertResume(resume);
-                    i = insertResult + i;
+                } else if (resumeByPernr != null) {
+                    int updateResult = resumeMapper.updateResume(resume);
+                    i = updateResult + i;
                 }
             }
         }
@@ -570,22 +568,6 @@ public class LsjsServiceImpl implements ILsjsService {
     @Override
     public List<Deduction> getDeduction(String pernr) {
         return deductionMapper.getDeductionByPernr(pernr);
-    }
-
-    /**
-     * 查询某一时间段内人事导入的离职员工工号
-     *
-     * @param approveGetDto
-     * @return
-     */
-    @Override
-    public List<String> getPernrImoprtDataByTime(ApproveGetDto approveGetDto) {
-        List<ImportData> imoprtDataByTime = importDataMapper.getImoprtDataByTime(approveGetDto);
-        List<String> pernrList = new ArrayList<>();
-        for (ImportData importData : imoprtDataByTime) {
-            pernrList.add(importData.getQuitPernr());
-        }
-        return pernrList;
     }
 
     /**

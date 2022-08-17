@@ -1,14 +1,11 @@
 package com.syx.mapper.lsjs;
 
 import com.syx.domain.Approve;
-import com.syx.domain.ImportData;
 import com.syx.domains.vo.ApproveDataRes;
 import com.syx.domains.vo.ApproveGetRes;
 import com.syx.domains.vo.QueryApproveRes;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-
-import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -44,7 +41,7 @@ public interface ApproveMapper {
      * @param reviewerPernr
      * @return
      */
-    List<String> getAuditQuitPernr(String reviewerPernr);
+    List<String> getAuditQuitPernr(@Param("reviewerPernr") String reviewerPernr, @Param("approveContent") Integer approveContent);
 
     /**
      * 根据离职员工工号查询所属地区经理工号
@@ -69,12 +66,11 @@ public interface ApproveMapper {
     List<Approve> getApproveByPernr(String pernr);
 
     /**
-     * 根据员工工号查询审核数据(人力资源中心查询审核数据)
-     * @param
+     * 离司结算审核数据导出报表查询存储过程
+     * @param TableName
+     * @param launchs
      * @return
      */
-    ApproveGetRes getApproveDataByPernr(ImportData importData);
-
     List<ApproveGetRes> getApproveDataByLQ(String TableName,List<String> launchs);
 
     /**
@@ -84,13 +80,19 @@ public interface ApproveMapper {
      */
     int deleteApproveDataByPernr(@Param("quitPernr") String quitPernr, @Param("launchId") Integer launchId);
 
-    Timestamp getSendTimeByPernr(@Param("pernr")String pernr, @Param("approveContent") Integer approveContent);
-
-    List<Integer> getApproveResultList(@Param("launchId")Integer launchId, @Param("quitPernr")String quitPernr);
-
+    /**
+     * 根据离职员工工号和审核人工号查询审核ID和发起ID
+     * @param quitPernr
+     * @param reviewerPernr
+     * @return
+     */
     Approve getApproveByReviewAndQuitPernr(@Param("quitPernr")String quitPernr, @Param("reviewerPernr")String reviewerPernr);
 
-    String getSAPStoreHeadByPernr(String pernr);
-
+    /**
+     * 离司结算流程监控报表查询存储过程
+     * @param name
+     * @param launchs
+     * @return
+     */
     List<ApproveDataRes> getApproveDataResBySqlServer(String name,List<String> launchs);
 }

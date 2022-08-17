@@ -65,7 +65,6 @@ public class ImportDataController {
      */
     @PostMapping(path = "/import")
     public AjaxResult importData(UploadDto uploadDto) throws Exception {
-        uploadDto.setUserId("072403");
         ExcelUtil<ImportDataDto> util = new ExcelUtil<ImportDataDto>(ImportDataDto.class);
         List<ImportDataDto> dataList = util.importExcel(uploadDto.getFile().getInputStream());
 

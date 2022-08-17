@@ -15,6 +15,10 @@
         select pernr, start_date, end_date, store_id, store_name, position from Resume where pernr = #{quitPernr}
     </select>
 
+    <select id="getResumeByPernrAndStartDate" resultType="com.syx.domains.vo.ResumeRes">
+        select pernr, start_date, end_date, store_id, store_name, position from Resume where pernr = #{pernr} and start_date = #{startDate}
+    </select>
+
     <insert id="insertResume" parameterType="com.syx.domain.Resume">
         insert into Resume (pernr, start_date, end_date, store_id, position, store_name, post)
         values (#{pernr}, #{startDate}, #{endDate}, #{storeId}, #{position}, #{storeName}, #{post})
@@ -23,5 +27,19 @@
     <delete id="deleteResume" parameterType="string">
         delete from Resume where pernr = #{pernr}
     </delete>
+
+    <update id="updateResume" parameterType="com.syx.domain.Resume">
+        update Resume
+        <trim prefix="set" suffixOverrides=",">
+            <if test="pernr != null">pernr = #{pernr},</if>
+            <if test="startDate != null">start_date = #{startDate},</if>
+            <if test="endDate != null">end_date = #{endDate},</if>
+            <if test="storeId != null">store_id = #{storeId},</if>
+            <if test="position != null">position = #{position},</if>
+            <if test="storeName != null">store_name = #{storeName},</if>
+            <if test="post != null">post = #{post},</if>
+        </trim>
+        where pernr = #{pernr} and start_date = #{startDate}
+    </update>
 
 </mapper>

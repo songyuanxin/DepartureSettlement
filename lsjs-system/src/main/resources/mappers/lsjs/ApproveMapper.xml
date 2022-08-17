@@ -51,10 +51,10 @@
         order by isnull(approveTime, GETDATE()), approvecontent
     </select>
 
-    <select id="getAuditQuitPernr" parameterType="string" resultType="string">
+    <select id="getAuditQuitPernr" resultType="string">
         select quit_pernr
         from Approve
-        where reviewer_pernr = #{reviewerPernr}
+        where reviewer_pernr = #{reviewerPernr} and approve_content = #{approveContent}
           and approve_result in (0, 1, 3, 4, null)
     </select>
 
@@ -82,7 +82,7 @@
     <update id="updateApprove" parameterType="com.syx.domain.Approve">
         update Approve
         <trim prefix="set" suffixOverrides=",">
-            <if test="approveTime != null">approve_time = #{approveTime},</if>
+            approve_time = #{approveTime},
             <if test="approveResult != null">approve_result = #{approveResult},</if>
             <if test="approveResultDesc != null">approve_result_desc = #{approveResultDesc},</if>
             <if test="reviewerPernr != null">reviewer_pernr = #{reviewerPernr},</if>
@@ -163,33 +163,12 @@
           and launch_id = #{launchId}
     </delete>
 
-    <select id="getSendTimeByPernr" resultType="java.sql.Timestamp">
-        select max(send_time)
-        from Approve
-        where quit_pernr = #{pernr}
-          and approve_content = #{approveContent}
-    </select>
-
-    <select id="getApproveResultList" resultType="int">
-        select approve_result
-        from Approve
-        where quit_pernr = #{quitPernr}
-          and launch_id = #{launchId}
-    </select>
-
     <select id="getApproveByReviewAndQuitPernr" parameterType="string" resultType="com.syx.domain.Approve">
         select top 1 *
         from Approve
         where quit_pernr = #{quitPernr}
           and reviewer_pernr = #{reviewerPernr}
         order by send_time desc
-    </select>
-
-    <select id="getSAPStoreHeadByPernr" parameterType="string" resultType="string">
-        select s.管理地区
-        from personInfo p
-                 inner join (SELECT * FROM [116.55.231.200].ZP.dbo.SAPStoreHead) s on p.storename = s.门店编码
-        where p.alias = #{pernr}
     </select>
 
     <select id="getApproveDataResBySqlServer" statementType="CALLABLE" resultType="com.syx.domains.vo.ApproveDataRes">

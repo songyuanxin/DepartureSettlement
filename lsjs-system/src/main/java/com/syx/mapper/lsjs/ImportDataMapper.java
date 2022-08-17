@@ -36,17 +36,7 @@ public interface ImportDataMapper {
 
     List<ImportData> getImoprtDataByTime(ApproveGetDto approveGetDto);
 
-    ImportData getImoprtDataByTimeAndPernr(ImportDataGetDto importDataGetDto);
-
-    List<ImportData> getImoprtDataByImportTime(String importTime);
-
-    List<ImportData> getImportDataList();
-
     List<ImportDataRes> getImoprtDataByPernr(String quitPernr);
-
-    ImportData getImoprtDataByQuitPernr(String quitPernr);
-
-    List<ImportData> getImportDataByImportPernr(String ImportPernr);
 
     ImportData getImportDataByQuitPernr(@Param("quitPernr") String quitPernr, @Param("launchId") Integer launchId);
 }

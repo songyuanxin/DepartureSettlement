@@ -2,6 +2,7 @@ package com.syx.mapper.lsjs;
 
 import com.syx.domain.Deduction;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -17,4 +18,7 @@ public interface DeductionMapper {
 
     int deleteDeduction(String pernr);
 
+    Deduction getDeductionByPernrAndMonth(@Param("pernr") String pernr, @Param("month") String month);
+
+    int updateDeduction(Deduction deduction);
 }

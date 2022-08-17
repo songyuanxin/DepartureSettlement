@@ -50,21 +50,11 @@ public class FuncterProcessServiceImpl implements IFuncterProcessService {
                 }
 
                 int insertApproveResult = 0;
-                int updateApproveResult = 0;
-                if (isReturn.equals("1")) {
-                    //若退回标识是区域经理，则需要删除区域经理审核记录并修改直接上级审核记录
-                    lsjsServiceImpl.deleteApproveByPernr(pernr, "6");
-                    updateApproveResult = updateApprove(importDataInfos);
-                }else if(isReturn.equals("2")){
-                    //若退回标识是地区经理，则需要删除区域经理和地区经理的审核记录并修改直接上级审核记录
-                    lsjsServiceImpl.deleteApproveByPernr(pernr, "6");
-                    lsjsServiceImpl.deleteApproveByPernr(pernr, "7");
-                    updateApproveResult = updateApprove(importDataInfos);
-                }else if(isReturn.equals("0")){
-                    //若不属于退回则属于发起流程时发送至直接上级
+                if(isReturn.equals("0")){
+                    //职能部门员工不存在退回
                     insertApproveResult = insertApprove(importDataInfos, direct.substring(0,6));
                 }
-                if (insertApproveResult == 0 && updateApproveResult == 0){
+                if (insertApproveResult == 0){
                     sendMsgRes.setErrcode(1);
                     sendMsgRes.setErrmsg("写入数据库失败");
                     return sendMsgRes;

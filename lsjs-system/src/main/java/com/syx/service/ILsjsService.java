@@ -35,7 +35,7 @@ public interface ILsjsService {
 
     String getDepartmentByPernr(String quitPernr);
 
-    List<String> getAuditQuitPernr(String reviewerPernr);
+    List<String> getAuditQuitPernr(String reviewerPernr, Integer approveContent);
 
     List<AuditUserRes> getUserInfoByPernrList(List<String> quitPernrList, String reviewerPernr);
 
@@ -64,8 +64,6 @@ public interface ILsjsService {
     List<ResumeRes> getResume(String pernr);
 
     List<Deduction> getDeduction(String pernr);
-
-    List<String> getPernrImoprtDataByTime(ApproveGetDto approveGetDto);
 
     List<ApproveGetRes> getApproveDataByPernr(List<ImportData> imoprtPernrByTime);
 

@@ -11,6 +11,10 @@
         select pernr, month, money from Deduction where pernr = #{quitPernr}
     </select>
 
+    <select id="getDeductionByPernrAndMonth" resultType="com.syx.domain.Deduction">
+        select pernr, month, money from Deduction where pernr = #{pernr} and month = #{month}
+    </select>
+
     <insert id="insertDeduction" parameterType="com.syx.domain.Deduction">
         insert into Deduction(pernr, month, money) values (#{pernr}, #{month}, #{money})
     </insert>
@@ -18,5 +22,15 @@
     <delete id="deleteDeduction" parameterType="string">
         delete from Deduction where pernr = #{pernr}
     </delete>
+
+    <update id="updateDeduction" parameterType="com.syx.domain.Deduction">
+        update Deduction
+        <trim prefix="set" suffixOverrides=",">
+            <if test="pernr != null">pernr = #{pernr},</if>
+            <if test="month != null">month = #{month},</if>
+            <if test="money != null">money = #{money},</if>
+        </trim>
+        where pernr = #{pernr} and month = #{month}
+    </update>
 
 </mapper>

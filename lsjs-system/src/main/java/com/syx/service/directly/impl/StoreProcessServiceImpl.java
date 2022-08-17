@@ -98,6 +98,7 @@ public class StoreProcessServiceImpl implements IStoreProcessService {
             approve.setApproveContent(1);
             approve.setApproveResult(1);
             approve.setApproveResultDesc("待审核");
+            approve.setApproveTime(null);
             approve.setSendTime(timestamp);
 
             i = lsjsServiceImpl.updateApprove(approve) + i;

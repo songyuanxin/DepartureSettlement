@@ -46,8 +46,8 @@ public class LsjsController {
      * @return
      */
     @PostMapping(value = "/getAuditQuitUser")
-    public AjaxResult getAuditQuitUser(String reviewerPernr) {
-        List<String> auditQuitPernr = lsjsService.getAuditQuitPernr(reviewerPernr);
+    public AjaxResult getAuditQuitUser(String reviewerPernr,Integer approveContent) {
+        List<String> auditQuitPernr = lsjsService.getAuditQuitPernr(reviewerPernr, approveContent);
         List<AuditUserRes> auditUserRes = lsjsService.getUserInfoByPernrList(auditQuitPernr, reviewerPernr);
         if (auditUserRes == null) {
             return AjaxResult.success("暂无待审核的离司结算申请");
@@ -124,7 +124,7 @@ public class LsjsController {
         approveStatusResList.setStatus(3);
         approveStatusResList.setName(userNameByPernr);
         approveStatusResList.setQueryApproveRes(approveByPernrList);
-        //3、如果该员工的离司结算已全部审核完成，则需要判断审核完成时间是否在当月5日之前，若在当月5日以及5日之前则只能在当月15日之前查询审核进度
+        //3、如果该员工的离司结算已全部审核完成，则需要判断是否还有权限查看。每月5日审批完的流程可在当月15日之前查询，如5日后审批完的可在次月15日之前查询。
         //审核完成时间
         if (approveStatusResList.getStatus() == 3){
             //获取当前系统时间
@@ -139,23 +139,26 @@ public class LsjsController {
             Instant instant = parse.toInstant();
             //将审核时间转换为LocalDateTime类型
             LocalDateTime allApproveTime = LocalDateTime.ofInstant(instant, ZoneId.ofOffset("GMT", ZoneOffset.ofHours(8)));
-            //跨年查询的直接返回查不到
+            //审批完成时间和查询时间不在同一年份的直接返回查不到
             if (now.getYear() != allApproveTime.getYear()){
                 approveStatusResList.setStatus(4);
                 return AjaxResult.error("您的离职工资结算流程已完结！", approveStatusResList);
             }
             //先判断查询时间与审核完成时间是否在同一个月
             if (now.getMonth() == allApproveTime.getMonth()){
-                if (allApproveTime.getDayOfMonth() <= 5 && now.getDayOfMonth() >= 15){
+                //再判断审批完成时间是否在15日之前并且查询时间在同一个月的20日之前
+                if (allApproveTime.getDayOfMonth() <= 15 && now.getDayOfMonth() >= 20){
                     approveStatusResList.setStatus(4);
                     return AjaxResult.error("您的离职工资结算流程已完结！", approveStatusResList);
                 }
             }else {
+                //若查询时间的月份大于审核完成时间的月份
                 if (now.getMonthValue() > allApproveTime.getMonthValue()){
-                    if (allApproveTime.getDayOfMonth() <= 5){
+                    //先判断上个月审批完成时间是否在15日之前，再判断审核完成时间是否在15日之后并且查询时间在20日之后
+                    if (allApproveTime.getDayOfMonth() <= 15){
                         approveStatusResList.setStatus(4);
                         return AjaxResult.error("您的离职工资结算流程已完结！", approveStatusResList);
-                    }else if (allApproveTime.getDayOfMonth() > 5 && now.getDayOfMonth() > 15){
+                    }else if (allApproveTime.getDayOfMonth() > 15 && now.getDayOfMonth() > 20){
                         approveStatusResList.setStatus(4);
                         return AjaxResult.error("您的离职工资结算流程已完结！", approveStatusResList);
                     }
@@ -202,7 +205,7 @@ public class LsjsController {
      * @throws DocumentException
      */
     @PostMapping(value = "/getPDKKandRZLL")
-    public AjaxResult getPDKKandRZLL(List<String> quitPernrList) throws Exception {
+    public AjaxResult getPDKKandRZLL(@RequestBody List<String> quitPernrList) throws Exception {
         int insertResult = lsjsService.getPDKKandRZLL(quitPernrList);
         return AjaxResult.success("请求成功",insertResult);
     }

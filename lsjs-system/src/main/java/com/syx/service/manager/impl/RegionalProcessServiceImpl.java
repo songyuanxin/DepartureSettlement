@@ -37,14 +37,6 @@ public class RegionalProcessServiceImpl implements IRegionalProcessService {
         String regionalPernr = approveStoreDto.getRegionalPernr();
         String userName = lsjsServiceImpl.getUserNameByPernr(quitPernr);
 
-        int insertApproveResult = 0;
-        insertApproveResult = insertApprove(approveStoreDto);
-        if (insertApproveResult == 0){
-            sendMsgRes.setErrcode(1);
-            sendMsgRes.setErrmsg("发送至区域经理审核时写入数据库失败");
-            return sendMsgRes;
-        }
-
 //        String splicing = "离司结算审核提醒:\n您收到了"+ quitPernr + userName + "的离司结算申请" + "<a href=\"http://10.9.16.2:8080/approve/#/pages/index/manager/regionApproval?pernr=" + regionalPernr + "\">"+"【审批入口】</a>";
         String splicing = "离司结算审核提醒:\n您收到了"+ quitPernr + userName + "的离司结算申请" + "<a href=\"http://hrfico.jzj.cn:19004/approve/#/pages/index/manager/regionApproval?pernr=" + regionalPernr + "\">"+"【审批入口】</a>";
         sendMsgRes = weChatServiceImpl.sendMsg(regionalPernr, splicing);
@@ -54,6 +46,15 @@ public class RegionalProcessServiceImpl implements IRegionalProcessService {
             sendMsgRes.setErrmsg("发送至区域经理审核时失败");
             return sendMsgRes;
         }
+
+        int insertApproveResult = 0;
+        insertApproveResult = insertApprove(approveStoreDto);
+        if (insertApproveResult == 0){
+            sendMsgRes.setErrcode(1);
+            sendMsgRes.setErrmsg("发送至区域经理审核时写入数据库失败");
+            return sendMsgRes;
+        }
+
         return sendMsgRes;
     }
 

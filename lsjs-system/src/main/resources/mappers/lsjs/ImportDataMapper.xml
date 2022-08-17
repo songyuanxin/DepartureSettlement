@@ -63,20 +63,6 @@
         </where>
     </select>
 
-    <select id="getImoprtDataByTimeAndPernr" parameterType="com.syx.domains.dto.ImportDataGetDto"
-            resultMap="ImportDataResult">
-        select *
-        from ImportData
-        where quit_pernr = #{quitPernr}
-          and convert(date, import_time) = #{importTime}
-    </select>
-
-    <select id="getImoprtDataByImportTime" parameterType="string" resultMap="ImportDataResult">
-        select *
-        from ImportData
-        where convert(date, import_time) = #{importTime}
-    </select>
-
     <select id="getImportDataList" resultMap="ImportDataResult">
         select top 500 *
         from ImportData
@@ -105,26 +91,11 @@
         group by a.quit_pernr, a.launch_id
     </select>
 
-    <select id="getImoprtDataByQuitPernr" parameterType="string" resultMap="ImportDataResult">
-        select *
-        from (select *, row_number() over(partition by quit_pernr order by import_time desc) rows from ImportData) t
-        where t.rows = 1
-          and t.quit_pernr = #{quitPernr}
-    </select>
-
-    <select id="getImportDataByImportPernr" parameterType="string" resultType="com.syx.domain.ImportData">
-        select *
-        from (select *, row_number() over(partition by quit_pernr order by import_time desc) rows from ImportData) t
-        where t.rows = 1
-          and t.originator_pernr = #{ImportPernr}
-    </select>
-
     <select id="getImportDataByQuitPernr" resultType="com.syx.domain.ImportData">
         select *
         from ImportData
         where quit_pernr = #{quitPernr}
           and launch_id = #{launchId}
     </select>
-
 
 </mapper>
