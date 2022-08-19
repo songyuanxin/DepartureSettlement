@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.syx.mapper.lsjs.LsjsAuditSendLogMapper">
+
+    <insert id="insertAuditSendLog" parameterType="com.syx.domain.LsjsAuditSendLog">
+        insert into LsjsAuditSendLog (quit_pernr,receiving_time,reviewer_pernr,approve_content,send_ident,send_time)
+        values (#{quitPernr}, #{receivingTime}, #{reviewerPernr}, #{approveContent}, #{sendIdent},#{sendTime})
+    </insert>
+
+</mapper>

@@ -35,7 +35,7 @@ public class WeChatServiceImpl {
     @Autowired
     private WxServiceImpl wxServiceImpl;
 
-    public SendMsgRes sendMsg(String reviewer, String splicing) {
+    public SendMsgRes sendMsgToReviewer(String reviewer, String splicing) {
         SendMsgRes sendMsgRes = new SendMsgRes();
         //二、组装发送信息实体
         SendMsgData sendMsgData = new SendMsgData();

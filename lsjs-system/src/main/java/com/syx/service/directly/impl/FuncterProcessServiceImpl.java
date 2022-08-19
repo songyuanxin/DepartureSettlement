@@ -62,11 +62,11 @@ public class FuncterProcessServiceImpl implements IFuncterProcessService {
 
 //                String splicing = "离司结算审核提醒:\n您收到了"+ quitpernr.substring(0, quitpernr.length()-1) + "的离司结算申请" + "<a href=\"http://10.9.16.2:8080/approve/#/pages/index/directly/functionApproval?pernr="+direct.substring(0,6) + "\">"+"【审批入口】</a>";
                 String splicing = "离司结算审核提醒:\n您收到了"+ quitpernr.substring(0, quitpernr.length()-1) + "的离司结算申请" + "<a href=\"http://hrfico.jzj.cn:19004/approve/#/pages/index/directly/functionApproval?pernr="+direct.substring(0,6) + "\">"+"【审批入口】</a>";
-                sendMsgRes = weChatServiceImpl.sendMsg(direct.substring(0,6), splicing);
+                sendMsgRes = weChatServiceImpl.sendMsgToReviewer(direct.substring(0,6), splicing);
                 //判断提醒消息是否发送成功，若发送成功则写入审核表以及审核记录表
                 if(sendMsgRes.getErrcode() != 0){
                     sendMsgRes.setErrcode(1);
-                    sendMsgRes.setErrmsg("发生至直接上级企业微信失败");
+                    sendMsgRes.setErrmsg("发送至直接上级企业微信失败");
                     return sendMsgRes;
                 }
             }

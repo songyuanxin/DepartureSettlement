@@ -3,6 +3,7 @@ package com.syx.mapper.lsjs;
 import com.syx.domain.Approve;
 import com.syx.domains.vo.ApproveDataRes;
 import com.syx.domains.vo.ApproveGetRes;
+import com.syx.domains.vo.AuditApproveVo;
 import com.syx.domains.vo.QueryApproveRes;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -95,4 +96,6 @@ public interface ApproveMapper {
      * @return
      */
     List<ApproveDataRes> getApproveDataResBySqlServer(String name,List<String> launchs);
+
+    List<AuditApproveVo> getAuditData();
 }

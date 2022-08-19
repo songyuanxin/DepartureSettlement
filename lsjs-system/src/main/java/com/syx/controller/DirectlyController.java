@@ -177,6 +177,26 @@ public class DirectlyController {
      */
     @PostMapping(path = "/store/adopt")
     public AjaxResult storeAdopt(DirectApproveStoreDto storeDto) {
+        if (StringUtils.isNotBlank(storeDto.getRegionalPernr())){
+            if (storeDto.getRegionalPernr().length()>0){
+                String userNameByPernr = lsjsService.getUserNameByPernr(storeDto.getRegionalPernr());
+                if (StringUtils.isBlank(userNameByPernr)){
+                    return AjaxResult.error("区域经理工号错误，请重新选择！");
+                }else if (StringUtils.isEmpty(userNameByPernr)){
+                    return AjaxResult.error("区域经理工号错误，请重新选择！");
+                }
+            }
+        }
+        if (StringUtils.isNotBlank(storeDto.getAreaPernr())){
+            if (storeDto.getAreaPernr().length()>0){
+                String userNameByPernr = lsjsService.getUserNameByPernr(storeDto.getAreaPernr());
+                if (StringUtils.isBlank(userNameByPernr)){
+                    return AjaxResult.error("地区经理工号错误，请重新选择！");
+                }else if (StringUtils.isEmpty(userNameByPernr)){
+                    return AjaxResult.error("地区经理工号错误，请重新选择！");
+                }
+            }
+        }
         //一、将审核结果写入数据库
         Approve approve = new Approve();
         //获取当前系统时间
