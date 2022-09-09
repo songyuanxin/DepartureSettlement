@@ -49,4 +49,5 @@ public class AuditUserRes {
     private String careDocumentNum;
     private String cardMoney;
     private String clothesMoney;
+    private String toolSendTime;
 }

@@ -53,6 +53,7 @@
 	         ,MAX(case when a.approve_content = 3 then a.quality_money else null end) as qualityMoney
 	         ,MAX(case when a.approve_content = 4 then a.card_money else null end) as cardMoney
 	         ,MAX(case when a.approve_content = 4 then a.clothes_money else null end) as clothesMoney
+	         ,MAX(case when a.approve_content = 4 then a.send_time else null end) as toolSendTime
 	         ,MAX(case when a.approve_content = 5 then a.care_money else null end) as careMoney
 	         ,MAX(case when a.approve_content = 5 then a.care_document_num else null end) as careDocumentNum
         from Approve a inner join personInfo p
