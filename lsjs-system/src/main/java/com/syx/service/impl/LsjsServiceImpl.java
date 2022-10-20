@@ -236,7 +236,7 @@ public class LsjsServiceImpl implements ILsjsService {
     public List<QueryApproveRes> queryApproveByPernr(String pernr) {
         //获取该离职员工最新导入数据
         ImportData lastImoprtDataByPernr = importDataMapper.getLastImoprtDataByPernr(pernr);
-        //根据离职员工工号和导入时间查询最新审核数据
+        //根据离职员工工号和发起Id查询最新审核数据
         List<QueryApproveRes> approve = approveMapper.queryApproveByPernr(lastImoprtDataByPernr.getQuitPernr(),lastImoprtDataByPernr.getLaunchId());
 
         List<QueryApproveRes> queryApproveResList = new ArrayList<>();
